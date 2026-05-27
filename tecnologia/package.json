@@ -1,7 +1,6 @@
 {
-  "name": "tecnologia",
-  "private": true,
-  "version": "0.0.0",
+  "name": "noiror-frontend",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,11 +8,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.25",
-    "vue-router": "^5.0.3"
+    "@googleapis/oauth2": "^5.0.1",
+    "@vue/compiler-sfc": "^3.5.33",
+    "axios": "^1.13.6",
+    "glob": "^13.0.6",
+    "gsap": "^3.15.0",
+    "pinia": "^2.3.1",
+    "qrcode": "^1.5.4",
+    "vue": "^3.3.11",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.2",
-    "vite": "^7.3.1"
+    "@vitejs/plugin-vue": "^4.5.2",
+    "vite": "^5.0.8"
   }
 }
