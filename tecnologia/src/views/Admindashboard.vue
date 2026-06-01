@@ -1229,7 +1229,7 @@ const siteStore     = useSiteStore()
 const MESES       = ['J','F','M','A','M','J','J','A','S','O','N','D']
 const MESES_FULL  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 const CATEGORIAS  = ['COMPUTING','MOBILE','AUDIO','GAMING','VISUAL','VIRTUAL']
-const STATUS_LIST = ['pendente','aprovado','enviado','entregue','cancelado']
+const STATUS_LIST = ['pendente','em-preparo','despachado','entregue','cancelado']
 const CAT_LABELS  = ['Computing','Mobile','Audio','Gaming','Visual','Virtual']
 const CAT_CORES   = ['#C8A84B','#3498db','#9b59b6','#2ecc71','#e67e22','#1abc9c']
 const GAMER_SUBCATS = ['Mouse','Teclado','Headset','Mousepad','Monitor','Cadeira','Webcam','Controle','Headphone','Microfone']
@@ -1328,7 +1328,15 @@ const mascararEmail = (email) => {
   const [u, d] = email.split('@')
   return !d ? email : u.slice(0, 2) + '***@' + d
 }
-const statusLabel = (s) => ({ pendente:'Pendente', confirmado:'Confirmado', preparando:'Em Preparo', aprovado:'Aprovado', enviado:'Enviado', transito:'A Caminho', entregue:'Entregue', cancelado:'Cancelado' })[s] || s || '—'
+  const statusLabel = (s) => ({ 
+  pendente:'Pendente', 
+  'em-preparo':'Em Preparo', 
+  despachado:'Despachado',
+  entregue:'Entregue', 
+  cancelado:'Cancelado',
+  aprovado:'Aprovado',
+  enviado:'Enviado'
+})[s] || s || '—'
 const statusClass = (s) => { if(s==='entregue') return 'entregue'; if(['enviado','transito','aprovado'].includes(s)) return 'enviado'; if(s==='cancelado') return 'cancelado'; return 'pendente' }
 const sparkLine = (data) => {
   if (!data?.length) return ''

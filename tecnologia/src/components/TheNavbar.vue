@@ -751,9 +751,17 @@
                   </div>
                 </div>
                 <div class="di__info">
-                  <span class="di__cat">{{ item.categoria }}</span>
-                  <p class="di__nome">{{ item.nome }}</p>
-                  <div class="di__foot">
+  <span class="di__cat">{{ item.categoria }}</span>
+  <p class="di__nome">{{ item.nome }}</p>
+
+  <div v-if="item.corNome || item.storage" style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
+    <span v-if="item.corHex" :style="`display:inline-block;width:10px;height:10px;border-radius:50%;background:${item.corHex};border:0.5px solid rgba(245,240,232,0.2);flex-shrink:0`"></span>
+    <span v-if="item.corNome" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(237,232,224,0.4);text-transform:uppercase;">{{ item.corNome }}</span>
+    <span v-if="item.corNome && item.storage" style="color:rgba(237,232,224,0.2);font-size:8px">·</span>
+    <span v-if="item.storage" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(237,232,224,0.4);text-transform:uppercase;">{{ item.storage }}</span>
+  </div>
+
+  <div class="di__foot">
                     <div class="di__qty" :aria-label="`Quantidade: ${item.qty}`">
                       <button @click="changeQty(item, -1)" aria-label="Diminuir quantidade">−</button>
                       <span aria-live="polite">{{ item.qty }}</span>
@@ -1254,7 +1262,7 @@ const onSearchInput = () => {
   searchResults.value = []
   searchTimer = setTimeout(async () => {
     try {
-      const res = await fetch(`/api/produtos?busca=${encodeURIComponent(q)}&limite=5`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/produtos?busca=${encodeURIComponent(q)}&limite=5`)
       if (res.ok) { const data = await res.json(); searchResults.value = data.produtos || data || [] }
     } catch { searchResults.value = [] }
     finally  { searchLoading.value = false }
@@ -1346,7 +1354,7 @@ const fazerCadastro = async () => {
 const loginGoogle = () => {
   if (!window.google) { alert('Google OAuth não carregado.'); return }
   window.google.accounts.oauth2.initTokenClient({
-    client_id: '577556110976-tm0prp8cn6hf04fri9pehrhbvg14vn6b.apps.googleusercontent.com',
+   client_id: '1072334614026-5g7u8oj8i1esvdkd5omlgbuirun0f2g6.apps.googleusercontent.com',
     scope: 'email profile',
     callback: async (response) => {
       if (response.error) return

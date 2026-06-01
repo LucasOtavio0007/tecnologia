@@ -176,7 +176,7 @@ const contentRef    = ref(null)
 const cursorLightRef = ref(null)
 
 const videoUrl  = '/img/VID-20260305-WA0000.mp4'
-const posterUrl = '/img/hero-poster.jpg'
+const posterUrl = ''
 
 // ── Stats ──
 const stats = [

@@ -238,10 +238,10 @@
             <span>R$ {{ fmt(filtroPreco[1]) }}</span>
           </div>
           <div class="store__sb-ranges">
-            <input type="range" min="0" max="55000" step="500"
+            <input type="range" min="0" max="500000" step="1000"
               v-model.number="filtroPreco[0]" class="store__sb-range"
               @input="clampPreco" aria-label="Preço mínimo"/>
-            <input type="range" min="0" max="55000" step="500"
+            <input type="range" min="0" max="500000" step="1000"
               v-model.number="filtroPreco[1]" class="store__sb-range"
               @input="clampPreco" aria-label="Preço máximo"/>
           </div>
@@ -863,7 +863,7 @@ const shineRefs   = ref({})
 const loading          = ref(true)
 const busca            = ref('')
 const categoriasAtivas = ref([])
-const filtroPreco      = ref([0, 55000])
+const filtroPreco = ref([0, 5000000])
 const apenasEstoque    = ref(false)
 const ordenacao        = ref('relevancia')
 const viewMode         = ref('grid')
@@ -973,7 +973,7 @@ const produtosPaginados = computed(() => {
 })
 const temFiltros = computed(() =>
   busca.value || categoriasAtivas.value.length || apenasEstoque.value ||
-  filtroPreco.value[0] > 0 || filtroPreco.value[1] < 55000
+  filtroPreco.value[0] > 0 || filtroPreco.value[1] < 5000000
 )
 const paginasVisiveis = computed(() => {
   const t = totalPaginas.value, c = pagina.value
@@ -1057,7 +1057,7 @@ function clampPreco() {
     filtroPreco.value[0] = filtroPreco.value[1]-500
 }
 function limparFiltros() {
-  busca.value=''; categoriasAtivas.value=[]; filtroPreco.value=[0,55000]
+  busca.value=''; categoriasAtivas.value=[]; filtroPreco.value=[0,5000000]
   apenasEstoque.value=false; ordenacao.value='relevancia'; pagina.value=1
 }
 function irPag(p) {
@@ -1081,16 +1081,28 @@ function toggleSaved(p) {
 /* ── Carrinho ── */
 function addToCart(p) {
   if (!p?.estoque) return
-  if (!auth.isLogado) { window.dispatchEvent(new CustomEvent('abrir-modal-auth',{detail:'login'})); return }
-  const key=p._id||p.id
+  if (!auth.isLogado) {
+    window.dispatchEvent(new CustomEvent('abrir-modal-auth', { detail: 'login' }))
+    return
+  }
+  const key = p._id || p.id
   if (addedIds.value.includes(key)) return
   const quantidade = modalAberto.value ? qtd.value : 1
-  for (let i=0;i<quantidade;i++) cart.adicionar({...p})
+
+  const itemComVariante = {
+    ...p,
+    corNome: corSelecionada.value       || p.cores?.[0]?.nome || '',
+    corHex:  modalBgColor.value         || p.cores?.[0]?.hex  || '',
+    storage: storageSelecionado.value?.label || '',
+    preco:   storageSelecionado.value?.preco || p.preco,
+  }
+
+  for (let i = 0; i < quantidade; i++) cart.adicionar(itemComVariante)
   addedIds.value.push(key)
-  mostrarToast(`${p.nome} adicionado ao atelier ◆`)
-  setTimeout(()=>{ window.dispatchEvent(new CustomEvent('abrir-carrinho')) }, 300)
-  if (modalAberto.value) setTimeout(()=>fecharModal(), 750)
-  setTimeout(()=>{ addedIds.value=addedIds.value.filter(id=>id!==key) }, 2500)
+  mostrarToast(`${p.nome} — ${itemComVariante.corNome || 'adicionado'} ◆`)
+  setTimeout(() => { window.dispatchEvent(new CustomEvent('abrir-carrinho')) }, 300)
+  if (modalAberto.value) setTimeout(() => fecharModal(), 750)
+  setTimeout(() => { addedIds.value = addedIds.value.filter(id => id !== key) }, 2500)
 }
 
 /* ── Modal ── */

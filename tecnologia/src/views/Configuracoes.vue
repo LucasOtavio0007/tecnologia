@@ -283,8 +283,8 @@
           <template v-else>
             <div class="cfg-grid-2">
               <div class="cfg-campo">
-                <label>Pedido elegível</label>
-                <select v-model="reembolsoForm.pedidoId" class="cfg-select cfg-select--line">
+                <label for="r-pedido">Pedido elegível</label>
+<select id="r-pedido" v-model="reembolsoForm.pedidoId" class="cfg-select cfg-select--line">
                   <option value="">Selecionar pedido…</option>
                   <option v-for="p in pedidosElegiveis" :key="p._id" :value="p._id">
                     #{{ (p.numero||p._id?.slice(-6))?.toUpperCase() }} — R$ {{ fmt(p.total) }}
@@ -292,8 +292,8 @@
                 </select>
               </div>
               <div class="cfg-campo">
-                <label>Motivo</label>
-                <select v-model="reembolsoForm.motivo" class="cfg-select cfg-select--line">
+                <label for="r-motivo">Motivo</label>
+<select id="r-motivo" v-model="reembolsoForm.motivo" class="cfg-select cfg-select--line">
                   <option value="">Selecionar motivo…</option>
                   <option value="produto_danificado">Produto danificado</option>
                   <option value="produto_errado">Produto errado</option>
@@ -303,8 +303,8 @@
                 </select>
               </div>
               <div class="cfg-campo cfg-col-2">
-                <label>Descrição detalhada</label>
-                <textarea v-model="reembolsoForm.descricao" rows="3"
+                <label for="r-desc">Descrição detalhada</label>
+<textarea id="r-desc" v-model="reembolsoForm.descricao" rows="3"
                   placeholder="Descreva o problema com detalhes…"></textarea>
               </div>
             </div>
@@ -939,8 +939,8 @@
               Pedido <strong style="color:var(--or)">#{{ (modalCancelamento?.numero||modalCancelamento?._id?.slice(-6))?.toUpperCase() }}</strong> — esta ação não pode ser desfeita após confirmação.
             </p>
             <div class="cfg-campo">
-              <label>Motivo do cancelamento</label>
-              <select v-model="cancelamentoMotivo" class="cfg-select cfg-select--line">
+              <label for="c-motivo">Motivo do cancelamento</label>
+<select id="c-motivo" v-model="cancelamentoMotivo" class="cfg-select cfg-select--line">
                 <option value="">Selecionar motivo…</option>
                 <option value="Desisti da compra">Desisti da compra</option>
                 <option value="Comprei por engano">Comprei por engano</option>
@@ -950,8 +950,8 @@
               </select>
             </div>
             <div class="cfg-campo" style="margin-top:12px">
-              <label>Detalhes (opcional)</label>
-              <textarea v-model="cancelamentoDetalhe" rows="2" placeholder="Descreva o motivo com mais detalhes…"></textarea>
+              <label for="c-detalhe">Detalhes (opcional)</label>
+<textarea id="c-detalhe" v-model="cancelamentoDetalhe" rows="2" placeholder="Descreva o motivo com mais detalhes…"></textarea>
             </div>
             <p v-if="erroCancelamento" class="cfg-erro-msg" style="margin-top:10px">{{ erroCancelamento }}</p>
           </div>
