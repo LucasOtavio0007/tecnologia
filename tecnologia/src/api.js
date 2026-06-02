@@ -3,9 +3,12 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   withCredentials: true,
-  timeout: 60000, // era 10000
+  timeout: 60000,
 })
 
+// Seta o token imediatamente se já existir no localStorage
+const _token = localStorage.getItem('token')
+if (_token) api.defaults.headers.common['Authorization'] = `Bearer ${_token}`
 // Rotas que podem retornar 401 sem significar sessão expirada
 const ROTAS_401_IGNORADAS = [
   '/carrinho',
