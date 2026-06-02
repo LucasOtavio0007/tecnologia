@@ -754,26 +754,32 @@
   <span class="di__cat">{{ item.categoria }}</span>
   <p class="di__nome">{{ item.nome }}</p>
 
-  <div v-if="item.corNome || item.storage" style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
-    <span v-if="item.corHex" :style="`display:inline-block;width:10px;height:10px;border-radius:50%;background:${item.corHex};border:0.5px solid rgba(245,240,232,0.2);flex-shrink:0`"></span>
-    <span v-if="item.corNome" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(237,232,224,0.4);text-transform:uppercase;">{{ item.corNome }}</span>
-    <span v-if="item.corNome && item.storage" style="color:rgba(237,232,224,0.2);font-size:8px">·</span>
-    <span v-if="item.storage" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(237,232,224,0.4);text-transform:uppercase;">{{ item.storage }}</span>
+  <!-- VARIANTES VISUAIS -->
+  <div v-if="item.corNome || item.storage" class="di__variantes">
+    <span
+      v-if="item.corHex"
+      class="di__swatch"
+      :style="{ background: item.corHex }"
+      :title="item.corNome"
+    ></span>
+    <span v-if="item.corNome" class="di__var-txt">{{ item.corNome }}</span>
+    <span v-if="item.corNome && item.storage" class="di__var-sep">·</span>
+    <span v-if="item.storage" class="di__var-txt">{{ item.storage }}</span>
   </div>
 
   <div class="di__foot">
-                    <div class="di__qty" :aria-label="`Quantidade: ${item.qty}`">
-                      <button @click="changeQty(item, -1)" aria-label="Diminuir quantidade">−</button>
-                      <span aria-live="polite">{{ item.qty }}</span>
-                      <button @click="changeQty(item, +1)" aria-label="Aumentar quantidade">+</button>
-                    </div>
-                    <span class="di__preco">R$ {{ fmt(item.preco * item.qty) }}</span>
-                  </div>
-                  <button class="di__salvar" @click="salvarParaDepois(item)" :aria-label="`Salvar ${item.nome} para comprar depois`">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                    Salvar para depois
-                  </button>
-                </div>
+    <div class="di__qty" :aria-label="`Quantidade: ${item.qty}`">
+      <button @click="changeQty(item, -1)" aria-label="Diminuir quantidade">−</button>
+      <span aria-live="polite">{{ item.qty }}</span>
+      <button @click="changeQty(item, +1)" aria-label="Aumentar quantidade">+</button>
+    </div>
+    <span class="di__preco">R$ {{ fmt(item.preco * item.qty) }}</span>
+  </div>
+  <button class="di__salvar" @click="salvarParaDepois(item)" :aria-label="`Salvar ${item.nome} para comprar depois`">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    Salvar para depois
+  </button>
+</div>
                 <button class="di__remover" @click="removeItem(item.id || item._id)" :aria-label="`Remover ${item.nome} do carrinho`">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
@@ -2433,4 +2439,46 @@ body.light-mode .af-linha input:-webkit-autofill:active {
   box-shadow: 0 0 0 1000px #ffffff inset !important;
   -webkit-text-fill-color: #0a0a1e !important;
 }
+
+/* ══ VARIANTES DO PRODUTO NO DRAWER ══ */
+.di__variantes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0 3px;
+  flex-wrap: wrap;
+}
+
+.di__swatch {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(245, 240, 232, 0.22);
+  flex-shrink: 0;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s;
+}
+
+.di__swatch:hover {
+  transform: scale(1.25);
+}
+
+.di__var-txt {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(237, 232, 224, 0.4);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.di__var-sep {
+  color: rgba(237, 232, 224, 0.18);
+  font-size: 8px;
+  line-height: 1;
+}
+
 </style>
