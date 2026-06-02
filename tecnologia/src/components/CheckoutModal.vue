@@ -827,8 +827,6 @@ const CUPONS_VALIDOS = {
   'FRETEGRATIS': { desconto: 0,    tipo: 'frete',   msg: 'Frete grátis aplicado!' },
 }
 
-const RESEND_API_KEY = 're_XXXXXXXXXXXXXXXX'
-const EMAIL_FROM = 'noreply@noiror.com.br'
 
 const locale = ref(localStorage.getItem('noir_locale') || 'pt-BR')
 const salvarLocale = () => localStorage.setItem('noir_locale', locale.value)
@@ -1266,78 +1264,16 @@ const finalizarPedido = async () => {
 }
 
 const enviarEmailConfirmacao = async (pedido) => {
-  emailStatus.value = 'sending'; emailStatusMsg.value = 'Enviando confirmação por e-mail...'
-  const htmlEmail = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-    body{font-family:Georgia,serif;background:#f5f0e8;margin:0;padding:40px 20px;color:#0d0a04}
-    .container{max-width:580px;margin:0 auto;background:#fff;border:1px solid #e0d5b8}
-    .header{background:#0d0a04;padding:28px;text-align:center}
-    .header h1{color:#C8A84B;font-size:22px;letter-spacing:4px;margin:0;font-style:italic}
-    .body{padding:28px}.titulo{font-size:18px;color:#0d0a04;margin-bottom:6px}
-    .section-title{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#8b6914;border-bottom:1px solid #e0d5b8;padding-bottom:6px;margin:18px 0 10px;font-family:monospace}
-    .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ebe0;font-size:13px}
-    .row span:first-child{color:#888}
-    .total-row{display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:bold;border-top:2px solid #C8A84B;margin-top:6px}
-    .total-row span:last-child{color:#C8A84B}
-    .footer{background:#0d0a04;padding:18px;text-align:center}
-    .footer p{color:rgba(245,240,232,0.25);font-size:9px;letter-spacing:3px;margin:0}
-    .badge{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:bold}
-    .variante{display:flex;align-items:center;gap:5px;margin-top:2px}
-    .v-swatch{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,0.12)}
-    .v-txt{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:0.5px}
-  </style></head><body><div class="container">
-    <div class="header"><h1>Noir &amp; Or</h1><p>ATELIER · CONFIRMAÇÃO DE PEDIDO</p></div>
-    <div class="body">
-      <p class="titulo">Olá, ${pedido.cliente?.nome?.split(' ')[0]} 👋</p>
-      <p style="font-size:13px;color:#666;margin-bottom:24px">Seu pedido foi recebido e está sendo processado.</p>
-      <div class="section-title">◆ Pedido</div>
-      <div class="row"><span>Número</span><span><strong>#${pedido.numero || (pedido._id||'').slice(-8).toUpperCase()}</strong></span></div>
-      <div class="row"><span>Data</span><span>${new Date(pedido.criadoEm || Date.now()).toLocaleDateString('pt-BR')}</span></div>
-      <div class="row"><span>Status</span><span><span class="badge">${pedido.status || 'Pendente'}</span></span></div>
-      <div class="section-title">◆ Itens</div>
-      ${(pedido.itens||[]).map(item => `
-        <div class="row">
-          <span>
-            ${item.nome||item.produto?.nome} × ${item.qty||1}
-            ${(item.corNome || item.storage) ? `
-              <div class="variante">
-                ${item.corHex ? `<span class="v-swatch" style="background:${item.corHex}"></span>` : ''}
-                <span class="v-txt">${[item.corNome, item.storage].filter(Boolean).join(' · ')}</span>
-              </div>` : ''}
-          </span>
-          <span>R$ ${((item.preco||0)*(item.qty||1)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
-        </div>`).join('')}
-      <div class="section-title">◆ Valores</div>
-      <div class="row"><span>Subtotal</span><span>R$ ${subtotal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
-      ${descontoValor.value > 0 ? `<div class="row"><span>Desconto</span><span style="color:green">−R$ ${descontoValor.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>` : ''}
-      <div class="row"><span>Frete</span><span>${freteValor.value === 0 ? 'GRÁTIS' : 'R$ '+freteValor.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
-      <div class="total-row"><span>TOTAL</span><span>R$ ${totalFinal.value.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
-      <div class="section-title">◆ Entrega</div>
-      <div class="row"><span>Endereço</span><span>${pedido.entrega?.endereco}</span></div>
-      <div class="row"><span>Cidade</span><span>${pedido.entrega?.cidade} — CEP ${pedido.entrega?.cep}</span></div>
-      <div class="row"><span>Prazo</span><span>5 a 10 dias úteis</span></div>
-    </div>
-    <div class="footer">
-      <p>NOIR &amp; OR · ATELIER &nbsp;◆&nbsp; ${LOJA.site} &nbsp;◆&nbsp; ${LOJA.email}</p>
-      <p style="margin-top:6px">Pagamento processado com segurança via Mercado Pago · SSL 256-bit</p>
-    </div>
-  </div></body></html>`
-
+  emailStatus.value = 'sending'
+  emailStatusMsg.value = 'Enviando confirmação por e-mail...'
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
-      body: JSON.stringify({
-        from: EMAIL_FROM,
-        to: [pedido.cliente.email],
-        subject: `✓ Pedido #${pedido.numero || (pedido._id||'').slice(-8).toUpperCase()} confirmado — Noir & Or`,
-        html: htmlEmail,
-      })
-    })
-    if (!res.ok) throw new Error(`Resend: ${res.status}`)
-    emailStatus.value = 'sent'; emailStatusMsg.value = `E-mail enviado para ${maskEmailDisplay(pedido.cliente.email)}`
+    await api.post(`/pedidos/${pedido._id}/confirmar`, {})
+    emailStatus.value = 'sent'
+    emailStatusMsg.value = `E-mail enviado para ${maskEmailDisplay(pedido.cliente?.email)}`
   } catch (e) {
     console.warn('[Email] Falhou:', e.message)
-    emailStatus.value = 'error'; emailStatusMsg.value = 'E-mail não pôde ser enviado, mas seu pedido está confirmado.'
+    emailStatus.value = 'error'
+    emailStatusMsg.value = 'E-mail não pôde ser enviado, mas seu pedido está confirmado.'
   }
 }
 
