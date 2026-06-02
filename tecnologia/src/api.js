@@ -3,7 +3,7 @@ import axios from 'axios'
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   withCredentials: true,
-  timeout: 10000,
+  timeout: 60000, // era 10000
 })
 
 // Rotas que podem retornar 401 sem significar sessão expirada

@@ -60,11 +60,9 @@ onMounted(() => {
 // ─── Inicialização principal ──────────────────────────────────────────────────
 // Ordem garantida: config → auth → cart (cart só init se já logado via token salvo)
 onMounted(async () => {
-  await siteStore.fetchConfig()
-  await auth.fetchMe()             // seta header Authorization se há token salvo
-
+  await auth.fetchMe()
   if (auth.isLogado) {
-    await cart.init()              // token já está no axios neste ponto
+    await cart.init()
   }
 })
 

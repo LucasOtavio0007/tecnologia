@@ -5,30 +5,25 @@
     <div class="nb-progress" :style="{ transform: `scaleX(${scrollProgress / 100})` }" aria-hidden="true"></div>
 
     <!-- TOAST SYSTEM -->
-    <teleport to="body">
-      <transition-group name="toast" tag="div" class="toast-container" aria-live="polite" aria-atomic="false">
-        <div
-          v-for="t in toasts"
-          :key="t.id"
-          :class="['toast', `toast--${t.type}`]"
-          role="alert"
-        >
-          <div class="toast__icon" aria-hidden="true">
-            <svg v-if="t.type === 'success'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <svg v-else-if="t.type === 'error'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div class="toast__body">
-            <span class="toast__title">{{ t.title }}</span>
-            <span v-if="t.msg" class="toast__msg">{{ t.msg }}</span>
-          </div>
-          <button class="toast__close" @click="removeToast(t.id)" aria-label="Fechar">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-          <div class="toast__progress" :style="{ animationDuration: t.duration + 'ms' }"></div>
-        </div>
-      </transition-group>
-    </teleport>
+<teleport to="body">
+  <transition-group name="toast" tag="ul" class="toast-container" aria-live="polite" aria-atomic="false">
+    <li v-for="t in toasts" :key="t.id" :class="['toast', `toast--${t.type}`]" role="alert">
+      <div class="toast__icon" aria-hidden="true">
+        <svg v-if="t.type === 'success'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg v-else-if="t.type === 'error'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="toast__body">
+        <span class="toast__title">{{ t.title }}</span>
+        <span v-if="t.msg" class="toast__msg">{{ t.msg }}</span>
+      </div>
+      <button class="toast__close" @click="removeToast(t.id)" aria-label="Fechar">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="toast__progress" :style="{ animationDuration: t.duration + 'ms' }"></div>
+    </li>
+  </transition-group>
+</teleport>
 
     <!-- NAVBAR -->
     <header

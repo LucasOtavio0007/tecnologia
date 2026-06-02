@@ -54,22 +54,26 @@ export const useCartStore = defineStore('cart', () => {
     sincronizarBackend()
   }
 
-  async function init() {
-    try {
-      const { data } = await api.get('/carrinho')
-      items.value = data.items || []
-    } catch { }
-  }
+ async function init() {
+  const token = localStorage.getItem('token')
+  if (!token) return
+  try {
+    const { data } = await api.get('/carrinho')
+    items.value = data.items || []
+  } catch { }
+}
 
-  let syncTimer = null
-  function sincronizarBackend() {
-    clearTimeout(syncTimer)
-    syncTimer = setTimeout(async () => {
-      try {
-        await api.put('/carrinho', { items: items.value })
-      } catch { }
-    }, 800)
-  }
+let syncTimer = null
+function sincronizarBackend() {
+  clearTimeout(syncTimer)
+  syncTimer = setTimeout(async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    try {
+      await api.put('/carrinho', { items: items.value })
+    } catch { }
+  }, 800)
+}
 
   return {
     items, loading,

@@ -18,35 +18,43 @@ export const useProdutosStore = defineStore('produtos', () => {
     loading.value = true
     erro.value    = null
 
-    try {
-   const { data } = await api.get('/produtos', {
-  params: Object.keys(params).length ? params : undefined
-})
+   // DEPOIS:
+const tentativas = forcar ? 3 : 1 // retry só no recarregar(), não em buscas filtradas
 
-      // Aceita qualquer formato que a API retorne
-      const lista =
-        Array.isArray(data)            ? data            :   // array direto
-        Array.isArray(data?.produtos)  ? data.produtos   :   // { produtos: [] }
-        Array.isArray(data?.data)      ? data.data       :   // { data: [] }
-        Array.isArray(data?.items)     ? data.items      :   // { items: [] }
-        Array.isArray(data?.results)   ? data.results    :   // { results: [] }
-        []
+for (let t = 1; t <= tentativas; t++) {
 
-      // Normaliza campos que podem vir inconsistentes do backend
-      todos.value = lista.map(normalizar)
-      _fetched.value = true
+  try {
+    const { data } = await api.get('/produtos', {
+      params: Object.keys(params).length ? params : undefined
+    })
 
-    } catch (e) {
+    const lista =
+      Array.isArray(data)           ? data          :
+      Array.isArray(data?.produtos) ? data.produtos :
+      Array.isArray(data?.data)     ? data.data     :
+      Array.isArray(data?.items)    ? data.items    :
+      Array.isArray(data?.results)  ? data.results  :
+      []
+
+    todos.value = lista.map(normalizar)
+    _fetched.value = true
+    loading.value  = false
+    return // sucesso — sai do loop
+
+  } catch (e) {
+    if (t < tentativas) {
+      await new Promise(r => setTimeout(r, t * 5000)) // 5s, depois 10s
+    } else {
       erro.value = e?.response?.data?.mensagem
         || e?.response?.data?.message
         || e?.message
-        || 'Erro ao carregar produtos'
+        || 'Servidor iniciando, recarregue em instantes.'
       console.error('[ProdutosStore] fetchProdutos:', erro.value)
-    } finally {
       loading.value = false
     }
   }
-
+}
+  }
   /* ── Normalização de um produto vindo da API ── */
   function normalizar(p) {
     return {

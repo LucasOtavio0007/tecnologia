@@ -71,19 +71,16 @@ function setupGlobalClickOutside() {
 let mounted = false
 
 async function bootstrap() {
-  // 1. Configurações do site (não depende de auth)
+  // + adicionar essas 2 linhas:
+  fetch(`${import.meta.env.VITE_API_URL}/produtos`, { method: 'HEAD' })
+    .catch(() => {})
+
+  // já existia:
   site.fetchConfig().catch(() => {})
-
-  // 2. Tenta restaurar sessão do usuário
   await auth.fetchMe()
-
-  // 3. Só inicializa carrinho se estiver logado
-  //    (agora fetchMe já terminou, token já está pronto)
   if (auth.isLogado) {
     await cart.init()
   }
-
-  // 4. Monta a app
   if (!mounted) {
     mounted = true
     app.mount('#app')
