@@ -1267,7 +1267,7 @@ const enviarEmailConfirmacao = async (pedido) => {
   emailStatus.value = 'sending'
   emailStatusMsg.value = 'Enviando confirmação por e-mail...'
   try {
-    await api.post(`/pedidos/${pedido._id}/confirmar`, {})
+    await api.patch(`/pedidos/${pedido._id}/confirmar`, {})
     emailStatus.value = 'sent'
     emailStatusMsg.value = `E-mail enviado para ${maskEmailDisplay(pedido.cliente?.email)}`
   } catch (e) {
