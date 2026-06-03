@@ -1229,7 +1229,7 @@ const siteStore     = useSiteStore()
 const MESES       = ['J','F','M','A','M','J','J','A','S','O','N','D']
 const MESES_FULL  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 const CATEGORIAS  = ['COMPUTING','MOBILE','AUDIO','GAMING','VISUAL','VIRTUAL']
-const STATUS_LIST = ['pendente','em-preparo','despachado','entregue','cancelado']
+const STATUS_LIST = ['pendente','aprovado','em-preparo','despachado','entregue','cancelado']
 const CAT_LABELS  = ['Computing','Mobile','Audio','Gaming','Visual','Virtual']
 const CAT_CORES   = ['#C8A84B','#3498db','#9b59b6','#2ecc71','#e67e22','#1abc9c']
 const GAMER_SUBCATS = ['Mouse','Teclado','Headset','Mousepad','Monitor','Cadeira','Webcam','Controle','Headphone','Microfone']
@@ -1330,12 +1330,11 @@ const mascararEmail = (email) => {
 }
   const statusLabel = (s) => ({ 
   pendente:'Pendente', 
+  aprovado:'Aprovado',
   'em-preparo':'Em Preparo', 
   despachado:'Despachado',
   entregue:'Entregue', 
   cancelado:'Cancelado',
-  aprovado:'Aprovado',
-  enviado:'Enviado'
 })[s] || s || '—'
 const statusClass = (s) => { if(s==='entregue') return 'entregue'; if(['enviado','transito','aprovado'].includes(s)) return 'enviado'; if(s==='cancelado') return 'cancelado'; return 'pendente' }
 const sparkLine = (data) => {
@@ -2111,6 +2110,8 @@ onUnmounted(()=>{
 .adm-status-sel--enviado   { color:var(--blue); border-color:rgba(52,152,219,.4); background:rgba(52,152,219,.05); }
 .adm-status-sel--entregue  { color:#1abc9c; border-color:rgba(26,188,156,.4); background:rgba(26,188,156,.05); }
 .adm-status-sel--cancelado { color:var(--red); border-color:rgba(231,76,60,.4); background:rgba(231,76,60,.05); }
+.adm-status-sel--despachado { color:var(--blue); border-color:rgba(52,152,219,.4); background:rgba(52,152,219,.05); }
+.adm-status-sel--em-preparo { color:#f39c12; border-color:rgba(243,156,18,.4); background:rgba(243,156,18,.05); }
 
 .adm-estoque-badge        { font-size:8px; letter-spacing:.1em; padding:3px 10px; border:0.5px solid; font-weight:600; text-transform:uppercase; white-space:nowrap; display:inline-block; }
 .adm-estoque-badge--ok    { background:rgba(46,204,113,.1); border-color:rgba(46,204,113,.25); color:var(--green); }
