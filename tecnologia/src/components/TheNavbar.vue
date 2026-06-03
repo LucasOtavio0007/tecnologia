@@ -6,7 +6,7 @@
 
     <!-- TOAST SYSTEM -->
 <teleport to="body">
-  <transition-group name="toast" tag="ul" class="toast-container" aria-live="polite" aria-atomic="false">
+  <transition-group name="toast" tag="ul" class="toast-container" aria-live="polite" aria-atomic="false" :css="false" @enter="onToastEnter" @leave="onToastLeave">
     <li v-for="t in toasts" :key="t.id" :class="['toast', `toast--${t.type}`]" role="alert">
       <div class="toast__icon" aria-hidden="true">
         <svg v-if="t.type === 'success'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -423,10 +423,11 @@
       </transition>
 
       <!-- ── MODAL AUTH ── -->
-      <transition name="fade">
-        <div
-          v-if="modalOpen"
-          class="nb-overlay"
+      <transition name="fade" appear>
+  <div
+    v-if="modalOpen"
+    key="auth-modal-overlay"
+    class="nb-overlay"
           @click.self="closeModal"
           role="dialog"
           :aria-label="modalTab === 'login' ? 'Fazer login' : 'Criar conta'"
@@ -869,8 +870,8 @@
       </div>
 
       <!-- ── SIDEBAR MOBILE ── -->
-      <transition name="sb-fade">
-        <div v-if="sidebarOpen" class="sb-overlay" @click.self="sidebarOpen = false" role="dialog" aria-label="Menu de navegação" aria-modal="true">
+      <transition name="sb-fade" appear>
+  <div v-if="sidebarOpen" key="sidebar-overlay" class="sb-overlay" @click.self="sidebarOpen = false" role="dialog" aria-label="Menu de navegação" aria-modal="true">
           <nav id="sidebar-menu" class="sb" @click.stop aria-label="Menu de navegação mobile">
             <div class="sb-kamon" aria-hidden="true">案内</div>
 
@@ -1034,6 +1035,23 @@ const addToast = (title, msg = '', type = 'info', duration = 4000) => {
 
 const removeToast = (id) => {
   toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+const onToastEnter = (el) => {
+  el.style.opacity = '0'
+  el.style.transform = 'translateX(30px)'
+  requestAnimationFrame(() => {
+    el.style.transition = 'opacity .3s, transform .4s'
+    el.style.opacity = '1'
+    el.style.transform = 'translateX(0)'
+  })
+}
+
+const onToastLeave = (el, done) => {
+  el.style.transition = 'opacity .25s, transform .3s'
+  el.style.opacity = '0'
+  el.style.transform = 'translateX(30px)'
+  setTimeout(done, 300)
 }
 
 /* ── Realm buttons na sidebar ── */
