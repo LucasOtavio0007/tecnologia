@@ -293,12 +293,12 @@
             <span>R$ {{ fmt(filtroPreco[1]) }}</span>
           </div>
           <div class="gm__sb-ranges">
-            <input type="range" min="0" :max="precoMax" step="50"
-              v-model.number="filtroPreco[0]" class="gm__sb-range"
-              @input="clampPreco" aria-label="Preço mínimo"/>
-            <input type="range" min="0" :max="precoMax" step="50"
-              v-model.number="filtroPreco[1]" class="gm__sb-range"
-              @input="clampPreco" aria-label="Preço máximo"/>
+           <input type="range" id="gm-preco-min" name="preco-min" min="0" :max="precoMax" step="50"
+  v-model.number="filtroPreco[0]" class="gm__sb-range"
+  @input="clampPreco" aria-label="Preço mínimo"/>
+<input type="range" id="gm-preco-max" name="preco-max" min="0" :max="precoMax" step="50"
+  v-model.number="filtroPreco[1]" class="gm__sb-range"
+  @input="clampPreco" aria-label="Preço máximo"/>
           </div>
           <button class="gm__sb-apply" @click="pagina=1">適用 · Aplicar</button>
         </div>
@@ -311,12 +311,20 @@
         <!-- Disponibilidade -->
         <div class="gm__sb-sec">
           <p class="gm__sb-lbl"><span class="gm__sb-lbl-kanji">在</span>Disponibilidade</p>
-          <label class="gm__sb-toggle-row" @click="apenasEstoque=!apenasEstoque; pagina=1">
-            <div :class="['gm__sb-toggle', { 'is-on': apenasEstoque }]">
-              <div class="gm__sb-toggle-thumb"></div>
-            </div>
-            <span>Apenas em estoque</span>
-          </label>
+         <label class="gm__sb-toggle-row" for="gm-apenas-estoque">
+  <input
+    type="checkbox"
+    id="gm-apenas-estoque"
+    name="apenas-estoque"
+    class="sr-only"
+    :checked="apenasEstoque"
+    @change="apenasEstoque=!apenasEstoque; pagina=1"
+  />
+  <div :class="['gm__sb-toggle', { 'is-on': apenasEstoque }]">
+    <div class="gm__sb-toggle-thumb"></div>
+  </div>
+  <span>Apenas em estoque</span>
+</label>
         </div>
 
         <div class="gm__sb-sep" aria-hidden="true">
