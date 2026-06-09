@@ -1649,32 +1649,28 @@ async function carregarProdutos() {
   loading.value = true
   erro.value = ''
   try {
-   const { data } = await api.get('/produtos?limit=200')
+    const { data } = await api.get('/produtos?limit=200')
     const lista =
       Array.isArray(data)           ? data          :
       Array.isArray(data?.produtos) ? data.produtos :
       Array.isArray(data?.data)     ? data.data     :
       []
 
-      // ADICIONE ISSO TEMPORARIAMENTE
     console.log('Total produtos da API:', lista.length)
     console.log('Categorias únicas:', [...new Set(lista.map(p => p.categoria))])
     console.log('Exemplo de produto:', lista[0])
-    
+
     todos.value = lista
       .filter(p => (p.categoria || '').toUpperCase() === 'GAMING')
-      ...
-      
-    todos.value = lista
-  .filter(p => (p.categoria || '').toUpperCase() === 'GAMING')
-  .map(p => ({
-  ...p,
-  id:          p._id  || p.id  || '',
-  subcategoria:(p.subCategoria || p.subcategoria || '').toLowerCase(),
-  imagem:      p.imagem || p.image || p.foto || p.thumbnail || p.imagens?.[0] || '',
-  estoque:     p.estoque != null ? Number(p.estoque) : 0,
-  preco:       Number(p.preco ?? p.price ?? 0),
-}))
+      .map(p => ({
+        ...p,
+        id:          p._id  || p.id  || '',
+        subcategoria:(p.subCategoria || p.subcategoria || '').toLowerCase(),
+        imagem:      p.imagem || p.image || p.foto || p.thumbnail || p.imagens?.[0] || '',
+        estoque:     p.estoque != null ? Number(p.estoque) : 0,
+        preco:       Number(p.preco ?? p.price ?? 0),
+      }))
+
     filtroPreco.value = [0, Math.max(15000, ...todos.value.map(p => p.preco || 0))]
   } catch (e) {
     todos.value = [...PRODUTOS_MOCK]
