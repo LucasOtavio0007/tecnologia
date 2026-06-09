@@ -827,6 +827,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import api from '@/api.js'
 import { useRoute } from 'vue-router'
 import { useProdutosStore } from '@/stores/produtos.js'
 import { useAuthStore }     from '@/stores/auth.js'
@@ -931,7 +932,7 @@ const sidebarStyle = computed(() => {
 })
 
 /* ── Computed: dados da store ── */
-const todos           = computed(() => produtosStore.todos)
+const todos = computed(() => produtosStore.todos.filter(p => p.categoria !== 'GAMING'))
 const totalGeral      = computed(() => todos.value.length)
 const todasCategorias = computed(() => produtosStore.categorias)
 

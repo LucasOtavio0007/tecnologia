@@ -202,25 +202,24 @@ for (let t = 1; t <= tentativas; t++) {
   }
 
   /* ── Computed ── */
-  const categorias = computed(() =>
-    [...new Set(todos.value.map(p => p.categoria).filter(Boolean))].sort()
-  )
+ const categorias = computed(() =>
+  [...new Set(todos.value.map(p => p.categoria).filter(c => c && c !== 'GAMING'))].sort()
+)
 
-  const destaques = computed(() =>
-    todos.value.filter(p => p.destaque)
-  )
 
-  const emEstoque = computed(() =>
-    todos.value.filter(p => p.estoque)
-  )
+ const destaques = computed(() =>
+  todos.value.filter(p => p.destaque && p.categoria !== 'GAMING')
+)
 
-  const limitadas = computed(() =>
-    todos.value.filter(p => p.limitada)
-  )
-
-  const novidades = computed(() =>
-    todos.value.filter(p => p.novo)
-  )
+const emEstoque = computed(() =>
+  todos.value.filter(p => p.estoque && p.categoria !== 'GAMING')
+)
+const limitadas = computed(() =>
+  todos.value.filter(p => p.limitada && p.categoria !== 'GAMING')
+)
+const novidades = computed(() =>
+  todos.value.filter(p => p.novo && p.categoria !== 'GAMING')
+)
 
   /* ── Getters ── */
   const getPorId = (id) =>
@@ -229,16 +228,17 @@ for (let t = 1; t <= tentativas; t++) {
   const getPorCategoria = (cat) =>
     todos.value.filter(p => p.categoria === cat)
 
-  const buscar = (q) => {
-    if (!q?.trim()) return todos.value
-    const termo = q.toLowerCase().trim()
-    return todos.value.filter(p =>
-      p.nome?.toLowerCase().includes(termo)      ||
-      p.marca?.toLowerCase().includes(termo)     ||
-      p.categoria?.toLowerCase().includes(termo) ||
-      p.descricao?.toLowerCase().includes(termo)
-    )
-  }
+const buscar = (q) => {
+  const base = todos.value.filter(p => p.categoria !== 'GAMING')
+  if (!q?.trim()) return base
+  const termo = q.toLowerCase().trim()
+  return base.filter(p =>
+    p.nome?.toLowerCase().includes(termo)      ||
+    p.marca?.toLowerCase().includes(termo)     ||
+    p.categoria?.toLowerCase().includes(termo) ||
+    p.descricao?.toLowerCase().includes(termo)
+  )
+}
 
   /* ── Retorno público da store ── */
   return {
