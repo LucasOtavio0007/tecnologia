@@ -931,9 +931,9 @@
  * 10. precoMax derivado dos dados reais
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import api from '@/api.js'
 import { useCartStore }  from '@/stores/cart.js'
 import { useAuthStore }  from '@/stores/auth.js'
-
 const cart = useCartStore()
 const auth = useAuthStore()
 /* ══════════════════════════════════════════════════════
