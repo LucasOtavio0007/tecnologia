@@ -1734,14 +1734,15 @@ const measureToolbar = () => {
    LIFECYCLE
 ══════════════════════════════════════════════════════ */
 onMounted(async () => {
+  console.log('GAMER MOUNTED')
   // Restaurar wishlist
   try {
     const r = localStorage.getItem('gm_wishlist')
     if (r) wishlist.value = JSON.parse(r)
   } catch {}
 
+  console.log('CHAMANDO carregarProdutos')
   await carregarProdutos()
-
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', measureToolbar, { passive: true })
   window.addEventListener('keydown', handleKeydown)
