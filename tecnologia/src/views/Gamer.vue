@@ -1658,6 +1658,7 @@ async function carregarProdutos() {
   erro.value = ''
   try {
     const { data } = await api.get('/produtos?limit=200')
+    console.log('RAW DATA:', data)
     const lista =
       Array.isArray(data)           ? data          :
       Array.isArray(data?.produtos) ? data.produtos :
@@ -1681,6 +1682,7 @@ async function carregarProdutos() {
 
     filtroPreco.value = [0, Math.max(15000, ...todos.value.map(p => p.preco || 0))]
   } catch (e) {
+    console.log('ERRO CATCH:', e)
     todos.value = [...PRODUTOS_MOCK]
     filtroPreco.value = [0, Math.max(15000, ...PRODUTOS_MOCK.map(p => p.preco))]
     erro.value = ''
