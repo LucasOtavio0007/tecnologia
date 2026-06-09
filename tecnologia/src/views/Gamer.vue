@@ -914,6 +914,7 @@
 </template>
 
 <script setup>
+import api from '@/api.js'
 /**
  * GamingStore.vue — Warforge Samurai Edition
  *
