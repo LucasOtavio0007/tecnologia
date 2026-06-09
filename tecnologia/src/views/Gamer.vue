@@ -922,9 +922,12 @@
  * 9. Brasas de partículas via CSS (sem canvas para este efeito)
  * 10. precoMax derivado dos dados reais
  */
-
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useCartStore }  from '@/stores/cart.js'
+import { useAuthStore }  from '@/stores/auth.js'
 
+const cart = useCartStore()
+const auth = useAuthStore()
 /* ══════════════════════════════════════════════════════
    DADOS MOCK — substitua pela sua store/API real
    Todos os campos que o template usa estão presentes.
@@ -1439,30 +1442,23 @@ function toggleSaved(p) {
    CARRINHO — lógica local, sem dependência externa
    FIX: substituir por cart.adicionar() quando integrar store real
 ══════════════════════════════════════════════════════ */
-const carrinhoLocal = ref([])
-
+// DEPOIS
 function addToCart(p) {
   if (!p?.estoque) return
+  if (!auth.isLogado) {
+    window.dispatchEvent(new CustomEvent('abrir-modal-auth', { detail: 'login' }))
+    return
+  }
   if (addedIds.value.includes(p.id)) return
   const quantidade = modalAberto.value ? qtd.value : 1
-
-  // Adiciona ao carrinho local
-  for (let i = 0; i < quantidade; i++) {
-    carrinhoLocal.value.push({ ...p, corNome: corSelecionada.value || '' })
-  }
-
+  const item = { ...p, corNome: corSelecionada.value || '' }
+  for (let i = 0; i < quantidade; i++) cart.adicionar(item)
   addedIds.value.push(p.id)
   mostrarToast(`${p.nome} adicionado ao arsenal ◆`)
-
-  // Disparar evento global para o cart drawer existente (se houver)
-  window.dispatchEvent(new CustomEvent('abrir-carrinho'))
-
+  setTimeout(() => { window.dispatchEvent(new CustomEvent('abrir-carrinho')) }, 300)
   if (modalAberto.value) setTimeout(() => fecharModal(), 750)
-  setTimeout(() => {
-    addedIds.value = addedIds.value.filter(id => id !== p.id)
-  }, 2500)
-}
-
+  setTimeout(() => { addedIds.value = addedIds.value.filter(id => id !== p.id) }, 2500)
+} 
 /* ══════════════════════════════════════════════════════
    MODAL
 ══════════════════════════════════════════════════════ */
@@ -1654,10 +1650,21 @@ async function carregarProdutos() {
   erro.value = ''
   try {
     const { data } = await api.get('/produtos?categoria=GAMING&limit=100')
-    todos.value = data.produtos || data || []
+    const lista =
+      Array.isArray(data)           ? data          :
+      Array.isArray(data?.produtos) ? data.produtos :
+      Array.isArray(data?.data)     ? data.data     :
+      []
+    todos.value = lista.map(p => ({
+      ...p,
+      id:          p._id  || p.id  || '',
+      subcategoria:(p.subCategoria || p.subcategoria || p.categoria || '').toLowerCase(),
+      imagem:      p.imagem || p.image || p.foto || p.thumbnail || '',
+      estoque:     p.estoque != null ? Number(p.estoque) : 0,
+      preco:       Number(p.preco ?? p.price ?? 0),
+    }))
     filtroPreco.value = [0, Math.max(15000, ...todos.value.map(p => p.preco || 0))]
   } catch (e) {
-    // Fallback para mock se API falhar
     todos.value = [...PRODUTOS_MOCK]
     filtroPreco.value = [0, Math.max(15000, ...PRODUTOS_MOCK.map(p => p.preco))]
     erro.value = ''

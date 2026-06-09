@@ -934,8 +934,9 @@ const sidebarStyle = computed(() => {
 /* ── Computed: dados da store ── */
 const todos = computed(() => produtosStore.todos.filter(p => p.categoria !== 'GAMING'))
 const totalGeral      = computed(() => todos.value.length)
-const todasCategorias = computed(() => produtosStore.categorias)
-
+const todasCategorias = computed(() =>
+  [...new Set(todos.value.map(p => p.categoria).filter(Boolean))].sort()
+)
 const heroStats = computed(() => [
   { idx: '01', label: 'Peças em catálogo',   val: totalGeral.value, kanji: '品' },
   { idx: '02', label: 'Edições limitadas',   val: todos.value.filter(p=>p.limitada).length||0, kanji: '限' },
