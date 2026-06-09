@@ -202,14 +202,15 @@ for (let t = 1; t <= tentativas; t++) {
   }
 
   /* ── Computed ── */
- const categorias = computed(() =>
-  [...new Set(todos.value.map(p => p.categoria).filter(c => c && c !== 'GAMING'))].sort()
-)
+ const isGaming = (p) => (p.categoria || '').toUpperCase() === 'GAMING'
 
-
- const destaques = computed(() =>
-  todos.value.filter(p => p.destaque && p.categoria !== 'GAMING')
+const categorias = computed(() =>
+  [...new Set(todos.value.map(p => p.categoria).filter(c => c && c.toUpperCase() !== 'GAMING'))].sort()
 )
+const destaques  = computed(() => todos.value.filter(p => p.destaque && !isGaming(p)))
+const emEstoque  = computed(() => todos.value.filter(p => p.estoque  && !isGaming(p)))
+const limitadas  = computed(() => todos.value.filter(p => p.limitada && !isGaming(p)))
+const novidades  = computed(() => todos.value.filter(p => p.novo     && !isGaming(p)))
 
 const emEstoque = computed(() =>
   todos.value.filter(p => p.estoque && p.categoria !== 'GAMING')

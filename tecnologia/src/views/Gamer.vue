@@ -1656,15 +1656,15 @@ async function carregarProdutos() {
       Array.isArray(data?.data)     ? data.data     :
       []
     todos.value = lista
-  .filter(p => p.categoria === 'GAMING')
+  .filter(p => (p.categoria || '').toUpperCase() === 'GAMING')
   .map(p => ({
-    ...p,
-    id:          p._id  || p.id  || '',
-    subcategoria:(p.subCategoria || p.subcategoria || '').toLowerCase(),
-    imagem:      p.imagem || p.image || p.foto || p.thumbnail || '',
-    estoque:     p.estoque != null ? Number(p.estoque) : 0,
-    preco:       Number(p.preco ?? p.price ?? 0),
-  }))
+  ...p,
+  id:          p._id  || p.id  || '',
+  subcategoria:(p.subCategoria || p.subcategoria || '').toLowerCase(),
+  imagem:      p.imagem || p.image || p.foto || p.thumbnail || p.imagens?.[0] || '',
+  estoque:     p.estoque != null ? Number(p.estoque) : 0,
+  preco:       Number(p.preco ?? p.price ?? 0),
+}))
     filtroPreco.value = [0, Math.max(15000, ...todos.value.map(p => p.preco || 0))]
   } catch (e) {
     todos.value = [...PRODUTOS_MOCK]
