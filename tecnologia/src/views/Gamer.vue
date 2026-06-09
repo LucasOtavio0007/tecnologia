@@ -1655,6 +1655,16 @@ async function carregarProdutos() {
       Array.isArray(data?.produtos) ? data.produtos :
       Array.isArray(data?.data)     ? data.data     :
       []
+
+      // ADICIONE ISSO TEMPORARIAMENTE
+    console.log('Total produtos da API:', lista.length)
+    console.log('Categorias únicas:', [...new Set(lista.map(p => p.categoria))])
+    console.log('Exemplo de produto:', lista[0])
+    
+    todos.value = lista
+      .filter(p => (p.categoria || '').toUpperCase() === 'GAMING')
+      ...
+      
     todos.value = lista
   .filter(p => (p.categoria || '').toUpperCase() === 'GAMING')
   .map(p => ({
