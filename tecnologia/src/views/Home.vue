@@ -559,17 +559,12 @@
             </template>
             <template v-else>
               <article
-                v-for="(p, i) in featured" :key="p._id||p.id"
-                class="prod-card"
-                :class="{ 'is-active': slideIdx === i }"
-                @mouseenter="autoPause = true"
-                @mouseleave="autoPause = false"
-                @click="openModal(p)"
-                role="button"
-                :aria-label="`Ver ${p.nome}`"
-                tabindex="0"
-                @keydown.enter="openModal(p)"
-              >
+  class="prod-card"
+  :class="{ 'is-active': slideIdx === i }"
+  @mouseenter="autoPause = true"
+  @mouseleave="autoPause = false"
+  @click="openModal(p)"
+>
                 <div class="prod-card__img" :style="p.imagem ? { backgroundImage: `url(${p.imagem})` } : {}">
                   <div v-if="!p.imagem" class="prod-card__gen-art" :class="`gen-art--${p.categoria?.toLowerCase() || 'tech'}`" aria-hidden="true">
                     <div class="gen-art__inner"></div>

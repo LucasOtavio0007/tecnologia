@@ -367,10 +367,7 @@
               :style="{ '--card-delay': `${i*50}ms` }"
               :ref="el => { if(el) cardRefs[i]=el }"
               @click="abrirModal(p)"
-              role="button"
-              :aria-label="`Ver ${p.nome}`"
-              tabindex="0"
-              @keydown.enter="abrirModal(p)"
+             @keydown.enter="abrirModal(p)"
             >
               <!-- Cantos decorativos — como no drawer__vazio__ico -->
               <span class="store__card-corner store__card-corner--tl" aria-hidden="true"></span>
@@ -1235,7 +1232,6 @@ onBeforeUnmount(()=>{
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300&display=swap');
 
 /* ══════════════════════════════════════
    TOKENS — 100% alinhados com navbar/footer

@@ -1757,7 +1757,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700;900&family=Noto+Serif+JP:wght@200;300;400&family=Syne:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
 
 /* ══════════════════════════════════════════════════════
    TOKENS — Samurai Warforge Palette

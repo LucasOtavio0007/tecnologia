@@ -1528,10 +1528,11 @@ watch(
 .navbar--scrolled {
   height: max(48px, calc(var(--navbar-h, 68px) - 12px));
   background: var(--navbar-bg-scroll) !important;
-  backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 1px 0 var(--cor-borda), 0 2px 20px rgba(0,0,0,.12);
 }
+
 .navbar--hidden { transform: translateY(-110%); }
 
 .navbar__inner {
@@ -1758,7 +1759,9 @@ watch(
 
 .nb-overlay {
   position: fixed; inset: 0; z-index: var(--z-modal, 10000);
-  background: var(--overlay-bg); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%);
+  background: var(--overlay-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
   display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 
@@ -2226,7 +2229,7 @@ body.light-mode .nb-search-field input:-webkit-autofill:active { -webkit-box-sha
 .nb-search-footer span { font-family: var(--or-font-num); color: var(--or-gold); opacity: .5; padding: 0 3px; background: var(--or-hair-2); border-radius: 2px; }
 
 /* ════════════ DRAWER CARRINHO ════════════ */
-.drawer-overlay { position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,.75); backdrop-filter: blur(8px) saturate(.8); -webkit-backdrop-filter: blur(8px) saturate(.8); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .5s var(--or-easing), visibility .5s; }
+.drawer-overlay { position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,.75); -webkit-backdrop-filter: blur(8px) saturate(.8); backdrop-filter: blur(8px) saturate(.8); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .5s var(--or-easing), visibility .5s; }
 .drawer-overlay.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
 .drawer { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; background: var(--or-deep); border-left: 0.5px solid var(--or-hair); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .65s var(--or-easing); overflow: hidden; }
 .drawer-overlay.is-open .drawer { transform: translateX(0); }
@@ -2278,6 +2281,10 @@ body.light-mode .nb-search-field input:-webkit-autofill:active { -webkit-box-sha
 .drawer__ornament-text { font-family: 'Noto Serif JP', serif; font-size: 8px; letter-spacing: .4em; color: var(--or-gold); opacity: .25; white-space: nowrap; }
 
 .drawer__items { flex: 1; overflow-y: auto; padding: 4px 0; display: flex; flex-direction: column; scrollbar-width: thin; scrollbar-color: var(--or-hair) transparent; position: relative; z-index: 1; }
+
+.drawer__items::-webkit-scrollbar { width: 6px; }
+.drawer__items::-webkit-scrollbar-track { background: transparent; }
+.drawer__items::-webkit-scrollbar-thumb { background: var(--or-hair); border-radius: 3px; }
 
 .drawer__vazio { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 52px 40px; text-align: center; }
 .drawer__vazio__ico { width: 64px; height: 64px; border: 0.5px solid var(--or-hair); display: flex; align-items: center; justify-content: center; position: relative; }
@@ -2349,7 +2356,7 @@ body.light-mode .nb-search-field input:-webkit-autofill:active { -webkit-box-sha
 .drawer__saved-info svg { color: var(--or-gold); opacity: .4; flex-shrink: 0; }
 
 /* ════════════ SIDEBAR MOBILE ════════════ */
-.sb-overlay { position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); display:flex; }
+.sb-overlay { position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.82); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); display:flex; }
 .sb { width:310px; height:100%; background:var(--or-deep); border-right:0.5px solid var(--or-hair); display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; position:relative; }
 .sb::-webkit-scrollbar { display:none; }
 .sb-kamon { position: absolute; bottom: 80px; right: 16px; font-family: 'Noto Serif JP', serif; font-size: 52px; color: var(--or-gold); opacity: .04; pointer-events: none; z-index: 0; line-height: 1; }
