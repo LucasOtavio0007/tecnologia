@@ -2158,4 +2158,4 @@ onUnmounted(() => {
   .co-body { grid-template-columns: 1fr; }
   .co-comprovante { border: 1px solid #ccc; background: white; color: #000; }
 }
-</style>
+</style> 
