@@ -1,0 +1,27 @@
+{
+  "name": "noiror-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@googleapis/oauth2": "^5.0.1",
+    "@vue/compiler-sfc": "^3.5.33",
+    "axios": "^1.13.6",
+    "glob": "^13.0.6",
+    "gsap": "^3.15.0",
+    "pinia": "^2.3.1",
+    "qrcode": "^1.5.4",
+    "resend": "^6.12.4",
+    "vue": "^3.3.11",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "vite": "^5.0.8"
+  }
+}
