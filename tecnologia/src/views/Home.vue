@@ -106,56 +106,89 @@
       </div>
     </section>
 
-    <!-- ══ 04 — GALERIA MOSAICO ══ -->
-    <section class="sec sec--gallery" data-reveal>
-      <div class="wrap">
-        <header class="sec__head">
+    <!-- ══════════════════════════════════════════════════════
+         04 — GALERIA CINEMATOGRÁFICA
+    ══════════════════════════════════════════════════════ -->
+    <section class="sec sec--cinegallery" data-reveal>
+      <div class="cg__filmstrip" aria-hidden="true">
+        <span v-for="n in 12" :key="n" class="cg__hole"></span>
+      </div>
+      <div class="cg__filmstrip cg__filmstrip--r" aria-hidden="true">
+        <span v-for="n in 12" :key="n" class="cg__hole"></span>
+      </div>
+
+      <header class="cg__head">
+        <div class="cg__head-left">
           <div class="sec__kicker">
             <span class="sec__num" aria-hidden="true">04</span>
             <div class="kicker__line" aria-hidden="true"></div>
           </div>
-          <div class="sec__titles">
+          <div>
             <span class="eyebrow">Curadoria Visual</span>
-            <h2 class="heading">Arte em <em>Metal Nobre</em></h2>
+            <h2 class="heading">Forjado em <em>Metal Nobre</em></h2>
           </div>
-        </header>
-        <div class="gallery-mosaic">
+        </div>
+        <div class="cg__head-scroll" aria-hidden="true">
+          <span class="cg__scroll-text">役者</span>
+          <span class="cg__scroll-line"></span>
+          <span class="cg__scroll-label">Deslize para explorar</span>
+        </div>
+      </header>
+
+      <!-- REEL principal: scroll horizontal cinematográfico -->
+      <div class="cg__reel-wrap">
+        <div class="cg__reel" ref="galReel">
           <div
             v-for="(g, i) in gallery"
             :key="i"
-            class="gal-item"
-            :class="'gal-item--'+i"
-            @mouseenter="() => hoveredGal = i"
-            @mouseleave="() => hoveredGal = -1"
+            class="cg__frame"
+            :class="{ 'is-active': activeGal === i }"
+            @mouseenter="activeGal = i"
+            @mouseleave="activeGal = -1"
+            @click="openGalleryModal(g)"
           >
-            <div class="gal-item__inner" :style="{ background: g.grad }">
-              <div class="gal-item__art" v-html="g.art"></div>
-              <div v-if="i === 0" class="gal-phone" aria-hidden="true">
-                <div class="gal-phone__body">
-                  <div class="gal-phone__island"></div>
-                  <div class="gal-phone__screen">
-                    <div class="gal-phone__badge">NOIR</div>
-                    <div class="gal-phone__line" style="width:70%"></div>
-                    <div class="gal-phone__line" style="width:45%;opacity:.4"></div>
-                    <div class="gal-phone__chips">
-                      <div class="gal-phone__chip"></div>
-                      <div class="gal-phone__chip"></div>
-                    </div>
-                  </div>
-                  <div class="gal-phone__shine"></div>
-                </div>
+            <!-- Fundo ambiente -->
+            <div class="cg__frame-bg" :style="{ background: g.grad }"></div>
+
+            <!-- Arte generativa SVG -->
+            <div class="cg__frame-art" v-html="g.art" aria-hidden="true"></div>
+
+            <!-- Número de filme -->
+            <div class="cg__frame-num" aria-hidden="true">
+              <span>{{ String(i+1).padStart(2,'0') }}</span>
+            </div>
+
+            <!-- Categoria flutuante -->
+            <div class="cg__frame-tag">{{ g.tag }}</div>
+
+            <!-- Painel de info que sobe no hover -->
+            <div class="cg__frame-info">
+              <div class="cg__info-bar" aria-hidden="true"></div>
+              <p class="cg__info-label">{{ g.label }}</p>
+              <p class="cg__info-price">{{ g.preco }}</p>
+              <div class="cg__info-cta">
+                Ver peça
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
               </div>
             </div>
-            <div class="gal-item__overlay"></div>
-            <div class="gal-item__grain"></div>
-            <div class="gal-item__num" aria-hidden="true">{{ String(i+1).padStart(2,'0') }}</div>
-            <div class="gal-item__tag">{{ g.tag }}</div>
-            <div class="gal-item__info">
-              <div class="gal-item__label">{{ g.label }}</div>
-              <div class="gal-item__price">{{ g.preco }}</div>
-            </div>
+
+            <!-- Grain overlay -->
+            <div class="cg__frame-grain" aria-hidden="true"></div>
+
+            <!-- Reflexo lateral cinematográfico -->
+            <div class="cg__frame-glare" aria-hidden="true"></div>
           </div>
         </div>
+      </div>
+
+      <!-- Indicadores de reel -->
+      <div class="cg__indicators" aria-hidden="true">
+        <span
+          v-for="(g, i) in gallery"
+          :key="i"
+          class="cg__dot"
+          :class="{ 'is-active': activeGal === i }"
+        ></span>
       </div>
     </section>
 
@@ -250,8 +283,19 @@
       </div>
     </section>
 
-    <!-- ══ 07 — CONFIGURADOR ══ -->
-    <section class="sec sec--config" data-reveal>
+    <!-- ══════════════════════════════════════════════════════
+         07 — CONFIGURADOR CINEMATOGRÁFICO
+    ══════════════════════════════════════════════════════ -->
+    <section class="sec sec--forge" data-reveal>
+      <!-- Fundo atmosférico tipo forja -->
+      <div class="forge__ambient" aria-hidden="true">
+        <div class="forge__ember forge__ember--1"></div>
+        <div class="forge__ember forge__ember--2"></div>
+        <div class="forge__ember forge__ember--3"></div>
+        <div class="forge__grid-lines"></div>
+        <canvas class="forge__particles" ref="forgeCanvas" aria-hidden="true"></canvas>
+      </div>
+
       <div class="wrap">
         <header class="sec__head">
           <div class="sec__kicker">
@@ -259,83 +303,205 @@
             <div class="kicker__line" aria-hidden="true"></div>
           </div>
           <div class="sec__titles">
-            <span class="eyebrow">Seu estilo · sua assinatura</span>
+            <span class="eyebrow">Seu estilo · Sua assinatura</span>
             <h2 class="heading">Configure sua <em>obra</em></h2>
           </div>
         </header>
-        <div class="config">
-          <div class="config__opts">
-            <div class="cfg-group">
-              <h4 class="cfg-label">Modelo</h4>
-              <div class="cfg-row">
-                <button v-for="m in models" :key="m.id" class="cfg-btn" :class="{ 'is-active': modelId === m.id }" @click="selectModel(m.id)">{{ m.name }}</button>
-              </div>
+
+        <div class="forge__layout">
+
+          <!-- ── PAINEL ESQUERDO: preview 3D imersivo ── -->
+          <div class="forge__stage" ref="forgeStageRef">
+            <!-- Linhas de scan tipo holograma -->
+            <div class="forge__scanlines" aria-hidden="true"></div>
+
+            <!-- Anel orbital que gira -->
+            <div class="forge__orbit" aria-hidden="true">
+              <div class="forge__orbit-ring forge__orbit-ring--1"></div>
+              <div class="forge__orbit-ring forge__orbit-ring--2"></div>
+              <div class="forge__orbit-dot" v-for="n in 6" :key="n" :style="{ '--dn': n }"></div>
             </div>
-            <div class="cfg-group">
-              <h4 class="cfg-label">Acabamento</h4>
-              <div class="cfg-row cfg-row--swatches">
-                <button v-for="(c, i) in finishes" :key="i" class="cfg-swatch" :class="{ 'is-active': finishIdx === i }" :style="{ background: c.grad }" :title="c.name" @click="selectFinish(i)" :aria-label="c.name"></button>
-              </div>
-              <transition name="cfg-fade">
-                <span class="cfg-sel" :key="finishIdx">{{ finishes[finishIdx].name }}</span>
-              </transition>
-            </div>
-            <div class="cfg-group">
-              <h4 class="cfg-label">Capacidade</h4>
-              <div class="cfg-row">
-                <button v-for="s in storages" :key="s.val" class="cfg-btn" :class="{ 'is-active': storageVal === s.val }" @click="storageVal = s.val">{{ s.label }}</button>
-              </div>
-            </div>
-            <div class="cfg-group">
-              <h4 class="cfg-label">Material</h4>
-              <div class="cfg-row">
-                <button v-for="(a, i) in coatings" :key="i" class="cfg-btn" :class="{ 'is-active': coatingIdx === i }" @click="coatingIdx = i">{{ a }}</button>
-              </div>
-            </div>
-            <div class="cfg-price">
-              <span class="cfg-price__label">Valor estimado</span>
-              <span class="cfg-price__val" ref="priceRef">R$ {{ fmt(totalPrice) }}</span>
-              <span class="cfg-price__inst">até 12× de R$ {{ fmt(Math.ceil(totalPrice/12)) }}</span>
-            </div>
-            <router-link to="/contato" class="cfg-cta">
-              <span class="cfg-cta__fill" aria-hidden="true"></span>
-              <span>Solicitar Orçamento</span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
-            </router-link>
-          </div>
-          <div class="config__preview" ref="previewRef" @mousemove="tiltPhone" @mouseleave="resetPhone" @mouseenter="pausePhoneAnim">
-            <div class="phone-scene" ref="phoneSceneRef">
-              <div class="phone" :style="{ '--metal': finishes[finishIdx].solid }">
-                <div class="phone__body">
-                  <div class="phone__island"></div>
-                  <div class="phone__hud"><span class="phone__time">9:41</span></div>
-                  <div class="phone__screen">
-                    <div class="phone__badge">NOIR</div>
-                    <div class="phone__lines">
-                      <div class="phone__line" style="width:75%"></div>
-                      <div class="phone__line" style="width:48%;opacity:.4"></div>
+
+            <!-- Dispositivo 3D com tilt -->
+            <div
+              class="forge__device-wrap"
+              ref="forgeDeviceRef"
+              @mousemove="tiltDevice"
+              @mouseleave="resetDevice"
+              @mouseenter="pauseDeviceAnim"
+            >
+              <div class="forge__device" :style="{ '--metal': finishes[finishIdx].solid }">
+                <!-- Reflexo top -->
+                <div class="forge__device-shine" aria-hidden="true"></div>
+
+                <div class="forge__device-body">
+                  <div class="forge__device-island"></div>
+                  <div class="forge__device-hud">
+                    <span class="forge__device-time">9:41</span>
+                    <span class="forge__device-model">{{ models.find(m=>m.id===modelId)?.name }}</span>
+                  </div>
+                  <div class="forge__device-screen">
+                    <div class="forge__device-badge">NOIR</div>
+                    <div class="forge__device-lines">
+                      <div class="forge__device-line" style="width:75%"></div>
+                      <div class="forge__device-line" style="width:48%;opacity:.4"></div>
                     </div>
-                    <div class="phone__chips">
-                      <div class="phone__chip"></div>
-                      <div class="phone__chip"></div>
-                      <div class="phone__chip"></div>
+                    <div class="forge__device-specs">
+                      <div class="forge__spec-chip">
+                        <span class="forge__spec-val">{{ currentStorage?.label }}</span>
+                        <span class="forge__spec-k">Storage</span>
+                      </div>
+                      <div class="forge__spec-chip">
+                        <span class="forge__spec-val" :style="{ color: finishes[finishIdx].solid }">{{ finishes[finishIdx].name }}</span>
+                        <span class="forge__spec-k">Acabamento</span>
+                      </div>
+                      <div class="forge__spec-chip">
+                        <span class="forge__spec-val">{{ coatings[coatingIdx] }}</span>
+                        <span class="forge__spec-k">Material</span>
+                      </div>
                     </div>
-                    <div class="phone__price-row">
-                      <div class="phone__line" style="width:40%;height:12px"></div>
-                      <div class="phone__add">+</div>
+                    <div class="forge__device-price-row">
+                      <div class="forge__device-pval">R$ {{ fmt(totalPrice) }}</div>
+                      <div class="forge__device-add">+</div>
                     </div>
                   </div>
-                  <div class="phone__bar"></div>
-                  <div class="phone__shine"></div>
+                  <div class="forge__device-bar"></div>
+                </div>
+              </div>
+
+              <!-- Sombra projetada -->
+              <div class="forge__device-shadow" :style="{ background: finishes[finishIdx].glow }"></div>
+            </div>
+
+            <!-- Tag flutuante de material -->
+            <div class="forge__material-tag" :style="{ borderColor: finishes[finishIdx].solid + '55' }">
+              <span class="forge__mt-dot" :style="{ background: finishes[finishIdx].solid }"></span>
+              <span>{{ finishes[finishIdx].name }}</span>
+              <span class="forge__mt-sep">·</span>
+              <span>{{ coatings[coatingIdx] }}</span>
+            </div>
+
+            <!-- Glow ambiente pulsante -->
+            <div class="forge__glow-ambient" :style="{ background: finishes[finishIdx].glow }"></div>
+          </div>
+
+          <!-- ── PAINEL DIREITO: controles ── -->
+          <div class="forge__controls">
+
+            <!-- Modelo -->
+            <div class="forge__group">
+              <div class="forge__group-header">
+                <span class="forge__group-kanji" aria-hidden="true">型</span>
+                <span class="forge__group-label">Dispositivo</span>
+                <span class="forge__group-num">01</span>
+              </div>
+              <div class="forge__models">
+                <button
+                  v-for="m in models"
+                  :key="m.id"
+                  class="forge__model-btn"
+                  :class="{ 'is-active': modelId === m.id }"
+                  @click="selectModel(m.id)"
+                >
+                  <div class="forge__model-icon" v-html="m.icon"></div>
+                  <span class="forge__model-name">{{ m.name }}</span>
+                  <span class="forge__model-base">R$ {{ fmt(m.base) }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Acabamento -->
+            <div class="forge__group">
+              <div class="forge__group-header">
+                <span class="forge__group-kanji" aria-hidden="true">金</span>
+                <span class="forge__group-label">Acabamento</span>
+                <span class="forge__group-num">02</span>
+              </div>
+              <div class="forge__finishes">
+                <button
+                  v-for="(f, i) in finishes"
+                  :key="i"
+                  class="forge__finish-btn"
+                  :class="{ 'is-active': finishIdx === i }"
+                  @click="selectFinish(i)"
+                  :title="f.name"
+                  :aria-label="f.name"
+                >
+                  <span class="forge__finish-orb" :style="{ background: f.grad }"></span>
+                  <span class="forge__finish-name">{{ f.name }}</span>
+                  <span class="forge__finish-add" v-if="f.add > 0">+R$ {{ fmt(f.add) }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Capacidade + Material em linha -->
+            <div class="forge__group-row">
+              <div class="forge__group forge__group--half">
+                <div class="forge__group-header">
+                  <span class="forge__group-kanji" aria-hidden="true">容</span>
+                  <span class="forge__group-label">Capacidade</span>
+                  <span class="forge__group-num">03</span>
+                </div>
+                <div class="forge__pills">
+                  <button
+                    v-for="s in storages"
+                    :key="s.val"
+                    class="forge__pill"
+                    :class="{ 'is-active': storageVal === s.val }"
+                    @click="storageVal = s.val"
+                  >{{ s.label }}</button>
+                </div>
+              </div>
+              <div class="forge__group forge__group--half">
+                <div class="forge__group-header">
+                  <span class="forge__group-kanji" aria-hidden="true">質</span>
+                  <span class="forge__group-label">Material</span>
+                  <span class="forge__group-num">04</span>
+                </div>
+                <div class="forge__pills">
+                  <button
+                    v-for="(a, i) in coatings"
+                    :key="i"
+                    class="forge__pill"
+                    :class="{ 'is-active': coatingIdx === i }"
+                    @click="coatingIdx = i"
+                  >{{ a }}</button>
                 </div>
               </div>
             </div>
-            <p class="preview__tag">
-              <span :style="{ color: finishes[finishIdx].solid }">{{ finishes[finishIdx].name }}</span>
-              &nbsp;·&nbsp;{{ currentStorage?.label }}
-              &nbsp;·&nbsp;{{ coatings[coatingIdx] }}
-            </p>
-            <div class="preview__glow" :style="{ background: finishes[finishIdx].glow }"></div>
+
+            <!-- Price display cinematográfico -->
+            <div class="forge__price-block" ref="priceRef">
+              <div class="forge__price-label">Valor estimado</div>
+              <div class="forge__price-main">
+                <span class="forge__price-currency">R$</span>
+                <span class="forge__price-val">{{ fmt(totalPrice) }}</span>
+              </div>
+              <div class="forge__price-inst">
+                <span class="forge__price-dot"></span>
+                12× de R$ {{ fmt(Math.ceil(totalPrice/12)) }} sem juros
+              </div>
+              <!-- Barra de composição do preço -->
+              <div class="forge__price-breakdown">
+                <div
+                  v-for="bd in priceBreakdown"
+                  :key="bd.label"
+                  class="forge__price-bd-item"
+                >
+                  <span class="forge__price-bd-label">{{ bd.label }}</span>
+                  <span class="forge__price-bd-line" :style="{ width: bd.pct + '%', background: bd.color }"></span>
+                  <span class="forge__price-bd-val">R$ {{ fmt(bd.val) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <router-link to="/contato" class="forge__cta">
+              <span class="forge__cta-fill" aria-hidden="true"></span>
+              <span class="forge__cta-text">Solicitar Orçamento</span>
+              <span class="forge__cta-kanji" aria-hidden="true">見積</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
+            </router-link>
           </div>
         </div>
       </div>
@@ -393,17 +559,12 @@
             </template>
             <template v-else>
               <article
-                v-for="(p, i) in featured" :key="p._id||p.id"
-                class="prod-card"
-                :class="{ 'is-active': slideIdx === i }"
-                @mouseenter="autoPause = true"
-                @mouseleave="autoPause = false"
-                @click="openModal(p)"
-                role="button"
-                :aria-label="`Ver ${p.nome}`"
-                tabindex="0"
-                @keydown.enter="openModal(p)"
-              >
+  class="prod-card"
+  :class="{ 'is-active': slideIdx === i }"
+  @mouseenter="autoPause = true"
+  @mouseleave="autoPause = false"
+  @click="openModal(p)"
+>
                 <div class="prod-card__img" :style="p.imagem ? { backgroundImage: `url(${p.imagem})` } : {}">
                   <div v-if="!p.imagem" class="prod-card__gen-art" :class="`gen-art--${p.categoria?.toLowerCase() || 'tech'}`" aria-hidden="true">
                     <div class="gen-art__inner"></div>
@@ -451,8 +612,6 @@
           <defs>
             <pattern id="seigaiha" x="0" y="0" width="40" height="30" patternUnits="userSpaceOnUse">
               <path d="M20 0 Q40 10 20 20 Q0 10 20 0Z" fill="none" stroke="rgba(200,168,75,0.045)" stroke-width="0.5"/>
-              <path d="M0 20 Q20 30 0 40" fill="none" stroke="rgba(200,168,75,0.03)" stroke-width="0.5"/>
-              <path d="M40 20 Q20 30 40 40" fill="none" stroke="rgba(200,168,75,0.03)" stroke-width="0.5"/>
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#seigaiha)"/>
@@ -614,181 +773,35 @@
       </transition>
     </teleport>
 
-    <!-- ══ CARRINHO DRAWER ══ -->
+    <!-- ══ MODAL GALERIA ══ -->
     <teleport to="body">
-      <transition name="cart-backdrop-fade">
+      <transition name="fade">
         <div
-          v-if="cartOpen"
-          class="cart-backdrop"
-          @click.self="cartOpen = false"
+          v-if="galModal"
+          class="galmodal-wrap"
+          @click.self="galModal = null"
           role="dialog"
           aria-modal="true"
-          aria-label="Carrinho de compras"
         >
-          <div class="cart-drawer" ref="cartDrawerRef">
-
-            <!-- ── Linha realm topo ── -->
-            <div class="cart__realm-line" aria-hidden="true"></div>
-
-            <!-- ── Canvas cristais geométricos ── -->
-            <canvas class="cart__canvas" ref="cartCanvasRef" aria-hidden="true"></canvas>
-
-            <!-- ── Grain overlay atmosférico ── -->
-            <div class="cart__grain" aria-hidden="true"></div>
-
-            <!-- ── Kamons de fundo ── -->
-            <div class="cart__kamon" aria-hidden="true">黒</div>
-            <div class="cart__kamon cart__kamon--2" aria-hidden="true">金</div>
-
-            <!-- ── Scanline cinemática ── -->
-            <div class="cart__scanline" aria-hidden="true"></div>
-
-            <!-- Header -->
-            <div class="cart__head">
-              <div class="cart__head-left">
-                <div class="cart__kicker">
-                  <span class="cart__kicker-num">00</span>
-                  <div class="cart__kicker-bar"></div>
-                </div>
-                <div>
-                  <span class="cart__eyebrow">Atelier Privé</span>
-                  <h2 class="cart__title">Seu <em>Atelier</em></h2>
-                </div>
-              </div>
-              <div class="cart__head-right">
-                <transition name="badge-pop">
-                  <span v-if="cartCount > 0" class="cart__count-badge" :key="cartCount">{{ cartCount }}</span>
-                </transition>
-                <button class="cart__close" @click="cartOpen = false" aria-label="Fechar carrinho">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-              </div>
+          <div class="galmodal">
+            <button class="galmodal__close" @click="galModal = null" aria-label="Fechar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div class="galmodal__visual">
+              <div class="galmodal__bg" :style="{ background: galModal.grad }"></div>
+              <div class="galmodal__art" v-html="galModal.art"></div>
+              <div class="galmodal__tag">{{ galModal.tag }}</div>
             </div>
-
-            <!-- Ornamento -->
-            <div class="cart__ornament" aria-hidden="true">
-              <span class="cart__orn-line"></span>
-              <span class="cart__orn-gem">◆</span>
-              <span class="cart__orn-line cart__orn-line--r"></span>
+            <div class="galmodal__info">
+              <span class="eyebrow">Édition Exclusive</span>
+              <h2 class="galmodal__title">{{ galModal.label }}</h2>
+              <p class="galmodal__price">{{ galModal.preco }}</p>
+              <router-link to="/loja" class="galmodal__cta" @click="galModal = null">
+                <span class="galmodal__cta-fill"></span>
+                Ver na Loja
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
+              </router-link>
             </div>
-
-            <!-- Corpo -->
-            <div class="cart__body" ref="cartBodyRef">
-
-              <!-- Vazio -->
-              <transition name="fade">
-                <div v-if="cartItems.length === 0" class="cart__vazio">
-                  <div class="cart__vazio-mon" aria-hidden="true">
-                    <svg viewBox="0 0 80 80" width="64" height="64">
-                      <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(200,168,75,0.18)" stroke-width="0.5"/>
-                      <circle cx="40" cy="40" r="24" fill="none" stroke="rgba(200,168,75,0.10)" stroke-width="0.5"/>
-                      <path d="M40 16 L43 28 L40 26 L37 28 Z" fill="rgba(200,168,75,0.28)"/>
-                      <path d="M40 64 L43 52 L40 54 L37 52 Z" fill="rgba(200,168,75,0.28)"/>
-                      <path d="M16 40 L28 37 L26 40 L28 43 Z" fill="rgba(200,168,75,0.28)"/>
-                      <path d="M64 40 L52 37 L54 40 L52 43 Z" fill="rgba(200,168,75,0.28)"/>
-                      <circle cx="40" cy="40" r="4" fill="none" stroke="rgba(200,168,75,0.35)" stroke-width="0.5"/>
-                    </svg>
-                  </div>
-                  <p class="cart__vazio-title">Seu atelier está vazio</p>
-                  <p class="cart__vazio-sub">Explore a coleção e adicione peças exclusivas</p>
-                  <router-link to="/loja" class="cart__vazio-cta" @click="cartOpen = false">
-                    <span class="cart__vazio-cta-fill" aria-hidden="true"></span>
-                    Explorar Coleção
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
-                  </router-link>
-                </div>
-              </transition>
-
-              <!-- Lista de itens -->
-              <transition-group name="cart-item" tag="div" class="cart__list">
-                <div v-for="item in cartItems" :key="item._id || item.id" class="cart-item">
-                  <div class="cart-item__img" :style="item.imagem ? { backgroundImage: `url(${item.imagem})` } : {}">
-                    <div v-if="!item.imagem" class="cart-item__gen" aria-hidden="true">
-                      <div class="cart-item__gen-inner"></div>
-                    </div>
-                    <div class="cart-item__img-overlay"></div>
-                  </div>
-                  <div class="cart-item__info">
-                    <span class="cart-item__cat">{{ item.categoria }}</span>
-                    <h4 class="cart-item__name">{{ item.nome }}</h4>
-                    <div class="cart-item__foot">
-                      <div class="cart-item__qty">
-                        <button class="qty-btn" @click="decrementItem(item)" :aria-label="`Remover um ${item.nome}`">
-                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <span class="qty-num">{{ item.qty }}</span>
-                        <button class="qty-btn" @click="incrementItem(item)" :aria-label="`Adicionar um ${item.nome}`">
-                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                      </div>
-                      <span class="cart-item__price">R$ {{ fmt((item.preco||0) * item.qty) }}</span>
-                    </div>
-                  </div>
-                  <button class="cart-item__remove" @click="removeItem(item)" :aria-label="`Remover ${item.nome}`">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                  <div class="cart-item__line" aria-hidden="true"></div>
-                </div>
-              </transition-group>
-            </div>
-
-            <!-- Footer -->
-            <div class="cart__foot" v-if="cartItems.length > 0">
-              <div class="cart__foot-sep" aria-hidden="true">
-                <span class="cart__foot-sep-line"></span>
-                <span class="cart__foot-sep-gem">◆</span>
-                <span class="cart__foot-sep-line cart__foot-sep-line--r"></span>
-              </div>
-
-              <div class="cart__totals">
-                <div class="cart__total-row">
-                  <span class="cart__total-label">Subtotal</span>
-                  <span class="cart__total-val">R$ {{ fmt(cartSubtotal) }}</span>
-                </div>
-                <div class="cart__total-row">
-                  <span class="cart__total-label">Parcelamento</span>
-                  <span class="cart__total-inst">12× de R$ {{ fmt(Math.ceil(cartSubtotal/12)) }}</span>
-                </div>
-                <div class="cart__total-row">
-                  <span class="cart__total-label">Frete</span>
-                  <span class="cart__total-free">
-                    <span class="free-dot" aria-hidden="true"></span>
-                    Grátis · VIP
-                  </span>
-                </div>
-              </div>
-
-              <div class="cart__selos">
-                <div class="cart__selo">
-                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span>SSL 256-bit</span>
-                </div>
-                <span class="cart__selo-dot" aria-hidden="true">·</span>
-                <div class="cart__selo">
-                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>Compra segura</span>
-                </div>
-                <span class="cart__selo-dot" aria-hidden="true">·</span>
-                <div class="cart__selo">
-                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <span>Dados protegidos</span>
-                </div>
-              </div>
-
-              <div class="cart__actions">
-                <router-link to="/checkout" class="cart__cta cart__cta--primary" @click="cartOpen = false">
-                  <span class="cart__cta-fill" aria-hidden="true"></span>
-                  <span>Finalizar Pedido</span>
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M12.5 5l7 7-7 7"/></svg>
-                </router-link>
-                <button class="cart__cta cart__cta--ghost" @click="cartOpen = false">
-                  <span>Continuar Comprando</span>
-                </button>
-              </div>
-
-              <div class="cart__foot-kanji" aria-hidden="true">購</div>
-            </div>
-
           </div>
         </div>
       </transition>
@@ -802,12 +815,14 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import Banner from '@/components/Banner.vue'
 import { useProdutosStore } from '@/stores/produtos.js'
 import { useSiteStore } from '@/stores/site.js'
+import { useCartStore } from '@/stores/cart.js'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const site = useSiteStore()
+const cart = useCartStore()
 
 /* ─── STORE ─── */
 const prodStore = useProdutosStore()
@@ -815,345 +830,28 @@ const featured  = ref([])
 const loading   = ref(true)
 const addedIds  = ref([])
 const modal     = ref(null)
+const galModal  = ref(null)
 
-/* ─── CART STATE ─── */
-const cartOpen  = ref(false)
-const cartItems = ref([])
-
-const cartSubtotal = computed(() =>
-  cartItems.value.reduce((acc, i) => acc + (i.preco || 0) * i.qty, 0)
-)
-const cartCount = computed(() =>
-  cartItems.value.reduce((a, i) => a + i.qty, 0)
-)
-
+/* ─── CART via navbar store (sem drawer próprio) ─── */
 function addCart(p) {
   if (!p?.estoque) return
-  window.dispatchEvent(new CustomEvent('add-to-cart', { detail: p }))
+  // Usa o cartStore compartilhado com a navbar
+  if (cart?.adicionar) {
+    cart.adicionar(p)
+  } else {
+    window.dispatchEvent(new CustomEvent('add-to-cart', { detail: p }))
+  }
   const k = p._id || p.id
   addedIds.value.push(k)
   setTimeout(() => { addedIds.value = addedIds.value.filter(id => id !== k) }, 2200)
-  const existing = cartItems.value.find(i => (i._id || i.id) === k)
-  if (existing) { existing.qty++ }
-  else { cartItems.value.push({ ...p, qty: 1 }) }
-  cartOpen.value = true
+  // Abre o drawer da navbar
+  window.dispatchEvent(new CustomEvent('open-cart'))
 }
 
-function removeItem(item) {
-  const k = item._id || item.id
-  cartItems.value = cartItems.value.filter(i => (i._id || i.id) !== k)
-}
-function incrementItem(item) {
-  const found = cartItems.value.find(i => (i._id || i.id) === (item._id || item.id))
-  if (found) found.qty++
-}
-function decrementItem(item) {
-  const k = item._id || item.id
-  const found = cartItems.value.find(i => (i._id || i.id) === k)
-  if (!found) return
-  if (found.qty <= 1) removeItem(item)
-  else found.qty--
-}
-
-/* ═══════════════════════════════════════════════════════════
-   CART CANVAS — Cristais Geométricos Caindo
-═══════════════════════════════════════════════════════════ */
-const cartCanvasRef = ref(null)
-const cartDrawerRef = ref(null)
-let cartRaf        = null
-let cartCtx        = null
-let cartParticles  = []
-let cartRO         = null
-
-function createCartCrystal(W, H, randomY = false) {
-  const t = site.tema
-  const palettes = {
-    escuro: [
-      'rgba(200,168,75,',
-      'rgba(245,215,142,',
-      'rgba(180,150,60,',
-      'rgba(220,200,120,',
-      'rgba(160,130,50,',
-    ],
-    claro: [
-      'rgba(61,108,191,',
-      'rgba(100,140,220,',
-      'rgba(180,200,245,',
-      'rgba(80,120,200,',
-    ],
-    gamer: [
-      'rgba(200,80,20,',
-      'rgba(240,120,40,',
-      'rgba(160,40,10,',
-      'rgba(220,90,30,',
-    ],
-  }
-  const colors = palettes[t] || palettes.escuro
-  const shapes = ['hex', 'hex', 'diamond', 'diamond', 'cross', 'shard', 'tri', 'dot']
-
-  return {
-    x:         Math.random() * W,
-    y:         randomY ? Math.random() * H : -Math.random() * H * 0.5 - 10,
-    size:      Math.random() * 5 + 1.5,
-    speedY:    Math.random() * 0.35 + 0.08,
-    speedX:    (Math.random() - 0.5) * 0.22,
-    rot:       Math.random() * Math.PI * 2,
-    rotSpeed:  (Math.random() - 0.5) * 0.006,
-    opacity:   Math.random() * 0.30 + 0.04,
-    opacityDir:Math.random() > 0.5 ? 1 : -1,
-    color:     colors[Math.floor(Math.random() * colors.length)],
-    shape:     shapes[Math.floor(Math.random() * shapes.length)],
-    spiral:    Math.random() * Math.PI * 2,
-    spiralSpeed:Math.random() * 0.008 + 0.002,
-    spiralAmp: Math.random() * 0.6 + 0.1,
-    glint:     Math.random() * Math.PI * 2,
-    glintSpeed:Math.random() * 0.02 + 0.008,
-  }
-}
-
-function drawHex(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  ctx.rotate(p.rot)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.15
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.55)
-  ctx.beginPath()
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 3) * i - Math.PI / 6
-    const r = p.size
-    i === 0 ? ctx.moveTo(r * Math.cos(a), r * Math.sin(a)) : ctx.lineTo(r * Math.cos(a), r * Math.sin(a))
-  }
-  ctx.closePath()
-  ctx.strokeStyle = p.color + Math.min(p.opacity * 2.2 + glintBoost * 3, 0.75) + ')'
-  ctx.lineWidth = 0.6
-  ctx.stroke()
-  ctx.fillStyle = p.color + (p.opacity * 0.08) + ')'
-  ctx.fill()
-  ctx.beginPath()
-  const a0 = -Math.PI / 6
-  ctx.moveTo(p.size * 0.5 * Math.cos(a0), p.size * 0.5 * Math.sin(a0))
-  ctx.lineTo(p.size * 0.5 * Math.cos(a0 + Math.PI * 2 / 3), p.size * 0.5 * Math.sin(a0 + Math.PI * 2 / 3))
-  ctx.strokeStyle = p.color + (p.opacity * 0.35) + ')'
-  ctx.lineWidth = 0.3
-  ctx.stroke()
-  ctx.restore()
-}
-
-function drawDiamond(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  ctx.rotate(p.rot)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.2
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.6)
-  const s = p.size
-  ctx.beginPath()
-  ctx.moveTo(0, -s * 1.4)
-  ctx.lineTo(s * 0.7, 0)
-  ctx.lineTo(0, s * 1.4)
-  ctx.lineTo(-s * 0.7, 0)
-  ctx.closePath()
-  ctx.strokeStyle = p.color + Math.min(p.opacity * 2.5 + glintBoost * 3, 0.85) + ')'
-  ctx.lineWidth = 0.5
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(-s * 0.4, 0)
-  ctx.lineTo(s * 0.4, 0)
-  ctx.strokeStyle = p.color + (p.opacity * 0.5) + ')'
-  ctx.lineWidth = 0.3
-  ctx.stroke()
-  ctx.restore()
-}
-
-function drawCross(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  ctx.rotate(p.rot)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.12
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.45)
-  const s = p.size * 1.1
-  ctx.strokeStyle = p.color + Math.min(p.opacity * 1.8, 0.55) + ')'
-  ctx.lineWidth = 0.5
-  ctx.beginPath()
-  ctx.moveTo(-s, 0); ctx.lineTo(s, 0)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(0, -s); ctx.lineTo(0, s)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.arc(0, 0, 0.8, 0, Math.PI * 2)
-  ctx.fillStyle = p.color + Math.min(p.opacity * 3 + glintBoost * 4, 1) + ')'
-  ctx.fill()
-  ctx.restore()
-}
-
-function drawShard(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  ctx.rotate(p.rot)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.18
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.50)
-  const s = p.size
-  ctx.beginPath()
-  ctx.moveTo(0, -s * 1.8)
-  ctx.lineTo(s * 0.5, s * 0.4)
-  ctx.lineTo(-s * 0.3, s * 0.8)
-  ctx.closePath()
-  ctx.strokeStyle = p.color + Math.min(p.opacity * 2 + glintBoost * 2.5, 0.70) + ')'
-  ctx.lineWidth = 0.5
-  ctx.stroke()
-  ctx.fillStyle = p.color + (p.opacity * 0.06) + ')'
-  ctx.fill()
-  ctx.restore()
-}
-
-function drawTri(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  ctx.rotate(p.rot)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.14
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.48)
-  const s = p.size
-  ctx.beginPath()
-  ctx.moveTo(0, -s)
-  ctx.lineTo(s * 0.866, s * 0.5)
-  ctx.lineTo(-s * 0.866, s * 0.5)
-  ctx.closePath()
-  ctx.strokeStyle = p.color + Math.min(p.opacity * 2 + glintBoost * 2, 0.65) + ')'
-  ctx.lineWidth = 0.5
-  ctx.stroke()
-  ctx.restore()
-}
-
-function drawCrystalDot(ctx, p) {
-  ctx.save()
-  ctx.translate(p.x, p.y)
-  const glintBoost = (Math.sin(p.glint) * 0.5 + 0.5) * 0.25
-  ctx.globalAlpha = Math.min(p.opacity + glintBoost, 0.55)
-  const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size * 1.2)
-  grad.addColorStop(0,   p.color + Math.min(p.opacity * 3 + glintBoost * 4, 1) + ')')
-  grad.addColorStop(0.4, p.color + Math.min(p.opacity * 1.2, 0.5) + ')')
-  grad.addColorStop(1,   p.color + '0)')
-  ctx.beginPath()
-  ctx.arc(0, 0, p.size * 1.2, 0, Math.PI * 2)
-  ctx.fillStyle = grad
-  ctx.fill()
-  ctx.restore()
-}
-
-function animateCartCanvas() {
-  if (!cartCtx || !cartCanvasRef.value) return
-  const W = cartCanvasRef.value.width
-  const H = cartCanvasRef.value.height
-  cartCtx.clearRect(0, 0, W, H)
-
-  const COUNT = 48
-  while (cartParticles.length < COUNT) cartParticles.push(createCartCrystal(W, H))
-  while (cartParticles.length > COUNT) cartParticles.pop()
-
-  cartParticles.forEach((p, i) => {
-    p.spiral   += p.spiralSpeed
-    p.glint    += p.glintSpeed
-    p.x        += p.speedX + Math.sin(p.spiral) * p.spiralAmp
-    p.y        += p.speedY
-    p.rot      += p.rotSpeed
-    p.opacity  += p.opacityDir * 0.0007
-    if (p.opacity > 0.34) p.opacityDir = -1
-    if (p.opacity < 0.03) p.opacityDir = 1
-
-    if (p.y > H + 20 || p.x < -20 || p.x > W + 20) {
-      cartParticles[i] = createCartCrystal(W, H)
-      cartParticles[i].y = -10
-    }
-
-    switch (p.shape) {
-      case 'hex':     drawHex(cartCtx, p);         break
-      case 'diamond': drawDiamond(cartCtx, p);     break
-      case 'cross':   drawCross(cartCtx, p);       break
-      case 'shard':   drawShard(cartCtx, p);       break
-      case 'tri':     drawTri(cartCtx, p);         break
-      default:        drawCrystalDot(cartCtx, p);  break
-    }
-  })
-  cartRaf = requestAnimationFrame(animateCartCanvas)
-}
-
-function initCartCanvas() {
-  const canvas = cartCanvasRef.value
-  if (!canvas) return
-  cartCtx = canvas.getContext('2d')
-  const resize = () => {
-    canvas.width  = canvas.offsetWidth  || 440
-    canvas.height = canvas.offsetHeight || window.innerHeight
-  }
-  resize()
-  cartRO = new ResizeObserver(resize)
-  cartRO.observe(canvas)
-  cartParticles = Array.from({ length: 48 }, () => {
-    const p = createCartCrystal(canvas.width, canvas.height)
-    p.y = Math.random() * canvas.height
-    return p
-  })
-  animateCartCanvas()
-}
-
-function destroyCartCanvas() {
-  if (cartRaf) { cancelAnimationFrame(cartRaf); cartRaf = null }
-  if (cartRO)  { cartRO.disconnect(); cartRO = null }
-  cartCtx = null
-  cartParticles = []
-}
-
-/* ─── Watcher Cart Open ─── */
-watch(cartOpen, async (val) => {
-  if (val) {
-    document.body.style.overflow = 'hidden'
-    await nextTick()
-    initCartCanvas()
-
-    gsap.fromTo(cartDrawerRef.value,
-      { x: '100%', opacity: 0 },
-      {
-        x: '0%',
-        opacity: 1,
-        duration: 0.65,
-        ease: 'expo.out',
-        onComplete: () => {
-          const items = cartDrawerRef.value?.querySelectorAll('.cart-item')
-          if (items?.length) {
-            gsap.fromTo(items,
-              { x: 24, opacity: 0 },
-              { x: 0, opacity: 1, duration: 0.45, stagger: 0.07, ease: 'power3.out' }
-            )
-          }
-          const line = cartDrawerRef.value?.querySelector('.cart__realm-line')
-          if (line) {
-            gsap.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: 'power3.out', transformOrigin: 'center' })
-          }
-        }
-      }
-    )
-  } else {
-    document.body.style.overflow = ''
-    if (cartDrawerRef.value) {
-      gsap.to(cartDrawerRef.value, {
-        x: '100%',
-        opacity: 0,
-        duration: 0.42,
-        ease: 'power3.in',
-        onComplete: destroyCartCanvas
-      })
-    } else {
-      destroyCartCanvas()
-    }
-  }
-})
-
-function handleOpenCart() { cartOpen.value = true }
+const openGalleryModal = (g) => { galModal.value = g }
 
 /* ─── DOM REFS ─── */
 const carousel       = ref(null)
-const previewRef     = ref(null)
-const phoneSceneRef  = ref(null)
 const sakuraCanvas   = ref(null)
 const statsRef       = ref(null)
 const dividerRef     = ref(null)
@@ -1168,8 +866,13 @@ const techNumRefs    = ref([])
 const pillarIconRefs = ref([])
 const matRefs        = ref([])
 const matIconRefs    = ref([])
-const cartBodyRef    = ref(null)
-const hoveredGal     = ref(-1)
+const galReel        = ref(null)
+const forgeCanvas    = ref(null)
+const forgeStageRef  = ref(null)
+const forgeDeviceRef = ref(null)
+
+/* ─── GALLERY ─── */
+const activeGal = ref(-1)
 
 /* ─── CAROUSEL ─── */
 const slideIdx  = ref(0)
@@ -1184,6 +887,12 @@ let carouselRO  = null
 let sakuraRaf = null
 let sakuraRO  = null
 const triggers = []
+
+/* ─── FORGE PARTICLES ─── */
+let forgeRaf = null
+let forgeCtx = null
+let forgeParticles = []
+let forgeRO = null
 
 /* ─── REALM COMPUTEDS ─── */
 const realmVars = computed(() => {
@@ -1208,10 +917,10 @@ const tickerSpeed = computed(() => site.tema === 'gamer' ? '16s' : site.tema ===
 
 /* ─── CONFIGURADOR ─── */
 const models = [
-  { id:'macbook', name:'MacBook Pro',   base:18990 },
-  { id:'iphone',  name:'iPhone 16 Pro', base:12990 },
-  { id:'ipad',    name:'iPad Pro',      base:10990 },
-  { id:'imac',    name:'iMac',          base:24990 },
+  { id:'macbook', name:'MacBook Pro',   base:18990, icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M0 21h24"/></svg>' },
+  { id:'iphone',  name:'iPhone 16 Pro', base:12990, icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="1" width="14" height="22" rx="3"/><path d="M10 5h4"/></svg>' },
+  { id:'ipad',    name:'iPad Pro',      base:10990, icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="1" width="18" height="22" rx="2"/><circle cx="12" cy="19" r="1"/></svg>' },
+  { id:'imac',    name:'iMac',          base:24990, icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="2" width="22" height="16" rx="2"/><path d="M8 22h8M12 18v4"/></svg>' },
 ]
 const storageMaps = {
   macbook:[{label:'512GB',val:'512GB',add:0},{label:'1TB',val:'1TB',add:1500},{label:'2TB',val:'2TB',add:3500}],
@@ -1220,10 +929,10 @@ const storageMaps = {
   imac:   [{label:'512GB',val:'512GB',add:0},{label:'1TB',val:'1TB',add:2000},{label:'2TB',val:'2TB',add:4000}],
 }
 const finishes = [
-  { name:'Ouro 24K',   solid:'#C8A84B', grad:'linear-gradient(145deg,#c8a84b,#f5d78e,#b8952a)', glow:'radial-gradient(circle,rgba(200,168,75,.45),transparent 65%)', add:0 },
-  { name:'Rose Gold',  solid:'#C2847A', grad:'linear-gradient(145deg,#b76e79,#e8b4bc,#a85d68)', glow:'radial-gradient(circle,rgba(183,110,121,.45),transparent 65%)', add:500 },
-  { name:'Platina',    solid:'#A8A8A8', grad:'linear-gradient(145deg,#8e8e8e,#d4d4d4,#7a7a7a)', glow:'radial-gradient(circle,rgba(180,180,180,.45),transparent 65%)', add:800 },
-  { name:'Preto Onyx', solid:'#555',    grad:'linear-gradient(145deg,#2a2a2a,#4a4a4a,#111)',    glow:'radial-gradient(circle,rgba(120,120,120,.35),transparent 65%)', add:300 },
+  { name:'Ouro 24K',   solid:'#C8A84B', grad:'radial-gradient(135deg,#FFD97D 0%,#C8A84B 50%,#8B6914 100%)', glow:'radial-gradient(circle,rgba(200,168,75,.55),transparent 65%)', add:0 },
+  { name:'Rose Gold',  solid:'#C2847A', grad:'radial-gradient(135deg,#f4c2be 0%,#C2847A 50%,#8B4A47 100%)', glow:'radial-gradient(circle,rgba(183,110,121,.55),transparent 65%)', add:500 },
+  { name:'Platina',    solid:'#C0C0C8', grad:'radial-gradient(135deg,#e8e8f0 0%,#A8A8B8 50%,#6a6a7a 100%)', glow:'radial-gradient(circle,rgba(192,192,200,.55),transparent 65%)', add:800 },
+  { name:'Preto Onyx', solid:'#6a6a6a', grad:'radial-gradient(135deg,#5a5a5a 0%,#2a2a2a 50%,#111 100%)',    glow:'radial-gradient(circle,rgba(140,140,140,.45),transparent 65%)', add:300 },
 ]
 const coatings      = ['Polido','Fosco','Escovado','Diamond Cut']
 const coatingPrices = [0,200,400,800]
@@ -1240,17 +949,125 @@ const totalPrice     = computed(() => {
   return base + (currentStorage.value?.add||0) + (finishes[finishIdx.value]?.add||0) + (coatingPrices[coatingIdx.value]||0)
 })
 
+const priceBreakdown = computed(() => {
+  const base    = models.find(m => m.id === modelId.value)?.base || 18990
+  const storage = currentStorage.value?.add || 0
+  const finish  = finishes[finishIdx.value]?.add || 0
+  const coating = coatingPrices[coatingIdx.value] || 0
+  const total   = totalPrice.value
+  return [
+    { label: 'Base',        val: base,    pct: (base/total)*100,    color: 'rgba(200,168,75,.8)' },
+    { label: 'Armazenamento', val: storage, pct: (storage/total)*100, color: 'rgba(200,168,75,.5)' },
+    { label: 'Acabamento',  val: finish,  pct: (finish/total)*100,  color: 'rgba(200,168,75,.35)' },
+    { label: 'Material',    val: coating, pct: (coating/total)*100, color: 'rgba(200,168,75,.2)' },
+  ].filter(b => b.val > 0)
+})
+
 function selectModel(id) {
   modelId.value    = id
   storageVal.value = storageMaps[id]?.[0]?.val || '512GB'
   coatingIdx.value = 0
-  if (phoneSceneRef.value) gsap.to(phoneSceneRef.value, { scale:0.95, duration:0.15, yoyo:true, repeat:1, ease:'power2.inOut' })
+  animateDeviceBump()
 }
 function selectFinish(i) {
   finishIdx.value = i
-  if (phoneSceneRef.value) gsap.to(phoneSceneRef.value, { rotateY:360, duration:0.6, ease:'power2.inOut', onComplete:()=> gsap.set(phoneSceneRef.value, { rotateY:0 }) })
+  animateDeviceSpin()
 }
-function pausePhoneAnim() {}
+
+function animateDeviceBump() {
+  if (!forgeDeviceRef.value) return
+  gsap.to(forgeDeviceRef.value, { scale:0.94, duration:0.12, yoyo:true, repeat:1, ease:'power2.inOut' })
+}
+function animateDeviceSpin() {
+  if (!forgeDeviceRef.value) return
+  gsap.to(forgeDeviceRef.value, {
+    rotateY: 360, duration: 0.8, ease:'power2.inOut',
+    onComplete: () => gsap.set(forgeDeviceRef.value, { rotateY:0 })
+  })
+}
+function pauseDeviceAnim() {}
+function tiltDevice(e) {
+  if (!forgeStageRef.value || !forgeDeviceRef.value) return
+  const r = forgeStageRef.value.getBoundingClientRect()
+  const x = ((e.clientX - r.left) / r.width - 0.5) * 26
+  const y = -((e.clientY - r.top) / r.height - 0.5) * 18
+  gsap.to(forgeDeviceRef.value, { rotateY: x, rotateX: y, duration:.5, ease:'power2.out' })
+}
+function resetDevice() {
+  if (forgeDeviceRef.value) {
+    gsap.to(forgeDeviceRef.value, { rotateY:0, rotateX:0, duration:1.4, ease:'elastic.out(1,.45)' })
+  }
+}
+
+/* ─── FORGE PARTICLES ─── */
+function createForgeParticle(W, H) {
+  return {
+    x: Math.random() * W,
+    y: H + Math.random() * 80,
+    size: Math.random() * 2.5 + 0.5,
+    speedY: -(Math.random() * 1.2 + 0.4),
+    speedX: (Math.random() - 0.5) * 0.5,
+    opacity: Math.random() * 0.55 + 0.1,
+    life: 1,
+    lifeSpeed: Math.random() * 0.004 + 0.001,
+    color: ['rgba(200,168,75,','rgba(245,215,142,','rgba(255,200,100,'][Math.floor(Math.random()*3)],
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: Math.random() * 0.025 + 0.01,
+  }
+}
+
+function animateForge() {
+  if (!forgeCtx || !forgeCanvas.value) return
+  const W = forgeCanvas.value.width
+  const H = forgeCanvas.value.height
+  forgeCtx.clearRect(0, 0, W, H)
+
+  while (forgeParticles.length < 55) forgeParticles.push(createForgeParticle(W, H))
+
+  forgeParticles.forEach((p, i) => {
+    p.wobble += p.wobbleSpeed
+    p.x += p.speedX + Math.sin(p.wobble) * 0.5
+    p.y += p.speedY
+    p.life -= p.lifeSpeed
+    p.opacity = p.life * 0.5
+
+    if (p.y < -20 || p.life <= 0) {
+      forgeParticles[i] = createForgeParticle(W, H)
+      return
+    }
+
+    const grd = forgeCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2)
+    grd.addColorStop(0, p.color + Math.min(p.opacity, 0.9) + ')')
+    grd.addColorStop(1, p.color + '0)')
+    forgeCtx.beginPath()
+    forgeCtx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2)
+    forgeCtx.fillStyle = grd
+    forgeCtx.fill()
+  })
+
+  forgeRaf = requestAnimationFrame(animateForge)
+}
+
+function initForge() {
+  const canvas = forgeCanvas.value; if (!canvas) return
+  forgeCtx = canvas.getContext('2d')
+  const resize = () => { canvas.width = canvas.offsetWidth || 600; canvas.height = canvas.offsetHeight || 700 }
+  resize()
+  forgeRO = new ResizeObserver(resize)
+  forgeRO.observe(canvas)
+  forgeParticles = Array.from({ length: 55 }, () => {
+    const p = createForgeParticle(canvas.width, canvas.height)
+    p.y = Math.random() * canvas.height
+    return p
+  })
+  animateForge()
+}
+
+function destroyForge() {
+  if (forgeRaf) { cancelAnimationFrame(forgeRaf); forgeRaf = null }
+  if (forgeRO)  { forgeRO.disconnect(); forgeRO = null }
+  forgeCtx = null; forgeParticles = []
+}
 
 /* ─── DADOS ESTÁTICOS ─── */
 const pillars = [
@@ -1276,11 +1093,11 @@ const materials = [
   { abbr:'5d',  title:'Cura Premium', desc:'Fusão molecular em câmara de atmosfera controlada por 5 dias consecutivos.', specs:['Temperatura ±0.1°C','Atmosfera de argônio','Adesão molecular permanente'], icon:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
 ]
 const gallery = [
-  { tag:'Édition Limitée', label:'Ouro 24K · iPhone 16 Pro', preco:'R$ 18.990', grad:'radial-gradient(ellipse at 30% 40%, rgba(200,168,75,.22) 0%, rgba(10,8,2,.97) 60%)', art:`<svg width="100%" height="100%" viewBox="0 0 300 500" fill="none"><circle cx="150" cy="250" r="120" stroke="rgba(200,168,75,.06)" stroke-width="1"/><circle cx="150" cy="250" r="80" stroke="rgba(200,168,75,.05)" stroke-width=".5"/><line x1="30" y1="250" x2="270" y2="250" stroke="rgba(200,168,75,.04)" stroke-width=".5"/><line x1="150" y1="80" x2="150" y2="420" stroke="rgba(200,168,75,.04)" stroke-width=".5"/></svg>` },
-  { tag:'Exclusivo', label:'MacBook Pro · Titânio', preco:'R$ 22.490', grad:'radial-gradient(ellipse at 60% 30%, rgba(100,80,200,.12) 0%, rgba(5,5,12,.98) 65%)', art:`<svg width="100%" height="100%" viewBox="0 0 200 200" fill="none">${Array.from({length:8},(_,i)=>`<line x1="${i*28}" y1="0" x2="${i*28}" y2="200" stroke="rgba(120,100,220,.05)" stroke-width=".5"/>`).join('')}<circle cx="100" cy="100" r="40" stroke="rgba(140,120,240,.1)" stroke-width=".5"/></svg>` },
-  { tag:'Novo', label:'iPad Pro · Platina', preco:'R$ 14.790', grad:'radial-gradient(ellipse at 50% 50%, rgba(168,168,168,.18) 0%, rgba(5,5,12,.98) 60%)', art:`<svg width="100%" height="100%" viewBox="0 0 200 200" fill="none">${Array.from({length:7},(_,i)=>`<circle cx="100" cy="100" r="${15+i*12}" stroke="rgba(168,168,168,${0.1-i*0.012})" stroke-width=".5"/>`).join('')}</svg>` },
-  { tag:'Limitado', label:'iMac · Rose Gold', preco:'R$ 28.490', grad:'radial-gradient(ellipse at 40% 60%, rgba(194,132,122,.18) 0%, rgba(8,4,4,.98) 60%)', art:`<svg width="100%" height="100%" viewBox="0 0 200 200" fill="none"><path d="M100 20L180 100L100 180L20 100Z" stroke="rgba(194,132,122,.12)" stroke-width="1" fill="rgba(194,132,122,.02)"/><circle cx="100" cy="100" r="8" fill="rgba(194,132,122,.2)"/></svg>` },
-  { tag:'Raro', label:'Apple Watch · Onyx', preco:'R$ 9.990', grad:'radial-gradient(ellipse at 50% 40%, rgba(74,74,74,.22) 0%, rgba(4,4,4,.98) 60%)', art:`<svg width="100%" height="100%" viewBox="0 0 200 200" fill="none"><rect x="55" y="45" width="90" height="110" rx="28" stroke="rgba(120,120,120,.12)" stroke-width="1"/><rect x="68" y="58" width="64" height="84" rx="18" stroke="rgba(120,120,120,.08)" stroke-width=".5"/></svg>` },
+  { tag:'Édition Limitée', label:'Ouro 24K · iPhone 16 Pro', preco:'R$ 18.990', grad:'radial-gradient(ellipse at 35% 40%, rgba(200,168,75,.35) 0%, rgba(6,5,2,.97) 65%)', art:`<svg width="100%" height="100%" viewBox="0 0 400 600" fill="none" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="g0" cx="50%" cy="45%"><stop offset="0%" stop-color="rgba(200,168,75,.18)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><ellipse cx="200" cy="300" rx="160" ry="200" fill="url(#g0)"/><circle cx="200" cy="300" r="140" stroke="rgba(200,168,75,.07)" stroke-width="1"/><circle cx="200" cy="300" r="100" stroke="rgba(200,168,75,.05)" stroke-width=".5"/><circle cx="200" cy="300" r="60" stroke="rgba(200,168,75,.08)" stroke-width=".5"/><line x1="60" y1="300" x2="340" y2="300" stroke="rgba(200,168,75,.04)" stroke-width=".5"/><line x1="200" y1="100" x2="200" y2="500" stroke="rgba(200,168,75,.04)" stroke-width=".5"/><path d="M200 160 L210 195 L200 188 L190 195 Z" fill="rgba(200,168,75,.4)"/><path d="M200 440 L210 405 L200 412 L190 405 Z" fill="rgba(200,168,75,.4)"/></svg>` },
+  { tag:'Exclusivo', label:'MacBook Pro · Titânio', preco:'R$ 22.490', grad:'radial-gradient(ellipse at 55% 35%, rgba(90,70,180,.22) 0%, rgba(5,4,14,.98) 70%)', art:`<svg width="100%" height="100%" viewBox="0 0 400 600" fill="none" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(120,90,220,.25)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs><rect x="80" y="150" width="240" height="300" fill="url(#g1)" stroke="rgba(120,90,220,.12)" stroke-width=".5"/>${Array.from({length:8},(_,i)=>`<line x1="${60+i*35}" y1="100" x2="${60+i*35}" y2="500" stroke="rgba(120,90,220,.05)" stroke-width=".5"/>`).join('')}<circle cx="200" cy="300" r="55" stroke="rgba(140,110,240,.12)" stroke-width=".8"/><circle cx="200" cy="300" r="20" fill="rgba(100,70,200,.08)" stroke="rgba(140,110,240,.18)" stroke-width=".5"/></svg>` },
+  { tag:'Novo', label:'iPad Pro · Platina', preco:'R$ 14.790', grad:'radial-gradient(ellipse at 50% 50%, rgba(180,180,200,.22) 0%, rgba(5,4,14,.98) 65%)', art:`<svg width="100%" height="100%" viewBox="0 0 400 600" fill="none" preserveAspectRatio="xMidYMid slice">${Array.from({length:9},(_,i)=>`<circle cx="200" cy="300" r="${20+i*22}" stroke="rgba(180,180,200,${0.15-i*0.015})" stroke-width=".5"/>`).join('')}<circle cx="200" cy="300" r="10" fill="rgba(200,200,220,.12)"/></svg>` },
+  { tag:'Limitado', label:'iMac · Rose Gold', preco:'R$ 28.490', grad:'radial-gradient(ellipse at 40% 60%, rgba(194,132,122,.25) 0%, rgba(10,4,4,.98) 65%)', art:`<svg width="100%" height="100%" viewBox="0 0 400 600" fill="none" preserveAspectRatio="xMidYMid slice"><path d="M200 80L360 300L200 520L40 300Z" stroke="rgba(194,132,122,.15)" stroke-width="1" fill="rgba(194,132,122,.03)"/><path d="M200 160L300 300L200 440L100 300Z" stroke="rgba(194,132,122,.08)" stroke-width=".5" fill="transparent"/><circle cx="200" cy="300" r="12" fill="rgba(194,132,122,.22)"/></svg>` },
+  { tag:'Raro', label:'Apple Watch · Onyx', preco:'R$ 9.990', grad:'radial-gradient(ellipse at 50% 42%, rgba(90,90,90,.28) 0%, rgba(4,4,4,.98) 65%)', art:`<svg width="100%" height="100%" viewBox="0 0 400 600" fill="none" preserveAspectRatio="xMidYMid slice"><rect x="120" y="120" width="160" height="360" rx="52" stroke="rgba(130,130,130,.14)" stroke-width="1"/><rect x="145" y="150" width="110" height="300" rx="38" stroke="rgba(130,130,130,.08)" stroke-width=".5"/><circle cx="200" cy="300" r="40" stroke="rgba(130,130,130,.1)" stroke-width=".5"/></svg>` },
 ]
 const reviews = [
   { name:'Rafael M.',  text:'Nunca imaginei que um smartphone pudesse ser uma obra de arte. A peça dourada simplesmente parou o tempo.', city:'São Paulo, SP' },
@@ -1297,16 +1114,14 @@ const openModal = (p) => {
 watch(modal, (val) => { if (!val) document.body.style.overflow = '' })
 
 function handleModalKeydown(e) {
-  if (!modal.value) return
-  if (e.key === 'Escape') { modal.value = null; return }
-  if (e.key !== 'Tab') return
+  if (e.key === 'Escape') { modal.value = null; galModal.value = null }
+  if (!modal.value || e.key !== 'Tab') return
   const focusable = modalRef.value?.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])')
   if (!focusable?.length) return
   const first = focusable[0], last = focusable[focusable.length-1]
   if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus() } }
   else            { if (document.activeElement === last)  { e.preventDefault(); first.focus() } }
 }
-function handleCartKeydown(e) { if (!cartOpen.value) return; if (e.key === 'Escape') cartOpen.value = false }
 
 /* ─── CAROUSEL ─── */
 const cardWidth = () => { const c = carousel.value?.querySelector('.prod-card'); return c ? c.offsetWidth+16 : 296 }
@@ -1334,12 +1149,6 @@ const tiltCard = (e, i) => {
   gsap.to(card, { rotateY:(e.clientX-r.left)/r.width*10-5, rotateX:-((e.clientY-r.top)/r.height-.5)*7, duration:.4, ease:'power2.out', transformPerspective:700 })
 }
 const resetCard = (i) => { const c=techCards.value[i]; if(c) gsap.to(c,{rotateY:0,rotateX:0,duration:.7,ease:'elastic.out(1,.5)'}) }
-const tiltPhone = (e) => {
-  if (!previewRef.value||!phoneSceneRef.value) return
-  const r = previewRef.value.getBoundingClientRect()
-  gsap.to(phoneSceneRef.value, { rotateY:((e.clientX-r.left)/r.width-.5)*22, rotateX:-((e.clientY-r.top)/r.height-.5)*14, duration:.5, ease:'power2.out' })
-}
-const resetPhone = () => { if(phoneSceneRef.value) gsap.to(phoneSceneRef.value,{rotateY:0,rotateX:0,duration:1.2,ease:'elastic.out(1,.4)'}) }
 
 function animatePillarIcon(i) {
   const el = pillarIconRefs.value[i]; if (!el) return
@@ -1436,7 +1245,7 @@ function initGSAP() {
     triggers.push(t.scrollTrigger)
   })
   gsap.from('.pillar',{opacity:0,y:40,rotateY:-12,stagger:{amount:.55},duration:1,ease:'power2.out',scrollTrigger:{trigger:'.pillars',start:'top 82%',once:true}})
-  gsap.from('.gal-item',{opacity:0,scale:.93,filter:'blur(6px)',stagger:{amount:.55,from:'random'},duration:1.15,ease:'power3.out',scrollTrigger:{trigger:'.gallery-mosaic',start:'top 80%',once:true}})
+  gsap.from('.cg__frame',{opacity:0,x:60,stagger:{amount:.55,from:'start'},duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.cg__reel',start:'top 85%',once:true}})
   gsap.from('.manifesto',{opacity:0,y:30,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.manifesto',start:'top 74%',once:true}})
   gsap.from('.tech-card',{opacity:0,y:32,rotateY:-10,stagger:{amount:.45},duration:1,ease:'power2.out',scrollTrigger:{trigger:'.tech-grid',start:'top 82%',once:true}})
   matRefs.value.forEach((el,i)=>{ if(!el) return; gsap.from(el,{clipPath:'inset(0 100% 0 0)',opacity:0,duration:1,delay:i*.15,ease:'power3.out',scrollTrigger:{trigger:'.materials',start:'top 82%',once:true}}) })
@@ -1448,8 +1257,8 @@ function initGSAP() {
   gsap.from('.review',{opacity:0,y:26,stagger:.14,duration:1,ease:'power3.out',scrollTrigger:{trigger:'.reviews',start:'top 80%',once:true}})
   gsap.from('.concierge__left',{opacity:0,x:-32,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.concierge',start:'top 80%',once:true}})
   gsap.from('.concierge__right',{opacity:0,x:32,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.concierge',start:'top 80%',once:true}})
-  gsap.from('.config__opts',{opacity:0,x:-28,duration:1,ease:'power3.out',scrollTrigger:{trigger:'.config',start:'top 78%',once:true}})
-  gsap.from('.config__preview',{opacity:0,x:28,duration:1,ease:'power3.out',scrollTrigger:{trigger:'.config',start:'top 78%',once:true}})
+  gsap.from('.forge__stage',{opacity:0,x:-40,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.sec--forge',start:'top 80%',once:true}})
+  gsap.from('.forge__controls',{opacity:0,x:40,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:'.sec--forge',start:'top 80%',once:true}})
   animateTorii()
   initCounters()
 }
@@ -1467,6 +1276,7 @@ onMounted(async () => {
   await nextTick()
   initGSAP()
   initSakura()
+  initForge()
   autoTimer = setInterval(() => {
     if (!autoPause.value && !modal.value && featured.value.length > 1) nextSlide()
   }, 3800)
@@ -1474,8 +1284,6 @@ onMounted(async () => {
   if (carousel.value) carouselRO.observe(carousel.value)
   document.addEventListener('visibilitychange', handleVisibility)
   document.addEventListener('keydown', handleModalKeydown)
-  document.addEventListener('keydown', handleCartKeydown)
-  window.addEventListener('open-cart', handleOpenCart)
 })
 
 onUnmounted(() => {
@@ -1483,12 +1291,10 @@ onUnmounted(() => {
   if (sakuraRaf)  cancelAnimationFrame(sakuraRaf)
   if (sakuraRO)   sakuraRO.disconnect()
   if (carouselRO) carouselRO.disconnect()
-  destroyCartCanvas()
+  destroyForge()
   triggers.forEach(t => t?.kill())
   document.removeEventListener('visibilitychange', handleVisibility)
   document.removeEventListener('keydown', handleModalKeydown)
-  document.removeEventListener('keydown', handleCartKeydown)
-  window.removeEventListener('open-cart', handleOpenCart)
   document.body.style.overflow = ''
 })
 </script>
@@ -1513,45 +1319,32 @@ onUnmounted(() => {
   color:      var(--h-text);
   font-family:'Syne', var(--font-sans, sans-serif);
 }
-.home.realm--gamer { filter:contrast(1.03) brightness(0.98); }
 
-:global(body.light-mode) .home {
-  --h-gold:  var(--cor-primaria,  #3D6CBF);
-  --h-gold2: var(--cor-secundaria,#7A9CC8);
-  --h-void:  var(--cor-fundo,     #EAF0F8);
-  --h-surf:  var(--cor-superficie,#FFFFFF);
-  --h-text:  var(--cor-texto,     #0D0D20);
-  --h-text2: var(--cor-texto-2,   rgba(13,13,32,0.82));
-  --h-text3: var(--cor-texto-3,   rgba(13,13,32,0.58));
-  --h-hair:  var(--cor-borda,     rgba(61,108,191,0.18));
-  --h-hairH: var(--cor-borda-h,   rgba(61,108,191,0.50));
-}
-:global(body.gamer-mode) .home {
-  --h-gold:  var(--cor-primaria,  #C85014);
-  --h-gold2: var(--cor-secundaria,#E8830A);
-  --h-void:  var(--cor-fundo,     #0A0A0F);
-  --h-surf:  var(--cor-superficie,#12120A);
-  --h-hair:  var(--cor-borda,     rgba(200,80,20,0.18));
-  --h-hairH: var(--cor-borda-h,   rgba(200,80,20,0.5));
-}
+:global(body.light-mode) .home { --h-gold:#3D6CBF; --h-gold2:#7A9CC8; --h-void:#EAF0F8; --h-surf:#FFFFFF; --h-text:#0D0D20; --h-text2:rgba(13,13,32,0.82); --h-text3:rgba(13,13,32,0.58); --h-hair:rgba(61,108,191,0.18); --h-hairH:rgba(61,108,191,0.50); }
+:global(body.gamer-mode) .home  { --h-gold:#C85014; --h-gold2:#E8830A; --h-void:#0A0A0F; --h-surf:#12120A; --h-hair:rgba(200,80,20,0.18); --h-hairH:rgba(200,80,20,0.5); }
 
-@keyframes goldShine  { from{background-position:0% center} to{background-position:200% center} }
-@keyframes beamSway   { from{transform:skewX(-6deg) translateX(-30px)} to{transform:skewX(6deg) translateX(30px)} }
-@keyframes pulseRing  { 0%{transform:scale(.5);opacity:.8} 100%{transform:scale(2.8);opacity:0} }
-@keyframes phoneFloat { 0%,100%{transform:translateY(0) rotateY(-4deg) rotateX(2deg)} 50%{transform:translateY(-18px) rotateY(4deg) rotateX(-2deg)} }
-@keyframes skelPulse  { 0%,100%{background-color:var(--h-surf)} 50%{background-color:rgba(200,168,75,.05)} }
-@keyframes kanjiPulse { 0%,100%{opacity:.06} 50%{opacity:.13} }
-@keyframes tickerMove { from{transform:translateX(0)} to{transform:translateX(-33.333%)} }
-@keyframes bridgeGlow { 0%,100%{opacity:.28;transform:scale(1)} 50%{opacity:.65;transform:scale(1.2)} }
-@keyframes monSpin    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-@keyframes monPulse   { 0%,100%{opacity:.55;filter:drop-shadow(0 0 4px rgba(200,168,75,.2))} 50%{opacity:.9;filter:drop-shadow(0 0 12px rgba(200,168,75,.5))} }
-@keyframes cornerPulse{ 0%,100%{opacity:.2} 50%{opacity:.55} }
-@keyframes vagasBlink { 0%,100%{opacity:.35} 50%{opacity:.55} }
-@keyframes ringRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-@keyframes freeDot    { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.5)} }
-@keyframes realmLineIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
-@keyframes badgePop   { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
-@keyframes kamonFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+@keyframes goldShine    { from{background-position:0% center} to{background-position:200% center} }
+@keyframes pulseRing    { 0%{transform:scale(.5);opacity:.8} 100%{transform:scale(2.8);opacity:0} }
+@keyframes kanjiPulse   { 0%,100%{opacity:.06} 50%{opacity:.13} }
+@keyframes tickerMove   { from{transform:translateX(0)} to{transform:translateX(-33.333%)} }
+@keyframes bridgeGlow   { 0%,100%{opacity:.28;transform:scale(1)} 50%{opacity:.65;transform:scale(1.2)} }
+@keyframes monSpin      { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes monPulse     { 0%,100%{opacity:.55;filter:drop-shadow(0 0 4px rgba(200,168,75,.2))} 50%{opacity:.9;filter:drop-shadow(0 0 12px rgba(200,168,75,.5))} }
+@keyframes cornerPulse  { 0%,100%{opacity:.2} 50%{opacity:.55} }
+@keyframes vagasBlink   { 0%,100%{opacity:.35} 50%{opacity:.55} }
+@keyframes ringRotate   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes beamSway     { from{transform:skewX(-6deg) translateX(-30px)} to{transform:skewX(6deg) translateX(30px)} }
+@keyframes skelPulse    { 0%,100%{background-color:var(--h-surf)} 50%{background-color:rgba(200,168,75,.05)} }
+@keyframes phoneFloat   { 0%,100%{transform:translateY(0) rotateY(-3deg) rotateX(1.5deg)} 50%{transform:translateY(-16px) rotateY(3deg) rotateX(-1.5deg)} }
+@keyframes orbitRotate1 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes orbitRotate2 { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+@keyframes forgePulse   { 0%,100%{opacity:.08;transform:scale(1)} 50%{opacity:.18;transform:scale(1.06)} }
+@keyframes emberDrift1  { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(60px,-40px) scale(1.3)} }
+@keyframes emberDrift2  { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,-30px) scale(0.8)} }
+@keyframes emberDrift3  { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,50px) scale(1.15)} }
+@keyframes cgHoleAnim   { 0%,100%{opacity:.35} 50%{opacity:.65} }
+@keyframes glareSlide   { 0%{transform:translateX(-200%) skewX(-18deg)} 100%{transform:translateX(300%) skewX(-18deg)} }
+@keyframes forgeScanline { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
 
 .wrap { width:76%; max-width:1280px; margin:0 auto; }
 .sec  { padding:clamp(88px,8vw,130px) 0; border:.5px solid var(--h-hair); position:relative; overflow:hidden; background:var(--h-void); }
@@ -1563,11 +1356,7 @@ onUnmounted(() => {
 .home .eyebrow { color:var(--h-gold) !important; -webkit-text-fill-color:var(--h-gold) !important; }
 .heading    { font-family:'Cormorant Garamond',serif; font-size:clamp(1.9rem,3.6vw,3.5rem); font-weight:300; color:var(--h-text); margin:0; line-height:1.06; }
 .heading em { font-style:italic; color:var(--h-gold); }
-.sec__grid-bg {
-  position:absolute; inset:0;
-  background-image:linear-gradient(rgba(200,168,75,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,168,75,.022) 1px,transparent 1px);
-  background-size:80px 80px; pointer-events:none;
-}
+.sec__grid-bg { position:absolute; inset:0; background-image:linear-gradient(rgba(200,168,75,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,168,75,.022) 1px,transparent 1px); background-size:80px 80px; pointer-events:none; }
 
 .hero-bridge { position:relative; height:140px; margin-top:-140px; background:linear-gradient(to bottom,transparent 0%,rgba(5,5,12,.0) 35%,rgba(5,5,12,.3) 70%,var(--h-void) 100%); z-index:5; pointer-events:none; display:flex; align-items:center; justify-content:center; }
 .bridge__ornament { position:relative; z-index:1; display:flex; align-items:center; gap:14px; }
@@ -1580,12 +1369,10 @@ onUnmounted(() => {
 .ticker__set  { display:inline-flex; align-items:center; }
 .ticker__item { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.4em; text-transform:uppercase; color:var(--h-text3); padding:0 32px; flex-shrink:0; }
 .ticker__sep  { color:var(--h-gold); font-size:5px; opacity:.5; flex-shrink:0; }
-.ticker--gamer .ticker__item { color:rgba(200,80,20,.6); }
-.ticker--gamer .ticker__sep  { color:rgba(200,80,20,.45); }
 
 .sec--pillars { border-top:none; }
 .pillars { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-left:.5px solid var(--h-hair); border-top:.5px solid var(--h-hair); }
-.pillar { padding:48px 32px; border-right:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); position:relative; overflow:hidden; transition:background .5s; transform-style:preserve-3d; perspective:800px; }
+.pillar { padding:48px 32px; border-right:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); position:relative; overflow:hidden; transition:background .5s; }
 .pillar__glow { position:absolute; bottom:-60px; left:50%; transform:translateX(-50%); width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(var(--realm-accent-rgb),.14),transparent 70%); opacity:0; transition:opacity .5s; pointer-events:none; }
 .pillar:hover { background:rgba(var(--realm-accent-rgb),.025); }
 .pillar:hover .pillar__glow { opacity:1; }
@@ -1598,7 +1385,7 @@ onUnmounted(() => {
 .pillar__kanji { position:absolute; right:10px; top:8px; font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--h-gold); opacity:.06; pointer-events:none; line-height:1; transition:opacity .5s,transform .5s; animation:kanjiPulse 7s ease-in-out infinite; }
 .pillar:hover .pillar__kanji { opacity:.22; transform:scale(1.08); }
 .pillar__index { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.2em; color:var(--h-gold); opacity:.3; margin-bottom:22px; }
-.pillar__icon  { color:var(--h-gold); margin-bottom:18px; opacity:.65; transition:opacity .3s,transform .4s; transform-style:preserve-3d; }
+.pillar__icon  { color:var(--h-gold); margin-bottom:18px; opacity:.65; transition:opacity .3s; }
 .pillar:hover .pillar__icon { opacity:1; }
 .pillar__title { font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--h-text); margin:0 0 12px; }
 .pillar__desc  { font-size:12px; color:var(--h-text3); line-height:1.9; margin:0 0 26px; }
@@ -1630,38 +1417,166 @@ onUnmounted(() => {
 .manifesto__link { display:inline-flex; align-items:center; gap:10px; font-size:9px; font-weight:600; letter-spacing:.4em; text-transform:uppercase; color:var(--h-text3); text-decoration:none; border-bottom:.5px solid var(--h-hair); padding-bottom:6px; align-self:flex-start; transition:color .3s,border-color .3s,gap .3s; }
 .manifesto__link:hover { color:var(--h-gold); border-color:var(--h-gold); gap:16px; }
 
-.sec--gallery { overflow:visible; }
-.gallery-mosaic { display:grid; grid-template-columns:2fr 1fr 1fr; grid-template-rows:300px 220px; gap:2px; }
-.gal-item { position:relative; overflow:hidden; cursor:pointer; background:var(--h-surf); }
-.gal-item--0 { grid-row:1/3; }
-.gal-item__inner { position:absolute; inset:0; background-size:cover; background-position:center; transition:transform .7s var(--ease),filter .6s; }
-.gal-item:hover .gal-item__inner { transform:scale(1.05); filter:brightness(1.15) saturate(1.1); }
-.gal-item__art { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
-.gal-phone { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:110px; transition:transform .7s var(--ease); }
-.gal-item--0:hover .gal-phone { transform:translate(-50%,-58%) scale(1.04); }
-.gal-phone__body { background:linear-gradient(160deg,rgba(200,168,75,.35),rgba(200,168,75,.1)); border-radius:24px; padding:2px; box-shadow:0 24px 48px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2); }
-.gal-phone__screen { background:#080810; border-radius:22px; padding:8px; min-height:180px; display:flex; flex-direction:column; gap:6px; position:relative; overflow:hidden; }
-.gal-phone__island { width:40px; height:14px; background:#000; border-radius:0 0 10px 10px; margin:0 auto 4px; }
-.gal-phone__badge  { font-size:5px; letter-spacing:.4em; color:rgba(200,168,75,.8); background:rgba(200,168,75,.08); border:.5px solid rgba(200,168,75,.2); padding:2px 5px; align-self:flex-start; }
-.gal-phone__line   { height:5px; border-radius:3px; background:rgba(200,168,75,.1); }
-.gal-phone__chips  { display:flex; gap:4px; }
-.gal-phone__chip   { flex:1; height:14px; border-radius:3px; background:rgba(200,168,75,.04); border:.5px solid rgba(200,168,75,.08); }
-.gal-phone__shine  { position:absolute; top:10%; right:0; width:2px; height:30%; background:linear-gradient(to bottom,transparent,rgba(255,255,255,.25),transparent); border-radius:1px; }
-.gal-item__overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(5,5,12,.9) 0%,rgba(5,5,12,.2) 50%,transparent 100%); z-index:1; }
-.gal-item__grain { position:absolute; inset:0; z-index:2; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"); mix-blend-mode:overlay; }
-.gal-item__num { position:absolute; top:12px; left:14px; z-index:3; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.25em; color:rgba(200,168,75,.4); }
-.gal-item__tag { position:absolute; top:12px; right:14px; z-index:3; font-size:7px; letter-spacing:.3em; text-transform:uppercase; color:var(--h-gold); border:.5px solid rgba(200,168,75,.4); background:rgba(200,168,75,.07); padding:3px 9px; transition:transform .4s var(--ease); }
-.gal-item:hover .gal-item__tag { transform:translateY(3px); }
-.gal-item__info { position:absolute; bottom:0; left:0; right:0; z-index:3; padding:14px 16px; transform:translateY(6px); opacity:0; transition:transform .45s var(--ease),opacity .35s; }
-.gal-item:hover .gal-item__info { transform:translateY(0); opacity:1; }
-.gal-item__label { font-size:9px; letter-spacing:.35em; text-transform:uppercase; color:rgba(237,232,224,.8); margin-bottom:4px; }
-.gal-item__price { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:300; color:var(--h-gold); }
+/* ══════════════════════════════════════
+   04 — GALERIA CINEMATOGRÁFICA
+══════════════════════════════════════ */
+.sec--cinegallery {
+  padding:clamp(60px,6vw,100px) 0;
+  overflow:hidden;
+  background:var(--h-void);
+  position:relative;
+}
 
+/* Film strip holes laterais */
+.cg__filmstrip {
+  position:absolute; top:0; bottom:0; left:0;
+  display:flex; flex-direction:column; justify-content:space-around;
+  padding:24px 0; pointer-events:none; z-index:2; width:28px;
+}
+.cg__filmstrip--r { left:auto; right:0; }
+.cg__hole {
+  width:12px; height:12px; margin:0 8px;
+  border-radius:2px; border:.5px solid rgba(200,168,75,.18);
+  background:rgba(200,168,75,.04);
+  animation:cgHoleAnim 3s ease-in-out infinite;
+}
+.cg__hole:nth-child(even) { animation-delay:.5s; }
+
+.cg__head {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  padding:0 clamp(36px,5vw,80px) 40px;
+  max-width:1400px; margin:0 auto;
+}
+.cg__head-left { display:flex; align-items:flex-start; gap:28px; }
+.cg__head-scroll { display:flex; align-items:center; gap:14px; }
+.cg__scroll-text { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-style:italic; color:var(--h-gold); opacity:.3; line-height:1; }
+.cg__scroll-line { width:48px; height:.5px; background:linear-gradient(to right,var(--h-gold),transparent); opacity:.3; }
+.cg__scroll-label { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.35em; text-transform:uppercase; color:var(--h-text3); }
+
+/* REEL de frames */
+.cg__reel-wrap { overflow:hidden; padding:0 28px; }
+.cg__reel {
+  display:flex; gap:16px;
+  padding:20px clamp(20px,4vw,60px) 36px;
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none; cursor:grab;
+}
+.cg__reel:active { cursor:grabbing; }
+.cg__reel::-webkit-scrollbar { display:none; }
+
+/* Frame individual — proporção de filme */
+.cg__frame {
+  flex-shrink:0;
+  width:clamp(240px,28vw,340px);
+  height:clamp(360px,42vw,520px);
+  scroll-snap-align:start;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+  border:.5px solid rgba(200,168,75,.1);
+  transition:
+    border-color .5s var(--ease),
+    transform .6s var(--ease);
+}
+.cg__frame::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:.5px;
+  background:linear-gradient(90deg,transparent,var(--h-gold),transparent);
+  opacity:0; transition:opacity .4s;
+}
+.cg__frame:hover { border-color:rgba(200,168,75,.35); transform:translateY(-8px) scale(1.015); }
+.cg__frame:hover::before { opacity:.8; }
+.cg__frame.is-active { border-color:rgba(200,168,75,.5); }
+
+/* Background gradiente */
+.cg__frame-bg { position:absolute; inset:0; }
+
+/* Arte SVG */
+.cg__frame-art {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  opacity:.9; transition:opacity .4s, transform .7s var(--ease);
+}
+.cg__frame:hover .cg__frame-art { opacity:1; transform:scale(1.04); }
+
+/* Número de filme */
+.cg__frame-num {
+  position:absolute; top:16px; left:18px; z-index:3;
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.35em;
+  color:rgba(200,168,75,.45);
+  display:flex; align-items:center; gap:6px;
+}
+.cg__frame-num::before {
+  content:''; display:block;
+  width:16px; height:.5px;
+  background:rgba(200,168,75,.35);
+}
+
+/* Tag de categoria */
+.cg__frame-tag {
+  position:absolute; top:16px; right:18px; z-index:3;
+  font-size:7px; letter-spacing:.35em; text-transform:uppercase;
+  color:var(--h-gold);
+  border:.5px solid rgba(200,168,75,.35);
+  background:rgba(200,168,75,.07);
+  padding:4px 10px;
+  backdrop-filter:blur(4px);
+  transition:transform .4s var(--ease);
+}
+.cg__frame:hover .cg__frame-tag { transform:translateY(-2px); }
+
+/* Painel info — sobe no hover */
+.cg__frame-info {
+  position:absolute; bottom:0; left:0; right:0; z-index:3;
+  padding:0 20px 24px;
+  background:linear-gradient(to top,rgba(5,5,12,.95) 0%,rgba(5,5,12,.6) 60%,transparent 100%);
+  transform:translateY(12px);
+  opacity:0;
+  transition:transform .5s var(--ease), opacity .4s;
+}
+.cg__frame:hover .cg__frame-info { transform:translateY(0); opacity:1; }
+.cg__info-bar { width:24px; height:.5px; background:var(--h-gold); opacity:.6; margin-bottom:12px; }
+.cg__info-label { font-size:10px; letter-spacing:.25em; text-transform:uppercase; color:rgba(237,232,224,.75); margin-bottom:6px; }
+.cg__info-price { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:300; color:var(--h-gold); margin-bottom:14px; }
+.cg__info-cta { display:inline-flex; align-items:center; gap:8px; font-size:8px; letter-spacing:.35em; text-transform:uppercase; color:var(--h-gold); opacity:.75; transition:opacity .25s, gap .3s; }
+.cg__info-cta:hover { opacity:1; gap:14px; }
+
+/* Grain overlay */
+.cg__frame-grain {
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+/* Glare lateral que passa no hover */
+.cg__frame-glare {
+  position:absolute; inset:0; z-index:4;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.06) 50%,transparent 70%);
+  transform:translateX(-200%) skewX(-18deg);
+  pointer-events:none;
+}
+.cg__frame:hover .cg__frame-glare {
+  animation:glareSlide .7s var(--ease) forwards;
+}
+
+/* Indicadores */
+.cg__indicators {
+  display:flex; justify-content:center; gap:8px;
+  padding:0 0 8px;
+}
+.cg__dot {
+  width:16px; height:2px;
+  background:var(--h-hair);
+  border-radius:1px;
+  transition:width .4s var(--ease), background .3s;
+}
+.cg__dot.is-active { width:28px; background:var(--h-gold); }
+
+/* ══ ORIENTAL DIVIDER ══ */
 .oriental-divider { position:relative; display:flex; align-items:center; justify-content:center; padding:44px 12%; background:var(--h-void); border-top:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); gap:16px; }
 .od-line { flex:1; max-width:180px; height:.5px; background:linear-gradient(to right,transparent,var(--h-hairH)); }
 .od-line--r { background:linear-gradient(to left,transparent,var(--h-hairH)); }
 .od-gem { font-size:5px; color:var(--h-gold); opacity:.45; }
-.od-mon { width:56px; height:56px; border-radius:50%; border:.5px solid var(--h-hairH); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-style:italic; color:var(--h-gold); opacity:.65; margin:0 10px; position:relative; transform-style:preserve-3d; }
+.od-mon { width:56px; height:56px; border-radius:50%; border:.5px solid var(--h-hairH); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-style:italic; color:var(--h-gold); opacity:.65; margin:0 10px; position:relative; }
 .od-mon::before { content:''; position:absolute; inset:4px; border-radius:50%; border:.5px solid var(--h-hair); }
 .od-mini-line { width:24px; height:.5px; background:var(--h-hairH); opacity:.4; }
 .od-center { display:flex; align-items:center; justify-content:center; }
@@ -1670,6 +1585,7 @@ onUnmounted(() => {
 .od-ring--1 { width:72px; height:72px; animation:ringRotate 18s linear infinite; }
 .od-ring--2 { width:90px; height:90px; animation:ringRotate 30s linear infinite reverse; }
 
+/* ══ TECH ══ */
 .tech-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-left:.5px solid var(--h-hair); border-top:.5px solid var(--h-hair); }
 .tech-card { padding:48px 32px 40px; border-right:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); position:relative; overflow:hidden; transition:background .4s; transform-style:preserve-3d; perspective:600px; cursor:default; }
 .tech-card__beam { position:absolute; top:0; left:50%; transform:translateX(-50%); width:1px; height:0; background:linear-gradient(to bottom,var(--h-gold),transparent); opacity:0; transition:height .6s var(--ease),opacity .4s; }
@@ -1685,6 +1601,7 @@ onUnmounted(() => {
 .tech-card__bar  { height:.5px; width:0; background:linear-gradient(to right,var(--h-gold),transparent); transition:width .6s var(--ease); }
 .tech-card:hover .tech-card__bar { width:60%; }
 
+/* ══ MATERIAIS ══ */
 .sec--materials { padding-bottom:0; }
 .materials { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:.5px solid var(--h-hair); border-left:.5px solid var(--h-hair); }
 .mat { padding:52px 40px; border-right:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); display:flex; flex-direction:column; gap:13px; position:relative; overflow:hidden; transition:background .4s; }
@@ -1693,7 +1610,7 @@ onUnmounted(() => {
 .mat:hover::before { opacity:.5; }
 .mat__abbr { position:absolute; top:14px; right:20px; font-family:'Cormorant Garamond',serif; font-size:3.8rem; font-style:italic; font-weight:300; color:var(--h-gold); opacity:.1; line-height:1; pointer-events:none; transition:opacity .4s,transform .4s; }
 .mat:hover .mat__abbr { opacity:.22; transform:scale(1.1); }
-.mat__icon { color:var(--h-gold); opacity:.55; transition:opacity .3s,transform .5s; transform-style:preserve-3d; }
+.mat__icon { color:var(--h-gold); opacity:.55; }
 .mat:hover .mat__icon { opacity:.9; }
 .mat__title { font-size:10px; letter-spacing:.25em; text-transform:uppercase; font-weight:700; color:var(--h-text2); }
 .mat__desc  { font-size:12px; color:var(--h-text3); line-height:1.85; }
@@ -1704,51 +1621,403 @@ onUnmounted(() => {
 .mat__progress-fill { height:100%; width:0; background:linear-gradient(to right,var(--h-gold),transparent); transition:width .8s var(--ease); }
 .mat:hover .mat__progress-fill { width:100%; }
 
-.config { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
-.config__opts { display:flex; flex-direction:column; gap:28px; }
-.cfg-group { display:flex; flex-direction:column; gap:11px; }
-.cfg-label { font-size:7px; letter-spacing:.55em; text-transform:uppercase; color:var(--h-gold); opacity:.6; }
-.cfg-row   { display:flex; gap:8px; flex-wrap:wrap; }
-.cfg-row--swatches { align-items:center; }
-.cfg-btn { padding:8px 18px; border:.5px solid var(--h-hair); background:transparent; color:var(--h-text3); font-family:'Syne',sans-serif; font-size:9px; letter-spacing:.18em; text-transform:uppercase; font-weight:600; cursor:pointer; transition:all .3s; }
-.cfg-btn:hover { border-color:var(--h-gold); color:var(--h-gold); }
-.cfg-btn.is-active { background:var(--h-gold); color:var(--h-void); border-color:transparent; }
-.cfg-swatch { width:26px; height:26px; border-radius:50%; border:1.5px solid transparent; cursor:pointer; transition:transform .25s,border-color .25s; }
-.cfg-swatch:hover { transform:scale(1.15); }
-.cfg-swatch.is-active { border-color:var(--h-gold); box-shadow:0 0 0 3px rgba(200,168,75,.2); }
-.cfg-sel { font-size:9px; letter-spacing:.2em; color:var(--h-gold); text-transform:uppercase; }
-.cfg-fade-enter-active,.cfg-fade-leave-active { transition:opacity .2s,transform .2s; }
-.cfg-fade-enter-from,.cfg-fade-leave-to { opacity:0; transform:translateY(4px); }
-.cfg-price { display:flex; flex-direction:column; gap:5px; padding:22px 0; border-top:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); }
-.cfg-price__label { font-size:7px; letter-spacing:.45em; text-transform:uppercase; color:var(--h-text3); }
-.cfg-price__val   { font-family:'Cormorant Garamond',serif; font-size:2.6rem; font-weight:300; color:var(--h-text); line-height:1.1; }
-.cfg-price__inst  { font-size:10px; color:var(--h-text3); }
-.cfg-cta { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; border:.5px solid var(--h-gold); color:var(--h-gold); text-decoration:none; font-size:8px; font-weight:700; letter-spacing:.45em; text-transform:uppercase; position:relative; overflow:hidden; align-self:flex-start; transition:color .45s var(--ease); }
-.cfg-cta__fill { position:absolute; inset:0; background:var(--h-gold); transform:translateX(-101%) skewX(-8deg); transform-origin:left; transition:transform .55s var(--ease); z-index:0; }
-.cfg-cta:hover .cfg-cta__fill { transform:translateX(0) skewX(0deg); }
-.cfg-cta:hover { color:var(--h-void); }
-.cfg-cta span:last-of-type,.cfg-cta svg { position:relative; z-index:1; }
+/* ══════════════════════════════════════
+   07 — FORGE (CONFIGURADOR)
+══════════════════════════════════════ */
+.sec--forge {
+  padding:clamp(88px,8vw,130px) 0;
+  border:.5px solid var(--h-hair);
+  background:var(--h-void);
+  position:relative;
+  overflow:hidden;
+}
 
-.config__preview { position:relative; display:flex; flex-direction:column; align-items:center; gap:26px; perspective:1200px; }
-.phone-scene { transform-style:preserve-3d; animation:phoneFloat 5s ease-in-out infinite; }
-.phone { width:180px; background:linear-gradient(160deg,var(--metal),color-mix(in srgb,var(--metal) 60%,#fff 40%),var(--metal)); padding:3px; border-radius:36px; box-shadow:0 48px 96px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.3),0 0 60px rgba(200,168,75,.06); transition:background .5s; }
-.phone__body   { width:100%; background:#05050c; border-radius:34px; overflow:hidden; display:flex; flex-direction:column; min-height:360px; position:relative; }
-.phone__island { width:66px; height:24px; background:#000; border-radius:0 0 18px 18px; margin:0 auto; flex-shrink:0; }
-.phone__hud    { padding:5px 14px; display:flex; justify-content:space-between; flex-shrink:0; }
-.phone__time   { font-size:9px; font-weight:700; color:rgba(237,232,224,.5); }
-.phone__screen { flex:1; padding:8px 12px 12px; display:flex; flex-direction:column; gap:8px; }
-.phone__badge  { font-size:7px; letter-spacing:.4em; font-weight:800; color:var(--h-gold); background:rgba(200,168,75,.08); border:.5px solid rgba(200,168,75,.14); padding:4px 10px; align-self:flex-start; }
-.phone__lines  { display:flex; flex-direction:column; gap:5px; }
-.phone__line   { height:7px; border-radius:3px; background:rgba(200,168,75,.1); }
-.phone__chips  { display:flex; gap:6px; margin:4px 0; }
-.phone__chip   { flex:1; height:20px; border-radius:5px; background:rgba(200,168,75,.04); border:.5px solid rgba(200,168,75,.1); }
-.phone__price-row { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
-.phone__add    { width:22px; height:22px; border-radius:50%; background:var(--h-gold); color:#05050c; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-.phone__bar    { width:76px; height:4px; border-radius:2px; background:rgba(255,255,255,.15); margin:0 auto 10px; flex-shrink:0; }
-.phone__shine  { position:absolute; top:10%; right:0; width:3px; height:35%; background:linear-gradient(to bottom,transparent,rgba(255,255,255,.3),transparent); border-radius:2px; }
-.preview__tag  { font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--h-text3); text-align:center; }
-.preview__glow { position:absolute; width:280px; height:280px; border-radius:50%; filter:blur(80px); opacity:.15; pointer-events:none; z-index:0; bottom:-60px; transition:background .5s; }
+/* Fundo atmosférico */
+.forge__ambient {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+}
+.forge__ember {
+  position:absolute; border-radius:50%;
+  filter:blur(120px); pointer-events:none;
+}
+.forge__ember--1 { width:500px; height:500px; top:-100px; right:-80px; background:radial-gradient(circle,rgba(200,168,75,.08),transparent 70%); animation:emberDrift1 16s ease-in-out infinite; }
+.forge__ember--2 { width:400px; height:400px; bottom:0; left:-60px; background:radial-gradient(circle,rgba(200,168,75,.05),transparent 70%); animation:emberDrift2 20s ease-in-out infinite; }
+.forge__ember--3 { width:300px; height:300px; top:50%; left:40%; background:radial-gradient(circle,rgba(200,168,75,.04),transparent 70%); animation:emberDrift3 12s ease-in-out infinite; }
+.forge__grid-lines {
+  position:absolute; inset:0;
+  background-image:linear-gradient(rgba(200,168,75,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,168,75,.018) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.forge__particles { position:absolute; inset:0; width:100%; height:100%; }
 
+.forge__layout {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+  position:relative; z-index:1;
+}
+
+/* ── STAGE (painel esquerdo preview) ── */
+.forge__stage {
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:640px;
+  perspective:1400px;
+}
+
+/* Scanlines hologramáticas */
+.forge__scanlines {
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 5px,
+    rgba(200,168,75,.012) 5px,
+    rgba(200,168,75,.012) 6px
+  );
+  animation:forgeScanline 8s linear infinite;
+  opacity:.5;
+}
+
+/* Anel orbital */
+.forge__orbit {
+  position:absolute; inset:0; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+}
+.forge__orbit-ring {
+  position:absolute; border-radius:50%;
+  border:.5px solid rgba(200,168,75,.12);
+}
+.forge__orbit-ring--1 { width:380px; height:380px; animation:orbitRotate1 24s linear infinite; }
+.forge__orbit-ring--2 { width:440px; height:440px; animation:orbitRotate2 36s linear infinite; border-style:dashed; border-color:rgba(200,168,75,.07); }
+.forge__orbit-dot {
+  position:absolute;
+  width:4px; height:4px; border-radius:50%;
+  background:var(--h-gold);
+  opacity:.4;
+  /* distribuídos em círculo */
+  transform:
+    rotate(calc(var(--dn) * 60deg))
+    translateX(190px)
+    rotate(calc(var(--dn) * -60deg));
+  animation:monPulse 3s ease-in-out infinite;
+  animation-delay: calc(var(--dn) * 0.5s);
+}
+
+/* Dispositivo */
+.forge__device-wrap {
+  position:relative;
+  transform-style:preserve-3d;
+  animation:phoneFloat 5.5s ease-in-out infinite;
+  z-index:2;
+}
+.forge__device-wrap:hover { animation-play-state:paused; }
+
+.forge__device {
+  width:clamp(150px,16vw,200px);
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--metal, #C8A84B) 80%, white 20%) 0%,
+      var(--metal, #C8A84B) 40%,
+      color-mix(in srgb, var(--metal, #C8A84B) 70%, black 30%) 100%
+    );
+  padding:3px;
+  border-radius:38px;
+  box-shadow:
+    0 60px 120px rgba(0,0,0,.85),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    0 0 80px rgba(200,168,75,.08);
+  transition:background .6s;
+}
+.forge__device-shine {
+  position:absolute; top:0; right:0;
+  width:3px; height:40%;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.35),transparent);
+  border-radius:2px;
+  z-index:10; pointer-events:none;
+}
+.forge__device-body {
+  background:#05050c;
+  border-radius:36px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:clamp(320px,36vw,420px);
+  position:relative;
+}
+.forge__device-island { width:72px; height:26px; background:#000; border-radius:0 0 18px 18px; margin:0 auto; flex-shrink:0; }
+.forge__device-hud { padding:6px 16px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.forge__device-time { font-family:'DM Mono',monospace; font-size:9px; font-weight:700; color:rgba(237,232,224,.45); }
+.forge__device-model { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.2em; color:rgba(200,168,75,.35); }
+.forge__device-screen { flex:1; padding:8px 14px 14px; display:flex; flex-direction:column; gap:10px; }
+.forge__device-badge { font-size:7px; letter-spacing:.45em; font-weight:800; color:var(--h-gold); background:rgba(200,168,75,.08); border:.5px solid rgba(200,168,75,.15); padding:4px 10px; align-self:flex-start; }
+.forge__device-lines { display:flex; flex-direction:column; gap:5px; }
+.forge__device-line { height:6px; border-radius:3px; background:rgba(200,168,75,.1); }
+
+/* Especificações no ecrã */
+.forge__device-specs { display:flex; gap:6px; flex-wrap:wrap; }
+.forge__spec-chip {
+  flex:1; min-width:60px;
+  background:rgba(200,168,75,.04);
+  border:.5px solid rgba(200,168,75,.1);
+  padding:6px 8px;
+  display:flex; flex-direction:column; gap:2px;
+}
+.forge__spec-val { font-family:'DM Mono',monospace; font-size:8px; color:var(--h-gold); letter-spacing:.05em; }
+.forge__spec-k   { font-size:6px; letter-spacing:.3em; text-transform:uppercase; color:rgba(237,232,224,.25); }
+
+.forge__device-price-row { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+.forge__device-pval { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--h-gold); font-style:italic; }
+.forge__device-add { width:22px; height:22px; border-radius:50%; background:var(--h-gold); color:#05050c; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.forge__device-bar { width:76px; height:4px; border-radius:2px; background:rgba(255,255,255,.15); margin:0 auto 10px; flex-shrink:0; }
+
+/* Sombra projetada */
+.forge__device-shadow {
+  position:absolute; bottom:-40px; left:50%; transform:translateX(-50%);
+  width:200px; height:60px;
+  border-radius:50%;
+  filter:blur(28px);
+  opacity:.35;
+  pointer-events:none;
+  transition:background .5s;
+}
+
+/* Tag flutuante de material */
+.forge__material-tag {
+  position:absolute; bottom:-60px; left:50%; transform:translateX(-50%);
+  display:inline-flex; align-items:center; gap:8px;
+  border:.5px solid transparent;
+  background:rgba(5,5,12,.75);
+  backdrop-filter:blur(8px);
+  padding:7px 16px;
+  font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--h-text3);
+  transition:border-color .4s, opacity .4s;
+  white-space:nowrap;
+  z-index:3;
+}
+.forge__mt-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; transition:background .4s; }
+.forge__mt-sep { color:var(--h-text3); opacity:.4; }
+
+/* Glow pulsante */
+.forge__glow-ambient {
+  position:absolute; width:340px; height:340px;
+  border-radius:50%; filter:blur(100px);
+  opacity:.12; pointer-events:none;
+  transition:background .6s;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation:forgePulse 5s ease-in-out infinite;
+}
+
+/* ── CONTROLS (painel direito) ── */
+.forge__controls {
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+  position:relative; z-index:1;
+}
+
+.forge__group { display:flex; flex-direction:column; gap:14px; }
+.forge__group--half { gap:10px; }
+.forge__group-row { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+
+.forge__group-header {
+  display:flex; align-items:center; gap:12px;
+  padding-bottom:10px;
+  border-bottom:.5px solid var(--h-hair);
+}
+.forge__group-kanji {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem; font-style:italic; font-weight:300;
+  color:var(--h-gold); opacity:.3; line-height:1; flex-shrink:0;
+  transition:opacity .3s;
+}
+.forge__group:hover .forge__group-kanji { opacity:.6; }
+.forge__group-label {
+  font-family:'DM Mono',monospace;
+  font-size:7px; letter-spacing:.5em; text-transform:uppercase;
+  color:var(--h-text3); flex:1;
+}
+.forge__group-num {
+  font-family:'DM Mono',monospace;
+  font-size:8px; letter-spacing:.2em;
+  color:var(--h-gold); opacity:.25;
+}
+
+/* Modelos */
+.forge__models { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.forge__model-btn {
+  display:flex; flex-direction:column; align-items:flex-start; gap:5px;
+  padding:12px 14px;
+  background:transparent;
+  border:.5px solid var(--h-hair);
+  color:var(--h-text3);
+  cursor:pointer;
+  transition:all .3s var(--ease);
+  position:relative; overflow:hidden;
+}
+.forge__model-btn::before {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:.5px;
+  background:var(--h-gold); transform:scaleX(0); transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.forge__model-btn:hover { border-color:var(--h-hairH); color:var(--h-text2); }
+.forge__model-btn:hover::before { transform:scaleX(1); }
+.forge__model-btn.is-active {
+  background:rgba(var(--realm-accent-rgb),.06);
+  border-color:var(--h-gold);
+  color:var(--h-text);
+}
+.forge__model-btn.is-active::before { transform:scaleX(1); }
+.forge__model-icon { color:var(--h-gold); opacity:.5; transition:opacity .3s; }
+.forge__model-btn.is-active .forge__model-icon,
+.forge__model-btn:hover .forge__model-icon { opacity:.9; }
+.forge__model-name { font-family:'Syne',sans-serif; font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:inherit; }
+.forge__model-base { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.08em; color:var(--h-gold); opacity:.5; }
+.forge__model-btn.is-active .forge__model-base { opacity:.85; }
+
+/* Acabamentos */
+.forge__finishes { display:flex; flex-direction:column; gap:7px; }
+.forge__finish-btn {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 14px;
+  background:transparent;
+  border:.5px solid var(--h-hair);
+  cursor:pointer;
+  transition:all .3s;
+  position:relative;
+}
+.forge__finish-btn::after {
+  content:'';
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  width:6px; height:6px; border-radius:50%;
+  background:var(--h-gold); opacity:0;
+  transition:opacity .3s;
+}
+.forge__finish-btn:hover { border-color:var(--h-hairH); }
+.forge__finish-btn.is-active { border-color:var(--h-gold); background:rgba(var(--realm-accent-rgb),.04); }
+.forge__finish-btn.is-active::after { opacity:.8; }
+.forge__finish-orb {
+  width:22px; height:22px; border-radius:50%; flex-shrink:0;
+  box-shadow:inset 0 2px 4px rgba(255,255,255,.2), 0 2px 8px rgba(0,0,0,.4);
+  border:.5px solid rgba(255,255,255,.15);
+}
+.forge__finish-name { font-family:'Syne',sans-serif; font-size:10px; font-weight:500; letter-spacing:.1em; color:var(--h-text2); flex:1; text-align:left; }
+.forge__finish-add { font-family:'DM Mono',monospace; font-size:8px; color:var(--h-gold); opacity:.5; }
+.forge__finish-btn.is-active .forge__finish-name { color:var(--h-text); }
+
+/* Pills */
+.forge__pills { display:flex; gap:6px; flex-wrap:wrap; }
+.forge__pill {
+  padding:6px 12px;
+  background:transparent;
+  border:.5px solid var(--h-hair);
+  color:var(--h-text3);
+  font-family:'DM Mono',monospace;
+  font-size:9px; letter-spacing:.15em;
+  cursor:pointer;
+  transition:all .25s;
+}
+.forge__pill:hover { border-color:var(--h-hairH); color:var(--h-text2); }
+.forge__pill.is-active { background:var(--h-gold); color:var(--h-void); border-color:transparent; }
+
+/* Price block */
+.forge__price-block {
+  padding:24px;
+  border:.5px solid var(--h-hair);
+  position:relative; overflow:hidden;
+  background:rgba(200,168,75,.025);
+}
+.forge__price-block::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:.5px;
+  background:linear-gradient(90deg,var(--h-gold),transparent);
+  opacity:.5;
+}
+.forge__price-label {
+  font-family:'DM Mono',monospace;
+  font-size:7px; letter-spacing:.5em; text-transform:uppercase;
+  color:var(--h-text3); margin-bottom:10px;
+}
+.forge__price-main {
+  display:flex; align-items:baseline; gap:6px;
+  margin-bottom:8px;
+}
+.forge__price-currency {
+  font-family:'DM Mono',monospace;
+  font-size:14px; color:var(--h-gold); opacity:.55;
+}
+.forge__price-val {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,4vw,2.8rem); font-weight:300;
+  color:var(--h-text); line-height:1;
+}
+.forge__price-inst {
+  font-size:10px; color:var(--h-text3);
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:18px;
+}
+.forge__price-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--h-gold); opacity:.5;
+  animation:monPulse 2.5s ease-in-out infinite;
+}
+
+/* Breakdown de preço */
+.forge__price-breakdown { display:flex; flex-direction:column; gap:8px; }
+.forge__price-bd-item { display:flex; align-items:center; gap:10px; }
+.forge__price-bd-label {
+  font-family:'DM Mono',monospace;
+  font-size:7px; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--h-text3); width:90px; flex-shrink:0;
+}
+.forge__price-bd-line { height:1.5px; border-radius:1px; transition:width .6s var(--ease); min-width:4px; }
+.forge__price-bd-val {
+  font-family:'DM Mono',monospace;
+  font-size:8px; letter-spacing:.08em;
+  color:var(--h-text3); margin-left:auto; flex-shrink:0;
+}
+
+/* CTA */
+.forge__cta {
+  display:inline-flex; align-items:center; gap:12px;
+  padding:16px 32px;
+  border:.5px solid var(--h-gold);
+  color:var(--h-gold);
+  text-decoration:none;
+  font-family:'Syne',sans-serif;
+  font-size:8px; font-weight:700; letter-spacing:.5em; text-transform:uppercase;
+  position:relative; overflow:hidden;
+  transition:color .45s var(--ease);
+}
+.forge__cta-fill {
+  position:absolute; inset:0;
+  background:var(--h-gold);
+  transform:translateX(-101%) skewX(-8deg);
+  transform-origin:left;
+  transition:transform .55s var(--ease);
+  z-index:0;
+}
+.forge__cta:hover .forge__cta-fill { transform:translateX(0) skewX(0deg); }
+.forge__cta:hover { color:var(--h-void); }
+.forge__cta-text, .forge__cta svg { position:relative; z-index:1; }
+.forge__cta-kanji {
+  position:relative; z-index:1;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem; font-style:italic;
+  color:var(--h-gold); opacity:.35;
+  margin-left:auto;
+  transition:opacity .3s;
+}
+.forge__cta:hover .forge__cta-kanji { color:var(--h-void); opacity:.5; }
+
+/* ══ PRODUTOS ══ */
 .shop-head { display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:30px; border-bottom:.5px solid var(--h-hair); }
 .shop-head__left { display:flex; align-items:flex-start; gap:26px; }
 .shop-head__ctrl { display:flex; align-items:center; gap:18px; }
@@ -1796,6 +2065,7 @@ onUnmounted(() => {
 .prod-card__info .skel-line { height:9px; border-radius:2px; background:var(--h-hair); margin-bottom:6px; }
 .skel-line--sm { width:50%; }
 
+/* ══ PORTAL ══ */
 .sec--exclus { min-height:72vh; display:flex; align-items:center; justify-content:center; text-align:center; position:relative; overflow:hidden; background:#000 !important; border-top:none; border-bottom:.5px solid var(--h-hair); }
 .portal__sakura { position:absolute; inset:0; z-index:1; pointer-events:none; width:100%; height:100%; }
 .portal__seigaiha { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
@@ -1828,6 +2098,7 @@ onUnmounted(() => {
 .exclus__btn:hover .exclus__btn-fill { transform:scaleX(1); }
 .exclus__btn:hover { color:#05050c; }
 
+/* ══ REVIEWS ══ */
 .reviews { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-left:.5px solid var(--h-hair); border-top:.5px solid var(--h-hair); }
 .review { padding:48px 36px; border-right:.5px solid var(--h-hair); border-bottom:.5px solid var(--h-hair); position:relative; overflow:hidden; transition:background .4s; }
 .review:hover { background:rgba(var(--realm-accent-rgb),.02); }
@@ -1844,6 +2115,7 @@ onUnmounted(() => {
 .review__city  { font-size:9px; color:var(--h-text3); letter-spacing:.1em; display:block; }
 .review__line  { position:absolute; bottom:0; left:36px; right:36px; height:.5px; background:var(--h-hair); }
 
+/* ══ CONCIERGE ══ */
 .concierge { display:grid; grid-template-columns:1fr 1fr; gap:88px; align-items:center; padding:64px 72px; position:relative; border:.5px solid var(--h-hair); }
 .concierge::before { content:''; position:absolute; top:0; left:0; right:0; height:.5px; background:linear-gradient(90deg,var(--h-gold),transparent); opacity:.35; }
 .concierge__left  { display:flex; flex-direction:column; gap:13px; }
@@ -1865,191 +2137,7 @@ onUnmounted(() => {
 .concierge__vagas { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.2em; color:var(--h-text3); animation:vagasBlink 4s ease-in-out infinite; }
 .vagas__num { color:var(--h-gold); opacity:.7; }
 
-/* CART DRAWER */
-.cart-backdrop {
-  position: fixed; inset: 0; z-index: 9998;
-  background: rgba(5,5,12,.80);
-  backdrop-filter: blur(18px) saturate(0.8);
-  -webkit-backdrop-filter: blur(18px) saturate(0.8);
-  display: flex; justify-content: flex-end;
-}
-.cart-backdrop-fade-enter-active { transition: opacity .3s ease; }
-.cart-backdrop-fade-leave-active { transition: opacity .28s ease .18s; }
-.cart-backdrop-fade-enter-from,
-.cart-backdrop-fade-leave-to { opacity: 0; }
-
-.cart-drawer {
-  position: relative;
-  width: 440px; max-width: 94vw; height: 100%;
-  background: #09090f;
-  background-image:
-    radial-gradient(ellipse at 20% 0%, rgba(200,168,75,.04) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 100%, rgba(200,168,75,.03) 0%, transparent 50%);
-  border-left: .5px solid rgba(200,168,75,.10);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  will-change: transform, opacity;
-  box-shadow: -24px 0 80px rgba(0,0,0,.65), -1px 0 0 rgba(200,168,75,.06);
-}
-
-.cart__realm-line {
-  position: absolute; top: 0; left: 0; right: 0; height: .5px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%, transparent 5%,
-    rgba(245,215,142,.5) 18%,
-    #C8A84B 50%,
-    rgba(245,215,142,.5) 82%,
-    transparent 95%, transparent 100%
-  );
-  opacity: .7; z-index: 10; pointer-events: none;
-  transform-origin: center;
-}
-.cart__canvas {
-  position: absolute; inset: 0; z-index: 1;
-  width: 100%; height: 100%;
-  pointer-events: none;
-}
-.cart__grain {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-.cart__kamon {
-  position: absolute;
-  font-family: 'Noto Serif JP','Yu Mincho','Hiragino Mincho Pro',serif;
-  font-size: 300px; font-weight: 300;
-  color: #C8A84B; opacity: .022;
-  pointer-events: none; z-index: 2;
-  line-height: 1; user-select: none;
-  bottom: -50px; right: -40px;
-  animation: kamonFloat 20s ease-in-out infinite;
-}
-.cart__kamon--2 {
-  font-size: 160px; opacity: .016;
-  top: 60px; left: -25px;
-  right: auto; bottom: auto;
-  animation: kamonFloat 28s ease-in-out infinite reverse;
-}
-.cart__scanline {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0, transparent 3px,
-    rgba(0,0,0,.018) 3px, rgba(0,0,0,.018) 4px
-  );
-  opacity: .4;
-}
-
-.cart__head {
-  position: relative; z-index: 5;
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 32px 28px 0;
-}
-.cart__head-left { display: flex; align-items: flex-start; gap: 16px; }
-.cart__head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-top: 6px; }
-.cart__kicker { display: flex; flex-direction: column; align-items: center; gap: 7px; flex-shrink: 0; padding-top: 4px; }
-.cart__kicker-num { font-family: 'DM Mono',monospace; font-size: 8px; letter-spacing: .3em; color: var(--h-gold); opacity: .4; }
-.cart__kicker-bar { width: .5px; height: 38px; background: linear-gradient(to bottom,var(--h-gold),transparent); opacity: .25; }
-.cart__eyebrow { display: block; font-size: 7px; letter-spacing: .55em; text-transform: uppercase; color: var(--h-gold); opacity: .6; margin-bottom: 6px; }
-.cart__title { font-family: 'Cormorant Garamond',serif; font-size: 1.75rem; font-weight: 300; color: var(--h-text); margin: 0; line-height: 1.05; }
-.cart__title em { font-style: italic; color: var(--h-gold); }
-
-.cart__count-badge {
-  min-width: 20px; height: 20px; padding: 0 5px;
-  background: var(--h-gold); color: #09090f;
-  border-radius: 10px; font-size: 8px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'DM Mono',monospace; letter-spacing: 0; flex-shrink: 0;
-}
-.badge-pop-enter-active { animation: badgePop .35s var(--ease) both; }
-.badge-pop-leave-active { transition: opacity .15s, transform .15s; }
-.badge-pop-leave-to { opacity: 0; transform: scale(0.6); }
-
-.cart__close {
-  width: 32px; height: 32px; flex-shrink: 0;
-  border: .5px solid rgba(200,168,75,.18); border-radius: 50%;
-  background: transparent; color: var(--h-text3);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all .3s;
-}
-.cart__close:hover { border-color: var(--h-gold); color: var(--h-gold); transform: rotate(90deg); background: rgba(200,168,75,.06); }
-
-.cart__ornament { position: relative; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 20px 28px 16px; }
-.cart__orn-line { flex: 1; height: .5px; background: linear-gradient(90deg,var(--h-gold),transparent); opacity: .15; }
-.cart__orn-line--r { background: linear-gradient(270deg,var(--h-gold),transparent); }
-.cart__orn-gem { font-size: 5px; color: var(--h-gold); opacity: .28; flex-shrink: 0; }
-
-.cart__body {
-  flex: 1; overflow-y: auto; overflow-x: hidden;
-  padding: 0 28px; position: relative; z-index: 5;
-  scrollbar-width: thin; scrollbar-color: rgba(200,168,75,.15) transparent;
-}
-.cart__body::-webkit-scrollbar { width: 2px; }
-.cart__body::-webkit-scrollbar-track { background: transparent; }
-.cart__body::-webkit-scrollbar-thumb { background: rgba(200,168,75,.2); border-radius: 1px; }
-
-.cart__vazio { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 56px 20px; text-align: center; }
-.cart__vazio-mon { opacity: .55; animation: monPulse 5s ease-in-out infinite; }
-.cart__vazio-title { font-family: 'Cormorant Garamond',serif; font-size: 1.3rem; font-weight: 300; color: var(--h-text); margin: 0; }
-.cart__vazio-sub { font-size: 11px; color: var(--h-text3); letter-spacing: .06em; margin: 0; }
-.cart__vazio-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 11px 26px; border: .5px solid var(--h-gold); color: var(--h-gold); text-decoration: none; font-size: 8px; font-weight: 700; letter-spacing: .42em; text-transform: uppercase; position: relative; overflow: hidden; transition: color .45s var(--ease); }
-.cart__vazio-cta-fill { position: absolute; inset: 0; background: var(--h-gold); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); z-index: 0; }
-.cart__vazio-cta:hover .cart__vazio-cta-fill { transform: scaleX(1); }
-.cart__vazio-cta:hover { color: var(--h-void); }
-.cart__vazio-cta span,.cart__vazio-cta svg { position: relative; z-index: 1; }
-
-.cart__list { display: flex; flex-direction: column; padding-bottom: 8px; }
-
-.cart-item { display: grid; grid-template-columns: 72px 1fr 24px; gap: 14px; align-items: start; padding: 16px 0; position: relative; transition: background .3s, padding .3s, margin .3s; }
-.cart-item:hover { background: rgba(200,168,75,.025); margin: 0 -28px; padding-left: 28px; padding-right: 28px; }
-.cart-item__img { width: 72px; height: 88px; flex-shrink: 0; background-size: cover; background-position: center; background-color: var(--h-surf); position: relative; overflow: hidden; border: .5px solid var(--h-hair); }
-.cart-item__gen { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.cart-item__gen-inner { width: 40px; height: 40px; border: .5px solid rgba(200,168,75,.15); animation: ringRotate 12s linear infinite; }
-.cart-item__img-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(5,5,12,.55),transparent 55%); }
-.cart-item__info { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-.cart-item__cat { font-size: 7px; letter-spacing: .4em; text-transform: uppercase; color: var(--h-gold); opacity: .7; }
-.cart-item__name { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--h-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cart-item__foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-.cart-item__price { font-family: 'Cormorant Garamond',serif; font-size: 1.05rem; font-weight: 300; color: var(--h-gold); }
-.cart-item__qty { display: flex; align-items: center; gap: 0; border: .5px solid var(--h-hair); }
-.qty-btn { width: 24px; height: 24px; background: transparent; border: none; color: var(--h-text3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color .2s,background .2s; }
-.qty-btn:hover { color: var(--h-gold); background: rgba(200,168,75,.06); }
-.qty-num { font-family: 'DM Mono',monospace; font-size: 10px; color: var(--h-text); min-width: 22px; text-align: center; line-height: 24px; }
-.cart-item__remove { width: 22px; height: 22px; background: transparent; border: .5px solid transparent; border-radius: 50%; color: var(--h-text3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .25s; align-self: center; flex-shrink: 0; }
-.cart-item__remove:hover { border-color: rgba(239,68,68,.4); color: rgba(239,68,68,.8); background: rgba(239,68,68,.05); }
-.cart-item__line { position: absolute; bottom: 0; left: 0; right: 0; height: .5px; background: linear-gradient(to right,transparent,var(--h-hair),transparent); }
-
-.cart__foot { position: relative; z-index: 5; padding: 0 28px 28px; flex-shrink: 0; background: linear-gradient(to bottom, transparent 0%, rgba(9,9,15,.98) 20%); }
-.cart__foot-sep { display: flex; align-items: center; gap: 10px; padding: 14px 0 12px; }
-.cart__foot-sep-line { flex: 1; height: .5px; background: linear-gradient(90deg,transparent,rgba(200,168,75,.2)); }
-.cart__foot-sep-line--r { background: linear-gradient(270deg,transparent,rgba(200,168,75,.2)); }
-.cart__foot-sep-gem { font-size: 5px; color: var(--h-gold); opacity: .3; flex-shrink: 0; }
-
-.cart__totals { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.cart__total-row { display: flex; justify-content: space-between; align-items: baseline; }
-.cart__total-label { font-size: 8px; letter-spacing: .4em; text-transform: uppercase; color: var(--h-text3); }
-.cart__total-val   { font-family: 'Cormorant Garamond',serif; font-size: 1.55rem; font-weight: 300; color: var(--h-text); }
-.cart__total-inst  { font-size: 9px; color: var(--h-text3); }
-.cart__total-free  { display: inline-flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--h-gold); opacity: .75; }
-.free-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--h-gold); animation: freeDot 2.5s ease-in-out infinite; flex-shrink: 0; }
-
-.cart__selos { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 0 14px; border-top: .5px solid var(--h-hair); border-bottom: .5px solid var(--h-hair); margin-bottom: 14px; font-size: 7px; letter-spacing: .2em; text-transform: uppercase; color: rgba(237,232,224,.1); }
-.cart__selo     { display: flex; align-items: center; gap: 5px; }
-.cart__selo svg { color: var(--h-gold); opacity: .3; flex-shrink: 0; }
-.cart__selo-dot { color: var(--h-hair); font-size: 10px; }
-
-.cart__actions { display: flex; flex-direction: column; gap: 8px; }
-.cart__cta { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; font-family: 'Syne',sans-serif; font-size: 8px; font-weight: 700; letter-spacing: .45em; text-transform: uppercase; cursor: pointer; text-decoration: none; position: relative; overflow: hidden; transition: color .45s var(--ease); border: none; }
-.cart__cta--primary { background: var(--h-gold); color: var(--h-void); border: .5px solid var(--h-gold); }
-.cart__cta-fill { position: absolute; inset: 0; background: var(--h-gold2); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); z-index: 0; }
-.cart__cta--primary:hover .cart__cta-fill { transform: scaleX(1); }
-.cart__cta--primary span,.cart__cta--primary svg { position: relative; z-index: 1; }
-.cart__cta--ghost { background: transparent; color: var(--h-text3); border: .5px solid var(--h-hair); font-size: 7.5px; }
-.cart__cta--ghost:hover { border-color: var(--h-gold); color: var(--h-gold); }
-.cart__foot-kanji { font-family: 'Cormorant Garamond',serif; font-size: 4rem; font-weight: 300; color: var(--h-gold); opacity: .035; text-align: right; line-height: 1; margin-top: 10px; pointer-events: none; user-select: none; }
-
-/* MODAL */
+/* ══ MODAIS ══ */
 .modal-wrap { position:fixed; inset:0; background:rgba(5,5,12,.92); backdrop-filter:blur(24px); display:flex; align-items:center; justify-content:center; z-index:9999; padding:24px; }
 .modal { background:var(--h-surf); border:.5px solid var(--h-hair); max-width:820px; width:100%; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; position:relative; max-height:88vh; overflow-y:auto; }
 .modal__close { position:absolute; top:14px; right:14px; z-index:2; width:28px; height:28px; border:.5px solid var(--h-hair); background:transparent; color:var(--h-text3); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .25s,color .25s,transform .35s; }
@@ -2072,38 +2160,48 @@ onUnmounted(() => {
 .modal__add:hover:not(:disabled) { color:var(--h-void); }
 .modal__add:disabled { opacity:.3; cursor:not-allowed; }
 
+/* Modal galeria */
+.galmodal-wrap { position:fixed; inset:0; background:rgba(5,5,12,.92); backdrop-filter:blur(24px); display:flex; align-items:center; justify-content:center; z-index:9999; padding:24px; }
+.galmodal { background:var(--h-surf); border:.5px solid var(--h-hair); max-width:680px; width:100%; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; position:relative; max-height:80vh; }
+.galmodal__close { position:absolute; top:14px; right:14px; z-index:2; width:28px; height:28px; border:.5px solid var(--h-hair); background:transparent; color:var(--h-text3); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .25s,color .25s,transform .35s; }
+.galmodal__close:hover { border-color:var(--h-gold); color:var(--h-gold); transform:rotate(90deg); }
+.galmodal__visual { position:relative; aspect-ratio:3/4; overflow:hidden; }
+.galmodal__bg { position:absolute; inset:0; }
+.galmodal__art { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.galmodal__tag { position:absolute; top:14px; left:14px; font-size:7px; letter-spacing:.35em; text-transform:uppercase; color:var(--h-gold); border:.5px solid rgba(200,168,75,.35); background:rgba(200,168,75,.07); padding:4px 10px; }
+.galmodal__info { padding:32px 28px; display:flex; flex-direction:column; gap:14px; }
+.galmodal__title { font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:300; color:var(--h-text); margin:0; }
+.galmodal__price { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--h-gold); margin-top:auto; }
+.galmodal__cta { display:inline-flex; align-items:center; gap:10px; padding:12px 24px; border:.5px solid var(--h-gold); color:var(--h-gold); text-decoration:none; font-size:8px; font-weight:700; letter-spacing:.4em; text-transform:uppercase; position:relative; overflow:hidden; transition:color .45s var(--ease); }
+.galmodal__cta-fill { position:absolute; inset:0; background:var(--h-gold); transform:scaleX(0); transform-origin:left; transition:transform .5s var(--ease); z-index:0; }
+.galmodal__cta:hover .galmodal__cta-fill { transform:scaleX(1); }
+.galmodal__cta:hover { color:var(--h-void); }
+.galmodal__cta > * { position:relative; z-index:1; }
+
 .fade-enter-active,.fade-leave-active { transition:opacity .3s; }
 .fade-enter-from,.fade-leave-to { opacity:0; }
-.cart-item-enter-active { transition:all .45s var(--ease); }
-.cart-item-leave-active { transition:all .3s ease-in; position:absolute; width:100%; }
-.cart-item-enter-from   { opacity:0; transform:translateX(30px); }
-.cart-item-leave-to     { opacity:0; transform:translateX(30px); }
 
-:global(body.light-mode) .cart-drawer   { background:var(--h-surf); }
-:global(body.light-mode) .cart-backdrop { background:rgba(234,240,248,.75); }
-:global(body.light-mode) .manifesto__bg-text { -webkit-text-stroke:.5px rgba(61,108,191,.07); }
-:global(body.light-mode) .home-ticker   { background:rgba(255,255,255,.92); border-color:rgba(61,108,191,.14); }
-:global(body.light-mode) .review__text  { color:rgba(13,13,32,.72); }
-:global(body.light-mode) .cfg-btn       { border-color:rgba(61,108,191,.22); color:rgba(13,13,32,.55); }
-:global(body.light-mode) .cfg-btn.is-active { background:var(--h-gold); color:#fff; }
-
+/* ══ RESPONSIVO ══ */
 @media (max-width:1200px) {
   .wrap { width:84%; }
   .pillars   { grid-template-columns:repeat(2,1fr); }
   .tech-grid { grid-template-columns:repeat(2,1fr); }
+  .forge__layout { gap:48px; }
+  .forge__models { grid-template-columns:1fr 1fr; }
 }
 @media (max-width:1024px) {
   .wrap { width:90%; }
   .manifesto { grid-template-columns:1fr; gap:52px; }
-  .gallery-mosaic { grid-template-columns:1fr 1fr; grid-template-rows:repeat(3,210px); }
-  .gal-item--0 { grid-row:auto; }
   .materials { grid-template-columns:1fr; }
-  .config { grid-template-columns:1fr; }
-  .config__preview { order:-1; }
   .concierge { grid-template-columns:1fr; gap:44px; padding:44px 36px; }
   .modal { grid-template-columns:1fr; }
   .modal__img { aspect-ratio:4/3; }
-  .cart-drawer { width:380px; }
+  .galmodal { grid-template-columns:1fr; }
+  .galmodal__visual { aspect-ratio:16/9; }
+  .forge__layout { grid-template-columns:1fr; }
+  .forge__stage { min-height:420px; }
+  .forge__orbit-ring--1 { width:280px; height:280px; }
+  .forge__orbit-ring--2 { width:320px; height:320px; }
 }
 @media (max-width:768px) {
   .wrap { width:94%; }
@@ -2111,18 +2209,14 @@ onUnmounted(() => {
   .pillars   { grid-template-columns:1fr 1fr; }
   .tech-grid { grid-template-columns:1fr 1fr; }
   .reviews   { grid-template-columns:1fr; }
-  .gallery-mosaic { grid-template-columns:1fr; grid-template-rows:auto; }
-  .gal-item  { height:210px; }
   .shop-head { flex-direction:column; align-items:flex-start; gap:18px; }
   .shop-head__ctrl { width:100%; justify-content:space-between; }
   .exclus__letterbox { height:36px; }
   .exclus__kanji,.portal__kanji-v { display:none; }
-  .cart-drawer { width:100vw; max-width:100vw; }
-  .cart__head { padding:22px 20px 0; }
-  .cart__ornament { padding:14px 20px 10px; }
-  .cart__body { padding:0 20px; }
-  .cart__foot { padding:0 20px 24px; }
-  .cart-item:hover { margin:0; padding-left:0; padding-right:0; }
+  .cg__frame { width:clamp(200px,72vw,280px); height:clamp(300px,60vw,400px); }
+  .cg__filmstrip { display:none; }
+  .forge__group-row { grid-template-columns:1fr; }
+  .forge__stage { min-height:360px; }
 }
 @media (max-width:480px) {
   .wrap { width:96%; }
@@ -2131,11 +2225,11 @@ onUnmounted(() => {
   .tech-grid { grid-template-columns:1fr; }
   .modal__specs { grid-template-columns:1fr; }
   .concierge { padding:28px 16px; }
+  .forge__models { grid-template-columns:1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .phone-scene,.ticker__track,.exclus__beam,.pillar__kanji,
-  .portal__mon,.portal__kanji-v,.mf__corner,.concierge__vagas,
-  .bridge__gem,.bridge__line,.cart__vazio-mon,.free-dot,
-  .cart__kamon { animation:none !important; }
+  .forge__device-wrap,.portal__mon,.portal__kanji-v,.mf__corner,
+  .concierge__vagas,.bridge__gem,.bridge__line,.forge__scanlines,
+  .forge__orbit-ring { animation:none !important; }
 }
 </style>

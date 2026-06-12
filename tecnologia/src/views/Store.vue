@@ -367,10 +367,7 @@
               :style="{ '--card-delay': `${i*50}ms` }"
               :ref="el => { if(el) cardRefs[i]=el }"
               @click="abrirModal(p)"
-              role="button"
-              :aria-label="`Ver ${p.nome}`"
-              tabindex="0"
-              @keydown.enter="abrirModal(p)"
+             @keydown.enter="abrirModal(p)"
             >
               <!-- Cantos decorativos — como no drawer__vazio__ico -->
               <span class="store__card-corner store__card-corner--tl" aria-hidden="true"></span>
@@ -827,6 +824,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import api from '@/api.js'
 import { useRoute } from 'vue-router'
 import { useProdutosStore } from '@/stores/produtos.js'
 import { useAuthStore }     from '@/stores/auth.js'
@@ -931,10 +929,11 @@ const sidebarStyle = computed(() => {
 })
 
 /* ── Computed: dados da store ── */
-const todos           = computed(() => produtosStore.todos)
+const todos = computed(() => produtosStore.todos.filter(p => p.categoria !== 'GAMING'))
 const totalGeral      = computed(() => todos.value.length)
-const todasCategorias = computed(() => produtosStore.categorias)
-
+const todasCategorias = computed(() =>
+  [...new Set(todos.value.map(p => p.categoria).filter(Boolean))].sort()
+)
 const heroStats = computed(() => [
   { idx: '01', label: 'Peças em catálogo',   val: totalGeral.value, kanji: '品' },
   { idx: '02', label: 'Edições limitadas',   val: todos.value.filter(p=>p.limitada).length||0, kanji: '限' },
@@ -1233,7 +1232,6 @@ onBeforeUnmount(()=>{
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300&display=swap');
 
 /* ══════════════════════════════════════
    TOKENS — 100% alinhados com navbar/footer

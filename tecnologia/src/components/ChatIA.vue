@@ -569,7 +569,9 @@ onUnmounted(() => {
   font-size: 8px; font-weight: 700; letter-spacing: 0.18em;
   color: rgba(200,168,75,0.92); pointer-events: none; z-index: 5;
   animation: badgeFloat 3.4s ease-in-out infinite;
-  white-space: nowrap; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  white-space: nowrap; 
+  -webkit-backdrop-filter: blur(4px);
+backdrop-filter: blur(4px);
 }
 
 .cia-dot-online {
@@ -765,6 +767,11 @@ onUnmounted(() => {
 .cia-confirm-leave-to { opacity: 0; transform: translateY(-8px); }
 
 /* ── MENSAGENS ── */
+
+.cia-msgs::-webkit-scrollbar { width: 6px; }
+.cia-msgs::-webkit-scrollbar-track { background: transparent; }
+.cia-msgs::-webkit-scrollbar-thumb { background: var(--or-hair, rgba(245,166,35,.12)); border-radius: 3px; }
+
 .cia-msgs {
   flex: 1; overflow-y: auto;
   padding: 14px;

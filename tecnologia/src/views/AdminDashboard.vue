@@ -1391,7 +1391,7 @@ const siteStore     = useSiteStore()
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const MESES       = ['J','F','M','A','M','J','J','A','S','O','N','D']
 const MESES_FULL  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
-const CATEGORIAS  = ['COMPUTING','MOBILE','AUDIO','GAMING','VISUAL','VIRTUAL']
+const CATEGORIAS  = ['COMPUTING','MOBILE','AUDIO','VISUAL','VIRTUAL']
 const STATUS_LIST = ['pendente','aprovado','em-preparo','despachado','entregue','cancelado']
 const CAT_LABELS  = ['Computing','Mobile','Audio','Gaming','Visual','Virtual']
 const CAT_CORES   = ['#C8A84B','#3498db','#9b59b6','#2ecc71','#e67e22','#1abc9c']
@@ -1690,15 +1690,19 @@ watch([filtroCat,filtroEstoque],()=>{pagProdutos.value=1})
 const formProdPadrao=()=>({nome:'',marca:'',categoria:'COMPUTING',subCategoria:'',preco:0,estoque:10,parcelas:12,sku:'',descricao:'',imagem:'',imagem2:'',imagem3:'',destaque:false,novo:false,limitada:false,rgb:false,cores:[],storageOptions:[],specs:[]})
 const formProd=ref(formProdPadrao())
 
-const produtosFiltrados=computed(()=>{
-  let l=sortarLista([...todosProdutos.value])
-  if(buscaProdutos.value.trim()){const q=buscaProdutos.value.toLowerCase();l=l.filter(p=>p.nome?.toLowerCase().includes(q)||p.marca?.toLowerCase().includes(q))}
-  if(filtroCat.value) l=l.filter(p=>p.categoria===filtroCat.value)
-  if(filtroEstoque.value==='ok')   l=l.filter(p=>p.estoque>5)
-  if(filtroEstoque.value==='zero') l=l.filter(p=>!p.estoque||p.estoque<=0)
-  if(filtroEstoque.value==='baixo') l=l.filter(p=>p.estoque>0&&p.estoque<=5)
+const produtosFiltrados = computed(() => {
+  let l = sortarLista([...todosProdutos.value].filter(p => p.categoria !== 'GAMING')) // ← excluir GAMING
+  if (buscaProdutos.value.trim()) {
+    const q = buscaProdutos.value.toLowerCase()
+    l = l.filter(p => p.nome?.toLowerCase().includes(q) || p.marca?.toLowerCase().includes(q))
+  }
+  if (filtroCat.value) l = l.filter(p => p.categoria === filtroCat.value)
+  if (filtroEstoque.value === 'ok')   l = l.filter(p => p.estoque > 5)
+  if (filtroEstoque.value === 'zero') l = l.filter(p => !p.estoque || p.estoque <= 0)
+  if (filtroEstoque.value === 'baixo') l = l.filter(p => p.estoque > 0 && p.estoque <= 5)
   return l
 })
+
 const totalPagProdutos  = computed(()=>Math.max(1,Math.ceil(produtosFiltrados.value.length/POR_PAGINA)))
 const produtosPaginados = computed(()=>{const s=(pagProdutos.value-1)*POR_PAGINA;return produtosFiltrados.value.slice(s,s+POR_PAGINA)})
 const todosProdChecked  = computed(()=>produtosPaginados.value.length>0&&produtosPaginados.value.every(p=>produtosSelecionados.value.includes(p._id)))
