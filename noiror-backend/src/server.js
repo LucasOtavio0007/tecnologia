@@ -14,7 +14,7 @@ import authRoutes from './routes/auth.js'
 import userRoutes from './routes/users.js'
 import produtoRoutes from './routes/produtos.js'
 import pedidoRoutes from './routes/pedidos.js'
-import reembolsosRoutes from './routes/reembolsos.js'   // ✅ NOVO
+import reembolsosRoutes from './routes/reembolsos.js'
 import configRoutes from './routes/config.js'
 import billingRoutes from './routes/billing.js'
 import adminRoutes from './routes/admin-global-routes.js'
@@ -31,16 +31,22 @@ import cupomRoutes from './routes/cupom.js'
 const app = express()
 await conectar()
 
-// Segurança
+app.set('trust proxy', 1)
+
 app.use(helmet({
   crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+  xssFilter: false,
 }))
+
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store')
+  next()
+})
 app.use(mongoSanitize())
 app.use(xss())
 app.use(hpp())
 app.use(cookieParser())
 
-// Rate limiting
 const limiterGeral = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
@@ -59,7 +65,6 @@ app.use('/api/', limiterGeral)
 app.use('/api/auth/login', limiterAuth)
 app.use('/api/auth/register', limiterAuth)
 
-// CORS
 app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
@@ -67,7 +72,11 @@ app.use(cors({
       'http://localhost:3000',
       'https://tecnologia-xi.vercel.app',
     ]
-    if (!origin || allowed.includes(origin)) {
+    if (
+      !origin ||
+      allowed.includes(origin) ||
+      /^https:\/\/tecnologia(-[a-z0-9]+)*\.vercel\.app$/.test(origin)
+    ) {
       callback(null, true)
     } else {
       callback(new Error(`CORS bloqueado: ${origin}`))
@@ -76,21 +85,18 @@ app.use(cors({
   credentials: true,
 }))
 
-// Body parser (raw para webhook Stripe e Mercado Pago)
 app.use('/api/billing/webhook',      express.raw({ type: 'application/json' }))
 app.use('/api/pagamento/mp/webhook', express.raw({ type: 'application/json' }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
-// Logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'))
 
-// Rotas
 app.use('/api/auth',          authRoutes)
 app.use('/api/usuarios',      userRoutes)
 app.use('/api/produtos',      produtoRoutes)
 app.use('/api/pedidos',       pedidoRoutes)
-app.use('/api/reembolsos',    reembolsosRoutes)   // ✅ NOVO
+app.use('/api/reembolsos',    reembolsosRoutes)
 app.use('/api/config',        configRoutes)
 app.use('/api/billing',       billingRoutes)
 app.use('/api/admin',         adminRoutes)
@@ -104,17 +110,14 @@ app.use('/api/visualizacoes', visualizacoesRoutes)
 app.use('/api/frete',         freteRoutes)
 app.use('/api/cupons',        cupomRoutes)
 
-// Health check
 app.get('/health', (req, res) => res.json({
   status: 'ok',
   env: process.env.NODE_ENV,
   timestamp: new Date().toISOString()
 }))
 
-// 404
 app.use((req, res) => res.status(404).json({ msg: 'Rota não encontrada.' }))
 
-// Error handler global
 app.use((err, req, res, next) => {
   console.error('Global error:', err.stack)
   res.status(err.statusCode || 500).json({ msg: err.message || 'Erro interno.' })
