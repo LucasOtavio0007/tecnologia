@@ -1,4 +1,3 @@
-
 <template>
   <div class="adm" :class="[`adm--secao-${secao}`, { 'adm--sidebar-open': sidebarOpen }]">
 
@@ -371,7 +370,8 @@
           <div class="adm-toolbar">
             <div class="adm-search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input v-model="buscaPedidos" placeholder="Buscar por ID, cliente ou e-mail…" autocomplete="off"/>
+              <label for="busca-pedidos" class="sr-only">Buscar pedidos</label>
+              <input id="busca-pedidos" name="busca-pedidos" v-model="buscaPedidos" placeholder="Buscar por ID, cliente ou e-mail…" autocomplete="off"/>
               <button v-if="buscaPedidos" @click="buscaPedidos=''" class="adm-search-clear" aria-label="Limpar">✕</button>
             </div>
             <select v-model="filtroPedStatus" class="adm-select">
@@ -379,9 +379,11 @@
               <option v-for="s in STATUS_LIST" :key="s" :value="s">{{ statusLabel(s) }}</option>
             </select>
             <div class="adm-date-range">
-              <input type="date" v-model="filtroPedDe" class="adm-date-input" title="De"/>
+              <label for="filtro-ped-de" class="sr-only">De</label>
+              <input id="filtro-ped-de" name="filtro-ped-de" type="date" v-model="filtroPedDe" class="adm-date-input" title="De"/>
               <span style="color:rgba(200,168,75,0.2);font-size:9px">→</span>
-              <input type="date" v-model="filtroPedAte" class="adm-date-input" title="Até"/>
+              <label for="filtro-ped-ate" class="sr-only">Até</label>
+              <input id="filtro-ped-ate" name="filtro-ped-ate" type="date" v-model="filtroPedAte" class="adm-date-input" title="Até"/>
             </div>
             <button class="btn btn--ghost btn--sm" @click="limparFiltrosPedidos">Limpar</button>
             <button class="btn btn--ghost btn--sm" @click="carregarPedidos">
@@ -408,7 +410,7 @@
             <table v-else class="adm-tabela">
               <thead>
                 <tr>
-                  <th style="width:32px;padding-left:18px"><input type="checkbox" :checked="todosChecked" @change="toggleTodos" class="adm-check"/></th>
+                  <th style="width:32px;padding-left:18px"><input type="checkbox" :checked="todosChecked" @change="toggleTodos" class="adm-check" aria-label="Selecionar todos"/></th>
                   <th @click="sortBy('_id')" class="adm-th-sort">Pedido <span class="adm-sort-icon">{{ sortIcone('_id') }}</span></th>
                   <th @click="sortBy('cliente.nome')" class="adm-th-sort">Cliente <span class="adm-sort-icon">{{ sortIcone('cliente.nome') }}</span></th>
                   <th>Itens</th>
@@ -423,7 +425,7 @@
               <tbody>
                 <tr v-if="!pedidosFiltrados.length"><td colspan="10" class="adm-vazio">Nenhum pedido encontrado</td></tr>
                 <tr v-for="p in pedidosPaginados" :key="p._id" :class="{ 'adm-row--selected': pedidosSelecionados.includes(p._id) }">
-                  <td style="padding-left:18px"><input type="checkbox" :checked="pedidosSelecionados.includes(p._id)" @change="toggleSelecionarPedido(p._id)" class="adm-check"/></td>
+                  <td style="padding-left:18px"><input type="checkbox" :checked="pedidosSelecionados.includes(p._id)" @change="toggleSelecionarPedido(p._id)" class="adm-check" :aria-label="`Selecionar pedido ${(p._id||'').slice(-6).toUpperCase()}`"/></td>
                   <td><span class="adm-mono-id">#{{ (p._id||'').slice(-8).toUpperCase() }}</span></td>
                   <td><p class="adm-nome">{{ p.cliente?.nome || 'N/A' }}</p><p class="adm-email">{{ p.cliente?.email || '' }}</p></td>
                   <td><span class="adm-badge">{{ p.itens?.length || 0 }} item(s)</span></td>
@@ -431,7 +433,8 @@
                   <td><span class="adm-badge">{{ (p.pagamento?.metodo||'').toUpperCase() || '—' }}</span></td>
                   <td>
                     <select :value="p.status" @change="atualizarStatusPedido(p, $event.target.value)"
-                      :class="['adm-status-sel', `adm-status-sel--${p.status}`]">
+                      :class="['adm-status-sel', `adm-status-sel--${p.status}`]"
+                      :aria-label="`Status do pedido ${(p._id||'').slice(-6).toUpperCase()}`">
                       <option v-for="s in STATUS_LIST" :key="s" :value="s">{{ statusLabel(s) }}</option>
                     </select>
                   </td>
@@ -446,7 +449,7 @@
                   </td>
                   <td class="adm-mono-date">{{ fmtDate(p.criadoEm) }}</td>
                   <td>
-                    <button class="adm-icon-btn adm-icon-btn--sm" @click="detalheP = p" title="Ver detalhes">
+                    <button class="adm-icon-btn adm-icon-btn--sm" @click="detalheP = p" title="Ver detalhes" aria-label="Ver detalhes do pedido">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                   </td>
@@ -475,8 +478,9 @@
           <div class="adm-toolbar">
             <div class="adm-search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input v-model="buscaProdutos" placeholder="Buscar produto…" autocomplete="off"/>
-              <button v-if="buscaProdutos" @click="buscaProdutos=''" class="adm-search-clear">✕</button>
+              <label for="busca-produtos" class="sr-only">Buscar produto</label>
+              <input id="busca-produtos" name="busca-produtos" v-model="buscaProdutos" placeholder="Buscar produto…" autocomplete="off"/>
+              <button v-if="buscaProdutos" @click="buscaProdutos=''" class="adm-search-clear" aria-label="Limpar busca">✕</button>
             </div>
             <select v-model="filtroCat" class="adm-select">
               <option value="">Todas as categorias</option>
@@ -511,7 +515,7 @@
             <table v-else class="adm-tabela">
               <thead>
                 <tr>
-                  <th style="width:32px;padding-left:18px"><input type="checkbox" :checked="todosProdChecked" @change="toggleTodosProd" class="adm-check"/></th>
+                  <th style="width:32px;padding-left:18px"><input type="checkbox" :checked="todosProdChecked" @change="toggleTodosProd" class="adm-check" aria-label="Selecionar todos os produtos"/></th>
                   <th @click="sortBy('nome')" class="adm-th-sort">Produto <span class="adm-sort-icon">{{ sortIcone('nome') }}</span></th>
                   <th @click="sortBy('categoria')" class="adm-th-sort">Categoria <span class="adm-sort-icon">{{ sortIcone('categoria') }}</span></th>
                   <th @click="sortBy('preco')" class="adm-th-sort">Preço <span class="adm-sort-icon">{{ sortIcone('preco') }}</span></th>
@@ -523,7 +527,7 @@
               <tbody>
                 <tr v-if="!produtosFiltrados.length"><td colspan="7" class="adm-vazio">Nenhum produto encontrado</td></tr>
                 <tr v-for="p in produtosPaginados" :key="p._id" :class="{ 'adm-row--selected': produtosSelecionados.includes(p._id) }">
-                  <td style="padding-left:18px"><input type="checkbox" :checked="produtosSelecionados.includes(p._id)" @change="toggleSelecionarProduto(p._id)" class="adm-check"/></td>
+                  <td style="padding-left:18px"><input type="checkbox" :checked="produtosSelecionados.includes(p._id)" @change="toggleSelecionarProduto(p._id)" class="adm-check" :aria-label="`Selecionar ${p.nome}`"/></td>
                   <td>
                     <div class="adm-prod-info">
                       <div class="adm-prod-img"><img :src="p.imagem" :alt="p.nome" @error="e=>e.target.style.opacity='0'"/></div>
@@ -544,13 +548,13 @@
                   </td>
                   <td>
                     <div style="display:flex;gap:6px">
-                      <button class="adm-icon-btn adm-icon-btn--sm" @click="duplicarProduto(p)" title="Duplicar">
+                      <button class="adm-icon-btn adm-icon-btn--sm" @click="duplicarProduto(p)" title="Duplicar" aria-label="Duplicar produto">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                       </button>
-                      <button class="adm-icon-btn adm-icon-btn--sm" @click="abrirEditarProduto(p)" title="Editar">
+                      <button class="adm-icon-btn adm-icon-btn--sm" @click="abrirEditarProduto(p)" title="Editar" aria-label="Editar produto">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoProduto = p" title="Excluir">
+                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoProduto = p" title="Excluir" aria-label="Excluir produto">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                       </button>
                     </div>
@@ -579,7 +583,8 @@
           <div class="adm-toolbar">
             <div class="adm-search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input v-model="buscaGamer" placeholder="Buscar produto gamer…" autocomplete="off"/>
+              <label for="busca-gamer" class="sr-only">Buscar produto gamer</label>
+              <input id="busca-gamer" name="busca-gamer" v-model="buscaGamer" placeholder="Buscar produto gamer…" autocomplete="off"/>
             </div>
             <select v-model="filtroGamerCat" class="adm-select">
               <option value="">Todas as subcategorias</option>
@@ -630,10 +635,10 @@
                   </td>
                   <td>
                     <div style="display:flex;gap:6px">
-                      <button class="adm-icon-btn adm-icon-btn--sm" @click="abrirEditarProduto(p, 'gamer')" title="Editar">
+                      <button class="adm-icon-btn adm-icon-btn--sm" @click="abrirEditarProduto(p, 'gamer')" title="Editar" aria-label="Editar produto gamer">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoProduto = p" title="Excluir">
+                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoProduto = p" title="Excluir" aria-label="Excluir produto gamer">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                       </button>
                     </div>
@@ -657,24 +662,59 @@
             </div>
             <div class="adm-card__body">
               <div class="adm-grid-2">
-                <div class="adm-campo"><label>Título Hero (kanji)</label><input v-model="gamerConfig.heroKanji" placeholder="戦場" autocomplete="off"/></div>
-                <div class="adm-campo"><label>Título Hero principal</label><input v-model="gamerConfig.heroTitulo" placeholder="Gaming" autocomplete="off"/></div>
-                <div class="adm-campo"><label>Subtítulo</label><input v-model="gamerConfig.heroSub" autocomplete="off"/></div>
-                <div class="adm-campo"><label>Descrição Hero</label><input v-model="gamerConfig.heroDesc" autocomplete="off"/></div>
-                <div class="adm-campo adm-col-2"><label>Texto do Banner</label><textarea v-model="gamerConfig.bannerTexto" rows="2" class="adm-campo__input"></textarea></div>
-                <div class="adm-campo"><label>Título do Banner</label><input v-model="gamerConfig.bannerTitulo" autocomplete="off"/></div>
-                <div class="adm-campo"><label>CTA do Banner</label><input v-model="gamerConfig.bannerCta" autocomplete="off"/></div>
+                <div class="adm-campo">
+                  <label for="gamer-hero-kanji">Título Hero (kanji)</label>
+                  <input id="gamer-hero-kanji" name="gamer-hero-kanji" v-model="gamerConfig.heroKanji" placeholder="戦場" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="gamer-hero-titulo">Título Hero principal</label>
+                  <input id="gamer-hero-titulo" name="gamer-hero-titulo" v-model="gamerConfig.heroTitulo" placeholder="Gaming" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="gamer-hero-sub">Subtítulo</label>
+                  <input id="gamer-hero-sub" name="gamer-hero-sub" v-model="gamerConfig.heroSub" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="gamer-hero-desc">Descrição Hero</label>
+                  <input id="gamer-hero-desc" name="gamer-hero-desc" v-model="gamerConfig.heroDesc" autocomplete="off"/>
+                </div>
+                <div class="adm-campo adm-col-2">
+                  <label for="gamer-banner-texto">Texto do Banner</label>
+                  <textarea id="gamer-banner-texto" name="gamer-banner-texto" v-model="gamerConfig.bannerTexto" rows="2" class="adm-campo__input"></textarea>
+                </div>
+                <div class="adm-campo">
+                  <label for="gamer-banner-titulo">Título do Banner</label>
+                  <input id="gamer-banner-titulo" name="gamer-banner-titulo" v-model="gamerConfig.bannerTitulo" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="gamer-banner-cta">CTA do Banner</label>
+                  <input id="gamer-banner-cta" name="gamer-banner-cta" v-model="gamerConfig.bannerCta" autocomplete="off"/>
+                </div>
               </div>
-              <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap">
-                <label class="adm-toggle-lbl">
-                  <div :class="['adm-tog', { on: gamerConfig.showBanner }]" @click="gamerConfig.showBanner = !gamerConfig.showBanner"><span class="adm-tog__thumb"></span></div>
-                  Exibir Banner Especial
-                </label>
-                <label class="adm-toggle-lbl">
-                  <div :class="['adm-tog', { on: gamerConfig.showParticles }]" @click="gamerConfig.showParticles = !gamerConfig.showParticles"><span class="adm-tog__thumb"></span></div>
-                  Partículas animadas
-                </label>
-              </div>
+               <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap">
+  <label class="adm-toggle-lbl">
+    <div
+      :class="['adm-tog', { on: gamerConfig.showBanner }]"
+      role="switch"
+      :aria-checked="String(gamerConfig.showBanner)"
+      tabindex="0"
+      @click="gamerConfig.showBanner = !gamerConfig.showBanner"
+      @keydown.enter.space.prevent="gamerConfig.showBanner = !gamerConfig.showBanner"
+    ><span class="adm-tog__thumb"></span></div>
+    Exibir Banner Especial
+  </label>
+  <label class="adm-toggle-lbl">
+    <div
+      :class="['adm-tog', { on: gamerConfig.showParticles }]"
+      role="switch"
+      :aria-checked="String(gamerConfig.showParticles)"
+      tabindex="0"
+      @click="gamerConfig.showParticles = !gamerConfig.showParticles"
+      @keydown.enter.space.prevent="gamerConfig.showParticles = !gamerConfig.showParticles"
+    ><span class="adm-tog__thumb"></span></div>
+    Partículas animadas
+  </label>
+</div>
             </div>
             <div class="adm-card__foot">
               <button class="btn btn--ghost btn--sm" @click="resetGamerConfig">Resetar</button>
@@ -699,8 +739,9 @@
           <div class="adm-toolbar">
             <div class="adm-search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input v-model="buscaUsuarios" placeholder="Buscar por nome ou e-mail…" autocomplete="off"/>
-              <button v-if="buscaUsuarios" @click="buscaUsuarios=''" class="adm-search-clear">✕</button>
+              <label for="busca-usuarios" class="sr-only">Buscar usuário</label>
+              <input id="busca-usuarios" name="busca-usuarios" v-model="buscaUsuarios" placeholder="Buscar por nome ou e-mail…" autocomplete="off"/>
+              <button v-if="buscaUsuarios" @click="buscaUsuarios=''" class="adm-search-clear" aria-label="Limpar busca">✕</button>
             </div>
             <select v-model="filtroRole" class="adm-select">
               <option value="">Todos os roles</option>
@@ -731,7 +772,7 @@
                   <td>
                     <div class="adm-usr-info">
                       <div class="adm-usr-av">
-                        <img v-if="u.avatar" :src="u.avatar" @error="e=>e.target.style.display='none'"/>
+                        <img v-if="u.avatar" :src="u.avatar" @error="e=>e.target.style.display='none'" :alt="u.nome"/>
                         <span v-else>{{ (u.nome||'U').charAt(0) }}</span>
                       </div>
                       <div><p class="adm-nome">{{ u.nome }} {{ u.sobrenome }}</p><p class="adm-email">{{ u.provider || 'local' }}</p></div>
@@ -743,10 +784,10 @@
                   <td class="adm-mono-date">{{ fmtDate(u.criadoEm) }}</td>
                   <td>
                     <div style="display:flex;gap:6px">
-                      <button class="adm-icon-btn adm-icon-btn--sm" :class="u.role==='admin'?'adm-icon-btn--danger':''" @click="toggleAdmin(u)" :disabled="u._id===meuId">
+                      <button class="adm-icon-btn adm-icon-btn--sm" :class="u.role==='admin'?'adm-icon-btn--danger':''" @click="toggleAdmin(u)" :disabled="u._id===meuId" :aria-label="u.role==='admin' ? 'Rebaixar para usuário' : 'Promover a admin'">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                       </button>
-                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoUsuario = u" :disabled="u._id===meuId">
+                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletandoUsuario = u" :disabled="u._id===meuId" aria-label="Excluir usuário">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                       </button>
                     </div>
@@ -844,7 +885,8 @@
           <div class="adm-toolbar">
             <div class="adm-search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input v-model="buscaCupons" placeholder="Buscar cupom…" autocomplete="off"/>
+              <label for="busca-cupons" class="sr-only">Buscar cupom</label>
+              <input id="busca-cupons" name="busca-cupons" v-model="buscaCupons" placeholder="Buscar cupom…" autocomplete="off"/>
             </div>
             <button class="btn btn--gold" @click="abrirNovoCupom">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -858,8 +900,8 @@
                 <tr><th>Código</th><th>Tipo</th><th>Valor</th><th>Uso</th><th>Validade</th><th>Status</th><th></th></tr>
               </thead>
               <tbody>
-                <tr v-if="!cupons.length"><td colspan="7" class="adm-vazio">Nenhum cupom criado</td></tr>
-                <tr v-for="c in cupons" :key="c._id||c.id">
+                <tr v-if="!cuponsExibidos.length"><td colspan="7" class="adm-vazio">Nenhum cupom encontrado</td></tr>
+<tr v-for="c in cuponsExibidos" :key="c._id||c.id">
                   <td><span class="adm-mono-id">{{ c.codigo }}</span></td>
                   <td><span class="adm-badge">{{ c.tipo==='pct'?'Percentual':c.tipo==='frete'?'Frete Grátis':'Valor Fixo' }}</span></td>
                   <td class="adm-gold-val">{{ c.tipo==='pct'?`${c.valor}%`:c.tipo==='frete'?'—':`R$ ${fmt(c.valor)}` }}</td>
@@ -868,10 +910,10 @@
                   <td><span :class="['adm-estoque-badge', c.ativo?'adm-estoque-badge--ok':'adm-estoque-badge--no']">{{ c.ativo?'Ativo':'Inativo' }}</span></td>
                   <td>
                     <div style="display:flex;gap:6px">
-                      <button class="adm-icon-btn adm-icon-btn--sm" @click="editarCupom(c)">
+                      <button class="adm-icon-btn adm-icon-btn--sm" @click="editarCupom(c)" aria-label="Editar cupom">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletarCupom(c)">
+                      <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="deletarCupom(c)" aria-label="Excluir cupom">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                       </button>
                     </div>
@@ -898,14 +940,36 @@
               <div class="adm-card__head"><span class="adm-card__kanji">城</span><h3 class="adm-card__titulo">Identidade e Marca</h3></div>
               <div class="adm-card__body">
                 <div class="adm-grid-2">
-                  <div class="adm-campo"><label>Nome do Site</label><input v-model="siteLocal.nome" placeholder="Noir & Or"/></div>
-                  <div class="adm-campo"><label>Slogan</label><input v-model="siteLocal.slogan"/></div>
-                  <div class="adm-campo adm-col-2"><label>Descrição Meta (SEO)</label><textarea v-model="siteLocal.descricao" rows="2" class="adm-campo__input"></textarea></div>
-                  <div class="adm-campo"><label>E-mail de Contato</label><input v-model="siteLocal.emailContato" type="email"/></div>
-                  <div class="adm-campo"><label>WhatsApp</label><input v-model="siteLocal.whatsapp"/></div>
-                  <div class="adm-campo"><label>Cor Primária</label><div style="display:flex;align-items:center;gap:10px"><input v-model="siteLocal.corPrimaria" type="color" class="adm-color-input"/><input v-model="siteLocal.corPrimaria" placeholder="#C8A84B" style="flex:1"/></div></div>
-                  <div class="adm-campo"><label>Tema padrão</label>
-                    <select v-model="siteLocal.temaDefault" class="adm-campo__sel">
+                  <div class="adm-campo">
+                    <label for="site-nome">Nome do Site</label>
+                    <input id="site-nome" name="site-nome" v-model="siteLocal.nome" placeholder="Noir & Or"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="site-slogan">Slogan</label>
+                    <input id="site-slogan" name="site-slogan" v-model="siteLocal.slogan"/>
+                  </div>
+                  <div class="adm-campo adm-col-2">
+                    <label for="site-descricao">Descrição Meta (SEO)</label>
+                    <textarea id="site-descricao" name="site-descricao" v-model="siteLocal.descricao" rows="2" class="adm-campo__input"></textarea>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="site-email">E-mail de Contato</label>
+                    <input id="site-email" name="site-email" v-model="siteLocal.emailContato" type="email"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="site-whatsapp">WhatsApp</label>
+                    <input id="site-whatsapp" name="site-whatsapp" v-model="siteLocal.whatsapp"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="site-cor-hex">Cor Primária</label>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <input id="site-cor-picker" name="site-cor-picker" v-model="siteLocal.corPrimaria" type="color" class="adm-color-input" aria-label="Seletor de cor primária"/>
+                      <input id="site-cor-hex" name="site-cor-hex" v-model="siteLocal.corPrimaria" placeholder="#C8A84B" style="flex:1"/>
+                    </div>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="site-tema-default">Tema padrão</label>
+                    <select id="site-tema-default" name="site-tema-default" v-model="siteLocal.temaDefault" class="adm-campo__sel">
                       <option value="escuro">Celestial (Escuro)</option>
                       <option value="claro">Autumn (Claro)</option>
                       <option value="gamer">Ghost (Gamer)</option>
@@ -928,10 +992,22 @@
               <div class="adm-card__head"><span class="adm-card__kanji">守</span><h3 class="adm-card__titulo">Segurança de Login</h3></div>
               <div class="adm-card__body">
                 <div class="adm-grid-2">
-                  <div class="adm-campo"><label>Máx. tentativas</label><input v-model.number="siteLocal.seg.maxTentativas" type="number" min="3" max="20"/></div>
-                  <div class="adm-campo"><label>Bloqueio base (s)</label><input v-model.number="siteLocal.seg.bloqueioBase" type="number"/></div>
-                  <div class="adm-campo"><label>Google OAuth Client ID</label><input v-model="siteLocal.seg.googleClientId"/></div>
-                  <div class="adm-campo"><label>Prazo cancelamento (h)</label><input v-model.number="siteLocal.seg.prazoCancelamento" type="number"/></div>
+                  <div class="adm-campo">
+                    <label for="seg-max-tentativas">Máx. tentativas</label>
+                    <input id="seg-max-tentativas" name="seg-max-tentativas" v-model.number="siteLocal.seg.maxTentativas" type="number" min="3" max="20"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="seg-bloqueio-base">Bloqueio base (s)</label>
+                    <input id="seg-bloqueio-base" name="seg-bloqueio-base" v-model.number="siteLocal.seg.bloqueioBase" type="number"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="seg-google-client-id">Google OAuth Client ID</label>
+                    <input id="seg-google-client-id" name="seg-google-client-id" v-model="siteLocal.seg.googleClientId"/>
+                  </div>
+                  <div class="adm-campo">
+                    <label for="seg-prazo-cancelamento">Prazo cancelamento (h)</label>
+                    <input id="seg-prazo-cancelamento" name="seg-prazo-cancelamento" v-model.number="siteLocal.seg.prazoCancelamento" type="number"/>
+                  </div>
                 </div>
               </div>
               <div class="adm-card__foot">
@@ -945,9 +1021,18 @@
               <div class="adm-card__topline"></div>
               <div class="adm-card__head"><span class="adm-card__kanji">法</span><h3 class="adm-card__titulo">Políticas Legais</h3></div>
               <div class="adm-card__body" style="display:flex;flex-direction:column;gap:20px">
-                <div class="adm-campo"><label>Termos de Uso</label><textarea v-model="siteLocal.politicas.termos" rows="5" class="adm-campo__input"></textarea></div>
-                <div class="adm-campo"><label>Política de Privacidade</label><textarea v-model="siteLocal.politicas.privacidade" rows="5" class="adm-campo__input"></textarea></div>
-                <div class="adm-campo"><label>Prefixo número do pedido</label><input v-model="siteLocal.politicas.pedidoPrefixo" placeholder="NOR-" maxlength="6"/></div>
+                <div class="adm-campo">
+                  <label for="politica-termos">Termos de Uso</label>
+                  <textarea id="politica-termos" name="politica-termos" v-model="siteLocal.politicas.termos" rows="5" class="adm-campo__input"></textarea>
+                </div>
+                <div class="adm-campo">
+                  <label for="politica-privacidade">Política de Privacidade</label>
+                  <textarea id="politica-privacidade" name="politica-privacidade" v-model="siteLocal.politicas.privacidade" rows="5" class="adm-campo__input"></textarea>
+                </div>
+                <div class="adm-campo">
+                  <label for="politica-prefixo">Prefixo número do pedido</label>
+                  <input id="politica-prefixo" name="politica-prefixo" v-model="siteLocal.politicas.pedidoPrefixo" placeholder="NOR-" maxlength="6"/>
+                </div>
               </div>
               <div class="adm-card__foot">
                 <button class="btn btn--gold" @click="salvarSite" :disabled="salvandoSite">Salvar Políticas</button>
@@ -962,12 +1047,12 @@
 
       <!-- Detalhe Pedido -->
       <transition name="modal-fade">
-        <div v-if="detalheP" class="adm-modal-wrap" @click.self="detalheP=null" role="dialog" aria-modal="true">
+        <div v-if="detalheP" class="adm-modal-wrap" @click.self="detalheP=null" role="dialog" aria-modal="true" aria-labelledby="modal-pedido-titulo">
           <div class="adm-modal">
             <div class="adm-modal__topline"></div>
             <div class="adm-modal__head">
-              <h3 class="adm-modal__titulo"><span class="adm-modal__kanji">令</span>Pedido #{{ (detalheP._id||'').slice(-8).toUpperCase() }}</h3>
-              <button class="adm-modal__close" @click="detalheP=null">✕</button>
+              <h3 id="modal-pedido-titulo" class="adm-modal__titulo"><span class="adm-modal__kanji">令</span>Pedido #{{ (detalheP._id||'').slice(-8).toUpperCase() }}</h3>
+              <button class="adm-modal__close" @click="detalheP=null" aria-label="Fechar modal">✕</button>
             </div>
             <div class="adm-modal__body">
               <div class="adm-grid-2" style="margin-bottom:20px">
@@ -978,7 +1063,7 @@
               </div>
               <p class="adm-mini-label" style="margin-bottom:10px">Itens do Pedido</p>
               <div v-for="item in detalheP.itens" :key="item._id" class="adm-modal-item">
-                <div class="adm-prod-img" style="width:48px;height:48px"><img :src="item.produto?.imagem||item.imagem" @error="e=>e.target.style.opacity='0'"/></div>
+                <div class="adm-prod-img" style="width:48px;height:48px"><img :src="item.produto?.imagem||item.imagem" @error="e=>e.target.style.opacity='0'" :alt="item.produto?.nome||item.nome"/></div>
                 <div style="flex:1"><p class="adm-nome">{{ item.produto?.nome||item.nome }}</p><p class="adm-email">Quantidade: {{ item.qty }}</p></div>
                 <span class="adm-gold-val">R$ {{ fmt((item.produto?.preco||item.preco||0)*item.qty) }}</span>
               </div>
@@ -996,18 +1081,18 @@
 
       <!-- Modal recusa cancelamento -->
       <transition name="modal-fade">
-        <div v-if="modalRecusa" class="adm-modal-wrap" @click.self="modalRecusa=null" role="dialog" aria-modal="true">
+        <div v-if="modalRecusa" class="adm-modal-wrap" @click.self="modalRecusa=null" role="dialog" aria-modal="true" aria-labelledby="modal-recusa-titulo">
           <div class="adm-modal adm-modal--sm">
             <div class="adm-modal__topline"></div>
             <div class="adm-modal__head">
-              <h3 class="adm-modal__titulo">{{ modalRecusaAprovando ? 'Aprovar Cancelamento' : 'Recusar Cancelamento' }}</h3>
-              <button class="adm-modal__close" @click="modalRecusa=null">✕</button>
+              <h3 id="modal-recusa-titulo" class="adm-modal__titulo">{{ modalRecusaAprovando ? 'Aprovar Cancelamento' : 'Recusar Cancelamento' }}</h3>
+              <button class="adm-modal__close" @click="modalRecusa=null" aria-label="Fechar modal">✕</button>
             </div>
             <div class="adm-modal__body">
               <p class="adm-email" style="margin-bottom:16px">Pedido #{{ (modalRecusa._id||'').slice(-8).toUpperCase() }}</p>
               <div v-if="!modalRecusaAprovando" class="adm-campo">
-                <label>Motivo da Recusa</label>
-                <textarea v-model="motivoRecusa" rows="3" class="adm-campo__input" placeholder="Informe o motivo…"></textarea>
+                <label for="motivo-recusa">Motivo da Recusa</label>
+                <textarea id="motivo-recusa" name="motivo-recusa" v-model="motivoRecusa" rows="3" class="adm-campo__input" placeholder="Informe o motivo…"></textarea>
               </div>
               <p v-else class="adm-email">Confirma a aprovação do cancelamento deste pedido?</p>
             </div>
@@ -1025,15 +1110,15 @@
 
       <!-- Modal Produto -->
       <transition name="modal-fade">
-        <div v-if="modalProduto" class="adm-modal-wrap" @click.self="modalProduto=false" role="dialog" aria-modal="true">
+        <div v-if="modalProduto" class="adm-modal-wrap" :key="editandoProduto ? formProd._id : 'novo'"@click.self="modalProduto=false" role="dialog" aria-modal="true" aria-labelledby="modal-produto-titulo">
           <div class="adm-modal adm-modal--lg">
             <div class="adm-modal__topline"></div>
             <div class="adm-modal__head">
-              <h3 class="adm-modal__titulo">
+              <h3 id="modal-produto-titulo" class="adm-modal__titulo">
                 <span class="adm-modal__kanji">{{ isGamerModal ? '戦' : '品' }}</span>
                 {{ editandoProduto ? 'Editar Produto' : 'Novo Produto' }}
               </h3>
-              <button class="adm-modal__close" @click="modalProduto=false">✕</button>
+              <button class="adm-modal__close" @click="modalProduto=false" aria-label="Fechar modal">✕</button>
             </div>
             <div class="adm-modal__body">
               <div class="adm-prod-form-tabs">
@@ -1042,68 +1127,115 @@
                   @click="prodFormTab = t.id">{{ t.label }}</button>
               </div>
 
-              <div v-if="prodFormTab === 'basico'" class="adm-grid-2">
-                <div class="adm-campo"><label>Nome *</label><input v-model="formProd.nome" autocomplete="off"/></div>
-                <div class="adm-campo"><label>Marca *</label><input v-model="formProd.marca" autocomplete="off"/></div>
+              <div v-show="prodFormTab === 'basico'" class="adm-grid-2">
                 <div class="adm-campo">
-                  <label>Categoria</label>
+                  <label for="prod-nome">Nome *</label>
+                  <input id="prod-nome" name="prod-nome" v-model="formProd.nome" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="prod-marca">Marca *</label>
+                  <input id="prod-marca" name="prod-marca" v-model="formProd.marca" autocomplete="off"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="prod-categoria">Categoria</label>
                   <template v-if="isGamerModal">
-                    <input value="GAMING" disabled class="adm-campo__sel" style="opacity:.4;cursor:not-allowed"/>
+                    <input id="prod-categoria" name="prod-categoria" value="GAMING" disabled class="adm-campo__sel" style="opacity:.4;cursor:not-allowed"/>
                   </template>
                   <template v-else>
-                    <select v-model="formProd.categoria" class="adm-campo__sel">
+                    <select id="prod-categoria" name="prod-categoria" v-model="formProd.categoria" class="adm-campo__sel">
                       <option v-for="c in CATEGORIAS" :key="c" :value="c">{{ c }}</option>
                     </select>
                   </template>
                 </div>
                 <div v-if="isGamerModal" class="adm-campo">
-                  <label>Subcategoria Gamer</label>
-                  <select v-model="formProd.subCategoria" class="adm-campo__sel">
+                  <label for="prod-subcategoria">Subcategoria Gamer</label>
+                  <select id="prod-subcategoria" name="prod-subcategoria" v-model="formProd.subCategoria" class="adm-campo__sel">
                     <option v-for="c in GAMER_SUBCATS" :key="c" :value="c">{{ c }}</option>
                   </select>
                 </div>
                 <div class="adm-campo">
-                  <label>Preço (R$) *</label>
-                  <input type="text" inputmode="numeric" placeholder="0,00" autocomplete="off"
-                    @input="e => { let d=e.target.value.replace(/\D/g,''); let n=(parseInt(d||'0')/100); formProd.preco=n; e.target.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) }"
-                    @focus="e => { let d=String(Math.round(formProd.preco*100)); let n=parseInt(d||'0')/100; e.target.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) }"/>
+                  <label for="prod-preco">Preço (R$) *</label>
+                  <input id="prod-preco" name="prod-preco" type="text" inputmode="numeric"
+       placeholder="0,00" autocomplete="off"
+       :value="formProd.preco > 0 
+               ? formProd.preco.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) 
+               : ''"
+       @input="e => { let d=e.target.value.replace(/\D/g,''); 
+                      let n=(parseInt(d||'0')/100); 
+                      formProd.preco=n; 
+                      e.target.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) }"
+       @focus="e => { let d=String(Math.round(formProd.preco*100)); 
+                      let n=parseInt(d||'0')/100; 
+                      e.target.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) }"/>
                 </div>
-                <div class="adm-campo"><label>Estoque</label><input v-model.number="formProd.estoque" type="number" min="0"/></div>
-                <div class="adm-campo"><label>Parcelas</label><input v-model.number="formProd.parcelas" type="number" min="1" max="24"/></div>
-                <div class="adm-campo"><label>SKU</label><input v-model="formProd.sku" autocomplete="off"/></div>
-                <div class="adm-campo adm-col-2"><label>Descrição</label><textarea v-model="formProd.descricao" rows="3" class="adm-campo__input"></textarea></div>
-                <div class="adm-campo adm-col-2"><label>URL da Imagem Principal</label><input v-model="formProd.imagem" autocomplete="off"/></div>
+                <div class="adm-campo">
+                  <label for="prod-estoque">Estoque</label>
+                  <input id="prod-estoque" name="prod-estoque" v-model.number="formProd.estoque" type="number" min="0"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="prod-parcelas">Parcelas</label>
+                  <input id="prod-parcelas" name="prod-parcelas" v-model.number="formProd.parcelas" type="number" min="1" max="24"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="prod-sku">SKU</label>
+                  <input id="prod-sku" name="prod-sku" v-model="formProd.sku" autocomplete="off"/>
+                </div>
+                <div class="adm-campo adm-col-2">
+                  <label for="prod-descricao">Descrição</label>
+                  <textarea id="prod-descricao" name="prod-descricao" v-model="formProd.descricao" rows="3" class="adm-campo__input"></textarea>
+                </div>
+                <div class="adm-campo adm-col-2">
+                  <label for="prod-imagem">URL da Imagem Principal</label>
+                  <input id="prod-imagem" name="prod-imagem" v-model="formProd.imagem" autocomplete="off"/>
+                </div>
               </div>
 
-              <div v-if="prodFormTab === 'imagens'" class="adm-grid-2">
-                <div class="adm-campo adm-col-2"><label>Imagem Principal</label><input v-model="formProd.imagem"/></div>
-                <div class="adm-campo adm-col-2"><div v-if="formProd.imagem" class="adm-img-preview"><img :src="formProd.imagem" alt="Preview" @error="e=>e.target.style.opacity='0'"/></div></div>
-                <div class="adm-campo"><label>Imagem 2</label><input v-model="formProd.imagem2"/></div>
-                <div class="adm-campo"><label>Imagem 3</label><input v-model="formProd.imagem3"/></div>
-              </div>
-
-              <div v-if="prodFormTab === 'variantes'">
+              <div v-show="prodFormTab === 'imagens'" class="adm-grid-2">
+  <div class="adm-campo adm-col-2">
+    <label for="prod-imagem-principal">Imagem Principal</label>
+    <input id="prod-imagem-principal" name="prod-imagem-principal" v-model="formProd.imagem"/>
+  </div>
+  <div class="adm-campo adm-col-2">
+    <div v-if="formProd.imagem" class="adm-img-preview" :key="formProd.imagem">
+      <img :src="formProd.imagem" alt="Preview" @error="e => { e.target.style.opacity = '0' }"/>
+    </div>
+  </div>
+  <div class="adm-campo">
+    <label for="prod-imagem2">Imagem 2</label>
+    <input id="prod-imagem2" name="prod-imagem2" v-model="formProd.imagem2"/>
+  </div>
+  <div class="adm-campo">
+    <label for="prod-imagem3">Imagem 3</label>
+    <input id="prod-imagem3" name="prod-imagem3" v-model="formProd.imagem3"/>
+  </div>
+</div>
+              <div v-show="prodFormTab === 'variantes'">
                 <p class="adm-campo-hint" style="margin-bottom:14px">Cores disponíveis</p>
                 <div v-for="(cor, i) in formProd.cores" :key="i" style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                  <input v-model="cor.nome" placeholder="Nome da cor" style="flex:1"/>
-                  <input v-model="cor.hex" type="color" class="adm-color-input"/>
-                  <input v-model="cor.hex" placeholder="#000000" style="width:90px"/>
-                  <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="formProd.cores.splice(i,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                  <label :for="`cor-nome-${i}`" class="sr-only">Nome da cor {{ i + 1 }}</label>
+                  <input :id="`cor-nome-${i}`" :name="`cor-nome-${i}`" v-model="cor.nome" placeholder="Nome da cor" style="flex:1"/>
+                  <label :for="`cor-picker-${i}`" class="sr-only">Cor {{ i + 1 }}</label>
+                  <input :id="`cor-picker-${i}`" :name="`cor-picker-${i}`" v-model="cor.hex" type="color" class="adm-color-input"/>
+                  <label :for="`cor-hex-${i}`" class="sr-only">Hex da cor {{ i + 1 }}</label>
+                  <input :id="`cor-hex-${i}`" :name="`cor-hex-${i}`" v-model="cor.hex" placeholder="#000000" style="width:90px"/>
+                  <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="formProd.cores.splice(i,1)" :aria-label="`Remover cor ${i + 1}`"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
                 </div>
                 <button class="btn btn--ghost btn--sm" @click="formProd.cores.push({nome:'',hex:'#000000'})">+ Adicionar cor</button>
               </div>
 
-              <div v-if="prodFormTab === 'specs'">
+              <div v-show="prodFormTab === 'specs'">
                 <p class="adm-campo-hint" style="margin-bottom:14px">Especificações técnicas</p>
                 <div v-for="(sp, i) in formProd.specs" :key="i" style="display:flex;gap:10px;margin-bottom:8px">
-                  <input v-model="sp.k" placeholder="ex: Processador" style="flex:1"/>
-                  <input v-model="sp.v" placeholder="ex: Apple M4" style="flex:2"/>
-                  <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="formProd.specs.splice(i,1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                  <label :for="`spec-k-${i}`" class="sr-only">Chave da spec {{ i + 1 }}</label>
+                  <input :id="`spec-k-${i}`" :name="`spec-k-${i}`" v-model="sp.k" placeholder="ex: Processador" style="flex:1"/>
+                  <label :for="`spec-v-${i}`" class="sr-only">Valor da spec {{ i + 1 }}</label>
+                  <input :id="`spec-v-${i}`" :name="`spec-v-${i}`" v-model="sp.v" placeholder="ex: Apple M4" style="flex:2"/>
+                  <button class="adm-icon-btn adm-icon-btn--sm adm-icon-btn--danger" @click="formProd.specs.splice(i,1)" :aria-label="`Remover spec ${i + 1}`"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
                 </div>
                 <button class="btn btn--ghost btn--sm" @click="formProd.specs.push({k:'',v:''})">+ Adicionar spec</button>
               </div>
 
-              <div v-if="prodFormTab === 'status'">
+              <div v-show="prodFormTab === 'status'">
                 <div style="display:flex;gap:24px;margin-top:16px;flex-wrap:wrap">
                   <label class="adm-toggle-lbl"><div :class="['adm-tog',{on:formProd.destaque}]" @click="formProd.destaque=!formProd.destaque"><span class="adm-tog__thumb"></span></div>Produto Destaque</label>
                   <label class="adm-toggle-lbl"><div :class="['adm-tog',{on:formProd.novo}]" @click="formProd.novo=!formProd.novo"><span class="adm-tog__thumb"></span></div>Novo Lançamento</label>
@@ -1127,27 +1259,52 @@
 
       <!-- Modal Cupom -->
       <transition name="modal-fade">
-        <div v-if="modalCupom" class="adm-modal-wrap" @click.self="modalCupom=false" role="dialog" aria-modal="true">
+        <div v-if="modalCupom" class="adm-modal-wrap" @click.self="modalCupom=false" role="dialog" aria-modal="true" aria-labelledby="modal-cupom-titulo">
           <div class="adm-modal adm-modal--sm">
             <div class="adm-modal__topline"></div>
             <div class="adm-modal__head">
-              <h3 class="adm-modal__titulo">{{ editandoCupom ? 'Editar Cupom' : 'Novo Cupom' }}</h3>
-              <button class="adm-modal__close" @click="modalCupom=false">✕</button>
+              <h3 id="modal-cupom-titulo" class="adm-modal__titulo">{{ editandoCupom ? 'Editar Cupom' : 'Novo Cupom' }}</h3>
+              <button class="adm-modal__close" @click="modalCupom=false" aria-label="Fechar modal">✕</button>
             </div>
             <div class="adm-modal__body">
               <div class="adm-grid-2">
-                <div class="adm-campo adm-col-2"><label>Código *</label><input v-model="formCupom.codigo" autocomplete="off" style="text-transform:uppercase"/></div>
-                <div class="adm-campo"><label>Tipo</label><select v-model="formCupom.tipo" class="adm-campo__sel"><option value="pct">Percentual (%)</option><option value="fixo">Valor Fixo (R$)</option><option value="frete">Frete Grátis</option></select></div>
-                <div class="adm-campo"><label>Valor</label><input v-model.number="formCupom.valor" type="number" min="0" :disabled="formCupom.tipo==='frete'"/></div>
-                <div class="adm-campo"><label>Pedido mínimo (R$)</label><input v-model.number="formCupom.minPedido" type="number" min="0"/></div>
-                <div class="adm-campo"><label>Limite de usos</label><input v-model.number="formCupom.limiteTotal" type="number" min="0"/></div>
-                <div class="adm-campo"><label>Válido de</label><input v-model="formCupom.validoDe" type="date" class="adm-date-input"/></div>
-                <div class="adm-campo"><label>Válido até</label><input v-model="formCupom.validoAte" type="date" class="adm-date-input"/></div>
+                <div class="adm-campo adm-col-2">
+                  <label for="cupom-codigo">Código *</label>
+                  <input id="cupom-codigo" name="cupom-codigo" v-model="formCupom.codigo" autocomplete="off" style="text-transform:uppercase"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-tipo">Tipo</label>
+                  <select id="cupom-tipo" name="cupom-tipo" v-model="formCupom.tipo" class="adm-campo__sel">
+                    <option value="pct">Percentual (%)</option>
+                    <option value="fixo">Valor Fixo (R$)</option>
+                    <option value="frete">Frete Grátis</option>
+                  </select>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-valor">Valor</label>
+                  <input id="cupom-valor" name="cupom-valor" v-model.number="formCupom.valor" type="number" min="0" :disabled="formCupom.tipo==='frete'"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-min-pedido">Pedido mínimo (R$)</label>
+                  <input id="cupom-min-pedido" name="cupom-min-pedido" v-model.number="formCupom.minPedido" type="number" min="0"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-limite">Limite de usos</label>
+                  <input id="cupom-limite" name="cupom-limite" v-model.number="formCupom.limiteTotal" type="number" min="0"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-valido-de">Válido de</label>
+                  <input id="cupom-valido-de" name="cupom-valido-de" v-model="formCupom.validoDe" type="date" class="adm-date-input"/>
+                </div>
+                <div class="adm-campo">
+                  <label for="cupom-valido-ate">Válido até</label>
+                  <input id="cupom-valido-ate" name="cupom-valido-ate" v-model="formCupom.validoAte" type="date" class="adm-date-input"/>
+                </div>
               </div>
               <div style="display:flex;gap:20px;margin-top:16px">
                 <label class="adm-toggle-lbl"><div :class="['adm-tog',{on:formCupom.ativo}]" @click="formCupom.ativo=!formCupom.ativo"><span class="adm-tog__thumb"></span></div>Cupom Ativo</label>
               </div>
-              <p v-if="erroFormCupom" class="adm-erro">{{ erroFormCupom }}</p>
+              <p v-if="erroFormCupom" class="adm-erro" role="alert">{{ erroFormCupom }}</p>
             </div>
             <div class="adm-modal__foot">
               <button class="btn btn--ghost" @click="modalCupom=false">Cancelar</button>
@@ -1162,10 +1319,13 @@
 
       <!-- Confirm Delete Produto -->
       <transition name="modal-fade">
-        <div v-if="deletandoProduto" class="adm-modal-wrap" @click.self="deletandoProduto=null">
+        <div v-if="deletandoProduto" class="adm-modal-wrap" @click.self="deletandoProduto=null" role="dialog" aria-modal="true" aria-labelledby="modal-del-prod-titulo">
           <div class="adm-modal adm-modal--sm">
             <div class="adm-modal__topline adm-modal__topline--red"></div>
-            <div class="adm-modal__head"><h3 class="adm-modal__titulo">Confirmar Exclusão</h3><button class="adm-modal__close" @click="deletandoProduto=null">✕</button></div>
+            <div class="adm-modal__head">
+              <h3 id="modal-del-prod-titulo" class="adm-modal__titulo">Confirmar Exclusão</h3>
+              <button class="adm-modal__close" @click="deletandoProduto=null" aria-label="Fechar modal">✕</button>
+            </div>
             <div class="adm-modal__body" style="text-align:center;padding:28px 26px">
               <p class="adm-modal__confirm-kanji">削</p>
               <p style="font-size:13px;color:rgba(237,232,224,0.55);line-height:1.7">Excluir <strong style="color:rgba(237,232,224,0.85)">{{ deletandoProduto.nome }}</strong>?<br/>Esta ação não pode ser desfeita.</p>
@@ -1182,10 +1342,13 @@
 
       <!-- Confirm Delete Usuário -->
       <transition name="modal-fade">
-        <div v-if="deletandoUsuario" class="adm-modal-wrap" @click.self="deletandoUsuario=null">
+        <div v-if="deletandoUsuario" class="adm-modal-wrap" @click.self="deletandoUsuario=null" role="dialog" aria-modal="true" aria-labelledby="modal-del-usr-titulo">
           <div class="adm-modal adm-modal--sm">
             <div class="adm-modal__topline adm-modal__topline--red"></div>
-            <div class="adm-modal__head"><h3 class="adm-modal__titulo">Excluir Usuário</h3><button class="adm-modal__close" @click="deletandoUsuario=null">✕</button></div>
+            <div class="adm-modal__head">
+              <h3 id="modal-del-usr-titulo" class="adm-modal__titulo">Excluir Usuário</h3>
+              <button class="adm-modal__close" @click="deletandoUsuario=null" aria-label="Fechar modal">✕</button>
+            </div>
             <div class="adm-modal__body" style="text-align:center;padding:28px 26px">
               <p class="adm-modal__confirm-kanji">除</p>
               <p style="font-size:13px;color:rgba(237,232,224,0.55);line-height:1.7">Excluir <strong style="color:rgba(237,232,224,0.85)">{{ deletandoUsuario.nome }}</strong>?<br/>Dados removidos permanentemente.</p>
@@ -1205,7 +1368,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useAuthStore }     from '@/stores/auth.js'
 import { useProdutosStore } from '@/stores/produtos.js'
 import { useSiteStore }     from '@/stores/site.js'
@@ -1328,12 +1491,12 @@ const mascararEmail = (email) => {
   const [u, d] = email.split('@')
   return !d ? email : u.slice(0, 2) + '***@' + d
 }
-  const statusLabel = (s) => ({ 
-  pendente:'Pendente', 
+const statusLabel = (s) => ({
+  pendente:'Pendente',
   aprovado:'Aprovado',
-  'em-preparo':'Em Preparo', 
+  'em-preparo':'Em Preparo',
   despachado:'Despachado',
-  entregue:'Entregue', 
+  entregue:'Entregue',
   cancelado:'Cancelado',
 })[s] || s || '—'
 const statusClass = (s) => { if(s==='entregue') return 'entregue'; if(['enviado','transito','aprovado'].includes(s)) return 'enviado'; if(s==='cancelado') return 'cancelado'; return 'pendente' }
@@ -1558,10 +1721,31 @@ const executarSeed=async()=>{seedando.value=true;try{const{data}=await api.post(
 
 const abrirNovoProduto=()=>{isGamerModal.value=false;editandoProduto.value=false;formProd.value=formProdPadrao();prodFormTab.value='basico';erroFormProd.value='';modalProduto.value=true}
 const abrirNovoProdutoGamer=()=>{isGamerModal.value=true;editandoProduto.value=false;formProd.value={...formProdPadrao(),categoria:'GAMING',subCategoria:'Mouse'};prodFormTab.value='basico';erroFormProd.value='';modalProduto.value=true}
-const abrirEditarProduto=(p,origem='')=>{
-  isGamerModal.value=origem==='gamer'||p.categoria==='GAMING';editandoProduto.value=true
-  formProd.value={...formProdPadrao(),...p,preco:Number(p.preco)||0,estoque:Number(p.estoque)||0,parcelas:Number(p.parcelas)||12,destaque:Boolean(p.destaque),novo:Boolean(p.novo),limitada:Boolean(p.limitada),cores:p.cores||[],storageOptions:p.storageOptions||[],specs:p.specs||[]}
-  prodFormTab.value='basico';erroFormProd.value='';modalProduto.value=true
+const abrirEditarProduto = (p, origem = '') => {
+  isGamerModal.value = origem === 'gamer' || p.categoria === 'GAMING'
+  editandoProduto.value = true
+  formProd.value = {
+    ...formProdPadrao(),
+    ...p,
+    preco:    Number(p.preco)    || 0,
+    estoque:  Number(p.estoque)  || 0,
+    parcelas: Number(p.parcelas) || 12,
+    destaque: Boolean(p.destaque),
+    novo:     Boolean(p.novo),
+    limitada: Boolean(p.limitada),
+    rgb:      Boolean(p.rgb),
+    imagem:   p.imagem   || '',
+    imagem2:  p.imagem2  || '',   // ← forçar explicitamente
+    imagem3:  p.imagem3  || '',   // ← forçar explicitamente
+    sku:      p.sku      || '',
+    subCategoria: p.subCategoria || '',
+    cores:        Array.isArray(p.cores) ? [...p.cores] : [],
+    storageOptions: Array.isArray(p.storageOptions) ? [...p.storageOptions] : [],
+    specs:    Array.isArray(p.specs) ? [...p.specs] : [],
+  }
+  prodFormTab.value = 'basico'
+  erroFormProd.value = ''
+  modalProduto.value = true
 }
 
 const salvarProduto=async()=>{
@@ -1591,7 +1775,7 @@ const duplicarProduto=async(p)=>{
 const deletarProdutosEmMassa=async()=>{
   if(!produtosSelecionados.value.length||!confirm(`Excluir ${produtosSelecionados.value.length} produto(s)?`)) return
   await Promise.all(produtosSelecionados.value.map(id=>api.delete(`/produtos/${id}`).catch(()=>{})))
-  await carregarProdutos();mostrarToast(`${produtosSelecionados.value.length} produto(s) removido(s).','','sucesso`);produtosSelecionados.value=[]
+  await carregarProdutos();mostrarToast(`${produtosSelecionados.value.length} produto(s) removido(s).`, '', 'sucesso');produtosSelecionados.value=[]
 }
 
 // ═══════════════════ GAMER ═══════════════════
@@ -1651,7 +1835,7 @@ const miniStatsUsuarios=computed(()=>[
 ])
 
 const carregarUsuarios=async()=>{loadingUsuarios.value=true;try{const{data}=await api.get('/usuarios?limit=500');todosUsuarios.value=data.users||data||[]}catch{todosUsuarios.value=[]}finally{loadingUsuarios.value=false}}
-const toggleAdmin=async(u)=>{const role=u.role==='admin'?'user':'admin';try{await api.patch(`/usuarios/${u._id}/role`,{role});u.role=role;mostrarToast(`Usuário ${role==='admin'?'promovido a ADMIN':'rebaixado para USER'}','','sucesso`);registrarLog(`${u.nome} → ${role}`)}catch(e){mostrarToast(e.response?.data?.msg||'Erro.','','erro')}}
+const toggleAdmin=async(u)=>{const role=u.role==='admin'?'user':'admin';try{await api.patch(`/usuarios/${u._id}/role`,{role});u.role=role;mostrarToast(`Usuário ${role==='admin'?'promovido a ADMIN':'rebaixado para USER'}`, '', 'sucesso');registrarLog(`${u.nome} → ${role}`)}catch(e){mostrarToast(e.response?.data?.msg||'Erro.','','erro')}}
 const deletarUsuario=async()=>{
   deletandoUsrLoad.value=true
   try{await api.delete(`/usuarios/${deletandoUsuario.value._id}`);todosUsuarios.value=todosUsuarios.value.filter(u=>u._id!==deletandoUsuario.value._id);mostrarToast('Usuário removido.','','sucesso');registrarLog(`Usuário "${deletandoUsuario.value.nome}" removido`);deletandoUsuario.value=null}
@@ -1683,6 +1867,14 @@ const statusAnalytics=computed(()=>{
 // ═══════════════════ CUPONS ═══════════════════
 const cupons        = ref([])
 const buscaCupons   = ref('')
+const cuponsExibidos = computed(() => {
+  if (!buscaCupons.value.trim()) return cupons.value
+  const q = buscaCupons.value.toLowerCase()
+  return cupons.value.filter(c =>
+    c.codigo?.toLowerCase().includes(q) ||
+    c.tipo?.toLowerCase().includes(q)
+  )
+})
 const modalCupom    = ref(false)
 const editandoCupom = ref(false)
 const salvandoCupom = ref(false)
@@ -1712,6 +1904,18 @@ const deletarCupom=async(c)=>{
 
 // ═══════════════════ SITE ═══════════════════
 const siteLocal=ref({nome:'',slogan:'',descricao:'',emailContato:'',whatsapp:'',corPrimaria:'#C8A84B',temaDefault:'escuro',seg:{maxTentativas:5,bloqueioBase:30,prazoCancelamento:24,googleClientId:''},politicas:{termos:'',privacidade:'',pedidoPrefixo:'NOR-'}})
+watch(
+  () => siteStore.config,
+  (cfg) => {
+    if (!cfg) return
+    const { seg, politicas, ...resto } = cfg
+    Object.assign(siteLocal.value, resto)
+    if (seg) Object.assign(siteLocal.value.seg, seg)
+    if (politicas) Object.assign(siteLocal.value.politicas, politicas)
+  },
+  { immediate: true, deep: true }
+)
+
 const salvandoSite=ref(false)
 const salvarSite=async()=>{salvandoSite.value=true;try{await siteStore.saveConfig(siteLocal.value);mostrarToast('Configurações salvas!','','sucesso');registrarLog('Config do site atualizada')}catch(e){mostrarToast(e.response?.data?.msg||'Erro ao salvar.','','erro')}finally{salvandoSite.value=false}}
 
@@ -1733,20 +1937,32 @@ onMounted(async()=>{
   if(!auth.isAdmin) return
   const updateClock=()=>{ horaAtual.value=new Date().toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',second:'2-digit'}) }
   updateClock(); clockTimer=setInterval(updateClock,1000)
-
-  const cfg=siteStore.config; if(cfg) Object.assign(siteLocal.value,cfg)
-
-  loadingDash.value=true
-  await Promise.all([carregarPedidos(),carregarProdutos(),carregarUsuarios()])
+  
+watch(
+  () => siteStore.config,
+  (cfg) => { if (cfg) Object.assign(siteLocal.value, cfg) },
+  { immediate: true, deep: true }
+)
+  loadingDash.value = true
+try {
+  await Promise.all([carregarPedidos(), carregarProdutos(), carregarUsuarios()])
   carregarCupons()
-  loadingDash.value=false
-
-  pollingTimer=setInterval(async()=>{
-    const antes=todosPedidos.value.length
+} finally {
+  loadingDash.value = false
+}
+  let _pollingEmCurso = false
+pollingTimer = setInterval(async () => {
+  if (_pollingEmCurso) return
+  _pollingEmCurso = true
+  try {
+    const antes = todosPedidos.value.length
     await carregarPedidos()
-    if(todosPedidos.value.length>antes) adicionarNotif(`${todosPedidos.value.length-antes} novo(s) pedido(s)!`,'pedidos')
-  },30000)
-
+    if (todosPedidos.value.length > antes)
+      adicionarNotif(`${todosPedidos.value.length - antes} novo(s) pedido(s)!`, 'pedidos')
+  } finally {
+    _pollingEmCurso = false
+  }
+}, 30000)
   window.addEventListener('keydown',handleKeydown)
 })
 
@@ -1759,6 +1975,19 @@ onUnmounted(()=>{
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap');
+
+/* ── Utilitário acessibilidade ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
 /* ═══ TOKENS (idênticos ao cfg) ═══ */
 .adm {
@@ -1834,7 +2063,7 @@ onUnmounted(()=>{
 .adm-orn__gem  { font-size:5px; color:var(--or); opacity:.38; }
 .adm-orn__kanji { font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:var(--or); opacity:.22; line-height:1; }
 
-/* ═══ ASIDE (DNA do cfg-aside) ═══ */
+/* ═══ ASIDE ═══ */
 .adm-aside {
   position:sticky; top:0;
   height:100vh;
@@ -1856,7 +2085,6 @@ onUnmounted(()=>{
 .adm-aside__logo-txt em { color:var(--or); font-style:normal; }
 .adm-aside__sub { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.38em; text-transform:uppercase; color:var(--or); opacity:.35; margin-top:3px; }
 
-/* Perfil aside (idêntico ao cfg) */
 .adm-aside__perfil { display:flex; align-items:center; gap:10px; padding:10px 16px; background:rgba(200,168,75,.025); border-top:0.5px solid var(--hair); border-bottom:0.5px solid var(--hair); position:relative; z-index:1; }
 .adm-aside__av-wrap { position:relative; flex-shrink:0; }
 .adm-aside__av { width:36px; height:36px; background:linear-gradient(135deg,var(--or),var(--or2)); border:1.5px solid rgba(200,168,75,.35); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:14px; font-weight:700; color:var(--void); overflow:hidden; flex-shrink:0; }
@@ -1868,13 +2096,11 @@ onUnmounted(()=>{
 .adm-badge-role__gem { font-size:4px; opacity:.8; }
 .adm-aside__perfil-email { font-family:'DM Mono',monospace; font-size:8px; color:var(--text3); letter-spacing:.03em; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
 
-/* Relógio */
 .adm-aside__clock { display:flex; align-items:center; gap:6px; padding:7px 16px; background:rgba(200,168,75,.02); border-bottom:0.5px solid var(--hair); position:relative; z-index:1; }
 .adm-aside__clock svg { color:var(--or); opacity:.45; flex-shrink:0; }
 .adm-aside__clock-label { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.4em; text-transform:uppercase; color:var(--text3); font-weight:600; }
 .adm-aside__clock-time  { font-family:'DM Mono',monospace; font-size:11px; color:var(--or); margin-left:auto; letter-spacing:.06em; }
 
-/* Nav */
 .adm-nav { flex:1; padding:4px 0; position:relative; z-index:1; }
 .adm-nav__grupo-label { display:flex; align-items:center; gap:7px; font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.48em; text-transform:uppercase; color:var(--or); opacity:.4; padding:7px 16px 4px; }
 .adm-nav__grupo-kanji { font-family:'Cormorant Garamond',serif; font-size:11px; font-style:italic; opacity:.7; letter-spacing:0; }
@@ -1894,7 +2120,6 @@ onUnmounted(()=>{
 .adm-nav__item.is-active .adm-nav__num   { opacity:.58; }
 .adm-nav__item.is-active .adm-nav__icon  { opacity:1; }
 
-/* Footer aside */
 .adm-aside__foot { padding:12px 16px 18px; border-top:0.5px solid var(--hair); flex-shrink:0; position:relative; z-index:1; display:flex; flex-direction:column; gap:8px; }
 .adm-sys { display:flex; align-items:center; gap:8px; }
 .adm-sys__dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px rgba(46,204,113,.55); flex-shrink:0; }
@@ -1903,12 +2128,10 @@ onUnmounted(()=>{
 .adm-aside__back:hover { color:var(--or); gap:11px; }
 .adm-aside__copy { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.15em; color:rgba(200,168,75,.16); }
 
-/* ═══ OVERLAY MOBILE ═══ */
 .adm-overlay { position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(8px); z-index:9; }
 .overlay-fade-enter-active,.overlay-fade-leave-active { transition:opacity .28s; }
 .overlay-fade-enter-from,.overlay-fade-leave-to { opacity:0; }
 
-/* ═══ CONTENT + TOPBAR ═══ */
 .adm-content { display:flex; flex-direction:column; min-height:calc(100vh - var(--navbar-h,56px)); position:relative; z-index:1; }
 
 .adm-topbar { display:flex; align-items:center; gap:14px; padding:13px 28px; border-bottom:0.5px solid var(--hair); position:sticky; top:0; z-index:20; background:rgba(6,6,13,.94); backdrop-filter:blur(28px); }
@@ -1924,7 +2147,6 @@ onUnmounted(()=>{
 .adm-topbar__status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px rgba(46,204,113,.55); }
 .adm-topbar__av { width:32px; height:32px; background:linear-gradient(135deg,var(--or),var(--or2)); border:1.5px solid rgba(200,168,75,.35); border-radius:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:var(--void); flex-shrink:0; }
 
-/* Icon btn */
 .adm-icon-btn { width:32px; height:32px; background:none; border:0.5px solid var(--hair); color:var(--text2); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; position:relative; flex-shrink:0; }
 .adm-icon-btn:hover { border-color:var(--hairH); color:var(--or); background:rgba(200,168,75,.05); }
 .adm-icon-btn--sm   { width:26px; height:26px; }
@@ -1932,7 +2154,6 @@ onUnmounted(()=>{
 .adm-icon-btn__badge { position:absolute; top:-4px; right:-4px; width:14px; height:14px; background:var(--red); border-radius:50%; border:1.5px solid var(--void); font-family:'DM Mono',monospace; font-size:7px; font-weight:700; display:flex; align-items:center; justify-content:center; color:#fff; }
 .adm-icon-btn__badge--pulse { animation:pulse 2s ease-in-out infinite; }
 
-/* Toast */
 .adm-toast { position:fixed; top:22px; right:22px; z-index:9100; display:flex; align-items:flex-start; gap:11px; min-width:260px; max-width:320px; background:var(--deep); border:0.5px solid var(--hair); box-shadow:0 12px 40px rgba(0,0,0,.55); padding:12px; overflow:hidden; }
 .adm-toast::before { content:''; position:absolute; top:0; left:0; right:0; height:0.5px; background:linear-gradient(90deg,transparent,var(--toast-accent,var(--or)),transparent); opacity:.7; }
 .adm-toast--sucesso { --toast-accent:#2ecc71; }
@@ -1948,7 +2169,6 @@ onUnmounted(()=>{
 .toast-slide-enter-active,.toast-slide-leave-active { transition:opacity .3s,transform .3s; }
 .toast-slide-enter-from,.toast-slide-leave-to { opacity:0; transform:translateX(14px); }
 
-/* Notif panel */
 .adm-notif-panel { position:absolute; top:calc(100% + 10px); right:0; width:300px; background:var(--panel); border:0.5px solid var(--hairH); z-index:50; max-height:360px; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.5); }
 .adm-notif-panel__head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:0.5px solid var(--hair); font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.3em; text-transform:uppercase; color:var(--or); opacity:.7; }
 .adm-notif-panel__mark { background:none; border:none; font-family:'DM Mono',monospace; font-size:7px; color:var(--text3); cursor:pointer; letter-spacing:.15em; transition:color .2s; }
@@ -1963,15 +2183,12 @@ onUnmounted(()=>{
 .notif-drop-enter-active,.notif-drop-leave-active { transition:opacity .2s,transform .25s; }
 .notif-drop-enter-from,.notif-drop-leave-to { opacity:0; transform:translateY(-8px); }
 
-/* ═══ SEÇÃO ═══ */
 .adm-section { padding:20px 28px; display:flex; flex-direction:column; gap:14px; }
 
-/* ═══ GRIDS ═══ */
 .adm-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
 .adm-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .adm-col-2  { grid-column:span 2; }
 
-/* ═══ STAT CARDS ═══ */
 .adm-stat { background:var(--panel); border:0.5px solid var(--hair); padding:14px 16px; position:relative; overflow:hidden; }
 .adm-stat__topline { position:absolute; top:0; left:0; right:0; height:0.5px; background:linear-gradient(90deg,var(--or),transparent); opacity:.18; }
 .adm-stat__kanji   { position:absolute; right:10px; top:8px; font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-style:italic; color:var(--or); opacity:.06; line-height:1; pointer-events:none; }
@@ -1980,14 +2197,12 @@ onUnmounted(()=>{
 .adm-stat__label   { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.4em; text-transform:uppercase; color:var(--text3); display:block; }
 .adm-stat__sub     { font-size:10px; color:var(--text3); margin-top:6px; display:block; }
 
-/* ═══ MINI STAT ═══ */
 .adm-mini-stat { background:var(--panel); border:0.5px solid var(--hair); padding:14px 16px; position:relative; overflow:hidden; }
 .adm-mini-stat__topline { position:absolute; top:0; left:0; right:0; height:0.5px; background:linear-gradient(90deg,var(--or),transparent); opacity:.18; }
 .adm-mini-stat__num   { display:block; font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; color:var(--text); line-height:1; margin-bottom:4px; }
 .adm-mini-stat__label { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.4em; text-transform:uppercase; color:var(--text3); display:block; }
 .adm-mini-stat__bar   { position:absolute; bottom:0; left:0; height:2px; background:linear-gradient(to right,var(--or),rgba(200,168,75,.3)); transition:width 1s var(--ease); }
 
-/* ═══ ALERTAS ═══ */
 .adm-alertas { display:flex; flex-direction:column; gap:8px; }
 .adm-alerta  { display:flex; align-items:center; gap:10px; padding:10px 18px; border:0.5px solid; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.15em; }
 .adm-alerta--warn { background:rgba(243,156,18,.05); border-color:rgba(243,156,18,.25); color:#f39c12; }
@@ -1996,7 +2211,6 @@ onUnmounted(()=>{
 .adm-alerta button { margin-left:auto; background:none; border:none; cursor:pointer; color:inherit; opacity:.5; transition:opacity .2s; font-size:11px; }
 .adm-alerta button:hover { opacity:1; }
 
-/* ═══ CARD ═══ */
 .adm-card { background:var(--panel); border:0.5px solid var(--hair); position:relative; overflow:hidden; }
 .adm-card::after { content:''; position:absolute; top:0; left:0; bottom:0; width:0.5px; background:linear-gradient(180deg,var(--or),transparent 60%); opacity:.1; }
 .adm-card__topline { position:absolute; top:0; left:0; right:0; height:0.5px; background:linear-gradient(90deg,var(--or),transparent 50%); opacity:.2; }
@@ -2010,7 +2224,6 @@ onUnmounted(()=>{
 .adm-card__body--radiais{ display:flex; justify-content:space-around; padding:18px 20px; }
 .adm-card__foot   { padding:14px 20px; border-top:0.5px solid var(--hair); display:flex; justify-content:flex-end; gap:8px; }
 
-/* ═══ CHARTS ═══ */
 .adm-charts { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:12px; }
 .adm-bar      { display:flex; align-items:flex-end; gap:5px; height:90px; }
 .adm-bar--tall{ height:130px; }
@@ -2045,7 +2258,6 @@ onUnmounted(()=>{
 .adm-log-item__msg  { font-size:11px; color:var(--text2); line-height:1.5; }
 .adm-log-item__time { font-family:'DM Mono',monospace; font-size:8px; color:var(--text3); margin-top:2px; display:block; }
 
-/* ═══ TOOLBAR / SEARCH ═══ */
 .adm-toolbar    { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 .adm-search-box { display:flex; align-items:center; gap:8px; background:rgba(200,168,75,.035); border:0.5px solid var(--hair); padding:7px 12px; flex:1; min-width:200px; max-width:340px; transition:border-color .2s; }
 .adm-search-box:focus-within { border-color:var(--hairH); }
@@ -2063,7 +2275,6 @@ onUnmounted(()=>{
 .adm-bulk        { display:flex; align-items:center; gap:10px; padding:10px 16px; background:rgba(200,168,75,.04); border:0.5px solid var(--hairH); flex-wrap:wrap; }
 .adm-bulk__count { font-family:'DM Mono',monospace; font-size:9px; color:var(--or); letter-spacing:.2em; }
 
-/* ═══ TABELA ═══ */
 .adm-tabela { width:100%; border-collapse:collapse; }
 .adm-tabela thead tr { border-bottom:0.5px solid var(--hairH); }
 .adm-tabela th { padding:12px 18px; font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.42em; text-transform:uppercase; color:rgba(200,168,75,.48); text-align:left; font-weight:700; white-space:nowrap; }
@@ -2084,7 +2295,6 @@ onUnmounted(()=>{
 .adm-skel-wrap { display:flex; flex-direction:column; gap:8px; padding:12px 18px; }
 .adm-skel-row  { height:40px; background:linear-gradient(90deg,rgba(200,168,75,.04) 0%,rgba(200,168,75,.08) 50%,rgba(200,168,75,.04) 100%); background-size:200% 100%; animation:skelPulse 1.6s ease-in-out infinite; }
 
-/* ═══ TEXTO / BADGES ═══ */
 .adm-nome      { font-size:12px; color:var(--text2); font-weight:500; margin:0; }
 .adm-email     { font-size:10px; color:var(--text3); margin-top:2px; margin-bottom:0; }
 .adm-txt-sm    { font-size:12px; color:var(--text2); }
@@ -2140,19 +2350,16 @@ onUnmounted(()=>{
 .adm-usr-av   { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--or),var(--or2)); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--void); flex-shrink:0; overflow:hidden; border:0.5px solid var(--hair); }
 .adm-usr-av img { width:100%; height:100%; object-fit:cover; }
 
-/* ═══ PAGINAÇÃO ═══ */
 .adm-pag      { display:flex; align-items:center; justify-content:center; gap:12px; padding:14px; border-top:0.5px solid var(--hair); }
 .adm-pag__btn { width:30px; height:30px; background:rgba(200,168,75,.05); border:0.5px solid var(--hair); color:var(--text2); cursor:pointer; transition:all .2s; }
 .adm-pag__btn:hover:not(:disabled) { border-color:var(--hairH); color:var(--or); }
 .adm-pag__btn:disabled { opacity:.3; cursor:not-allowed; }
 .adm-pag__info { font-family:'DM Mono',monospace; font-size:11px; color:var(--text3); letter-spacing:.12em; }
 
-/* ═══ SPINNER ═══ */
 .adm-spinner    { width:10px; height:10px; border:1.5px solid rgba(200,168,75,.2); border-top-color:var(--or); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; display:inline-block; }
 .adm-spinner--sm{ width:10px; height:10px; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
-/* ═══ BOTÕES (idênticos ao cfg) ═══ */
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:'Syne',sans-serif; font-size:7.5px; font-weight:700; letter-spacing:.4em; text-transform:uppercase; padding:10px 20px; border:none; cursor:pointer; transition:all .32s var(--ease); white-space:nowrap; position:relative; overflow:hidden; text-decoration:none; }
 .btn:disabled { opacity:.3; cursor:not-allowed; }
 .btn--gold { background:transparent; color:var(--or); border:0.5px solid var(--or); }
@@ -2167,20 +2374,17 @@ onUnmounted(()=>{
 .btn--sm   { padding:6px 14px; font-size:7px; }
 .btn--full { width:100%; }
 
-/* ═══ SITE TABS ═══ */
 .adm-site-tabs { display:flex; gap:4px; flex-wrap:wrap; }
 .adm-site-tab  { display:flex; align-items:center; gap:7px; padding:9px 16px; background:rgba(200,168,75,.04); border:0.5px solid var(--hair); color:var(--text3); font-family:'Syne',sans-serif; font-size:10px; letter-spacing:.08em; cursor:pointer; transition:all .25s var(--ease); }
 .adm-site-tab:hover { border-color:var(--hairH); color:var(--text2); }
 .adm-site-tab.is-active { background:rgba(200,168,75,.1); border-color:var(--hairH); color:var(--or); }
 .adm-site-tab__kanji{ font-family:'Cormorant Garamond',serif; font-size:14px; font-style:italic; opacity:.65; }
 
-/* ═══ PROD FORM TABS ═══ */
 .adm-prod-form-tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:20px; }
 .adm-prod-form-tab  { padding:7px 14px; background:rgba(200,168,75,.04); border:0.5px solid var(--hair); color:var(--text3); font-size:9px; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:all .2s; font-family:'DM Mono',monospace; }
 .adm-prod-form-tab:hover { border-color:var(--hairH); color:var(--text2); }
 .adm-prod-form-tab.is-active { background:rgba(200,168,75,.1); border-color:var(--hairH); color:var(--or); }
 
-/* ═══ CAMPOS ═══ */
 .adm-campo { display:flex; flex-direction:column; gap:6px; }
 .adm-campo label { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.52em; text-transform:uppercase; color:var(--or); opacity:.58; }
 .adm-campo input, .adm-campo textarea, .adm-campo__input, .adm-campo__sel {
@@ -2197,20 +2401,17 @@ onUnmounted(()=>{
 .adm-img-preview { width:100%; height:140px; border:0.5px solid var(--hair); background:rgba(200,168,75,.03); overflow:hidden; }
 .adm-img-preview img { width:100%; height:100%; object-fit:cover; }
 
-/* Toggles */
 .adm-toggle-lbl { display:flex; align-items:center; gap:10px; cursor:pointer; font-size:12px; color:var(--text2); }
 .adm-tog        { width:42px; height:22px; border-radius:40px; background:rgba(200,168,75,.08); border:0.5px solid var(--hair); position:relative; transition:all .25s; cursor:pointer; flex-shrink:0; }
 .adm-tog.on     { background:rgba(200,168,75,.2); border-color:var(--hairH); }
 .adm-tog__thumb { position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.3); transition:transform .25s var(--ease); }
 .adm-tog.on .adm-tog__thumb { transform:translateX(20px); background:var(--or); }
 
-/* Vazio */
 .adm-vazio-bloco        { display:flex; flex-direction:column; align-items:center; gap:10px; padding:60px 20px; text-align:center; }
 .adm-vazio-bloco__kanji { font-family:'Cormorant Garamond',serif; font-size:4rem; font-style:italic; color:var(--or); opacity:.1; }
 .adm-vazio-bloco__titulo{ font-size:15px; font-weight:600; color:var(--text2); }
 .adm-vazio-simples      { text-align:center; padding:24px; color:var(--text3); font-size:12px; }
 
-/* Notif rows full */
 .adm-notif-row       { display:flex; align-items:center; gap:12px; padding:14px 20px; border-bottom:0.5px solid var(--hair); cursor:pointer; transition:background .2s; }
 .adm-notif-row:hover { background:rgba(200,168,75,.028); }
 .adm-notif-row--nova { background:rgba(200,168,75,.025); }
@@ -2219,7 +2420,6 @@ onUnmounted(()=>{
 .adm-notif-row__msg  { font-size:12px; color:var(--text2); line-height:1.5; margin:0; }
 .adm-notif-row__time { font-family:'DM Mono',monospace; font-size:8px; color:var(--text3); margin-top:3px; }
 
-/* Tabela simples dash */
 .adm-tbl-head { display:grid; grid-template-columns:90px 1fr 120px 120px 100px; gap:12px; padding:10px 20px; border-bottom:0.5px solid var(--hairH); }
 .adm-tbl-head span { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:.42em; text-transform:uppercase; color:rgba(200,168,75,.42); }
 .adm-tbl-head--ped { grid-template-columns:90px 1fr 120px 120px 100px; }
@@ -2227,7 +2427,6 @@ onUnmounted(()=>{
 .adm-tbl-row--ped{ grid-template-columns:90px 1fr 120px 120px 100px; }
 .adm-tbl-row:hover { background:rgba(200,168,75,.025); }
 
-/* ═══ MODAL ═══ */
 .adm-modal-wrap { position:fixed; inset:0; z-index:9200; background:rgba(5,5,9,.92); backdrop-filter:blur(22px); display:flex; align-items:center; justify-content:center; padding:20px; }
 .adm-modal { background:linear-gradient(135deg,rgba(10,8,2,.99),rgba(7,6,1,.99)); border:0.5px solid var(--hair); max-width:680px; width:100%; max-height:90vh; overflow-y:auto; position:relative; }
 .adm-modal--sm { max-width:440px; }
@@ -2248,7 +2447,6 @@ onUnmounted(()=>{
 .modal-fade-enter-active,.modal-fade-leave-active { transition:opacity .28s; }
 .modal-fade-enter-from,.modal-fade-leave-to { opacity:0; }
 
-/* ═══ RESPONSIVO ═══ */
 @media (max-width:1200px) {
   .adm { grid-template-columns:200px 1fr; }
   .adm-grid-4 { grid-template-columns:repeat(2,1fr); }
