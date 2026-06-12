@@ -1,5 +1,58 @@
 <template>
   <teleport to="body">
+
+    <!-- ══ MODAL VERIFICAÇÃO DE IDADE ══ -->
+    <transition name="co-fade">
+      <div v-if="mostrarVerifIdade" class="co-overlay co-overlay--idade" role="dialog" aria-modal="true" aria-label="Verificação de Idade">
+        <div class="co-idade-modal">
+          <span class="co-corner co-corner--tl" aria-hidden="true"></span>
+          <span class="co-corner co-corner--tr" aria-hidden="true"></span>
+          <span class="co-corner co-corner--bl" aria-hidden="true"></span>
+          <span class="co-corner co-corner--br" aria-hidden="true"></span>
+
+          <div class="co-idade-icone" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+
+          <div class="co-idade-kanji" aria-hidden="true">成人</div>
+
+          <h2 class="co-idade-titulo">Verificação de Idade</h2>
+          <p class="co-idade-desc">
+            Para acessar a loja Noir&nbsp;&amp;&nbsp;Or, você deve ter pelo menos
+            <strong>18 anos</strong>. Ao continuar, você confirma que é maior de idade.
+          </p>
+
+          <div class="co-idade-aviso">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            A venda é proibida para menores de 18 anos (Art. 243, ECA).
+          </div>
+
+          <div class="co-idade-btns">
+            <button class="btn-ghost" @click="recusarIdade">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Não, sou menor de idade
+            </button>
+            <button class="btn-gold" @click="confirmarIdade">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Sim, tenho 18 anos ou mais
+            </button>
+          </div>
+
+          <p class="co-idade-legal">
+            Ao confirmar, você declara que tem 18 anos ou mais e concorda com os
+            <a href="#" @click.prevent>Termos de Uso</a> e a
+            <a href="#" @click.prevent>Política de Privacidade</a>.
+          </p>
+        </div>
+      </div>
+    </transition>
+
+    <!-- ══ CHECKOUT PRINCIPAL ══ -->
     <div v-if="aberto" class="co-overlay" @click.self="tentarFechar" role="dialog" aria-modal="true" aria-label="Checkout Noir & Or">
 
       <div class="co-realm-line" aria-hidden="true"></div>
@@ -42,6 +95,11 @@
           </nav>
 
           <div class="co-header__right">
+            <!-- Badge de maioridade confirmada -->
+            <div class="co-idade-badge" title="Maioridade confirmada" aria-label="Maior de 18 anos verificado">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              +18
+            </div>
             <select v-model="locale" class="co-locale-sel" @change="salvarLocale">
               <option value="pt-BR">🇧🇷</option>
               <option value="en-US">🇺🇸</option>
@@ -84,70 +142,41 @@
               <div v-else>
                 <TransitionGroup name="item-list" tag="div" class="co-itens">
                   <div v-for="item in itens" :key="item._id||item.id" class="co-item">
-
-                    <div class="co-item__num" aria-hidden="true">
-                      {{ String(itens.indexOf(item)+1).padStart(2,'0') }}
-                    </div>
-
+                    <div class="co-item__num" aria-hidden="true">{{ String(itens.indexOf(item)+1).padStart(2,'0') }}</div>
                     <div class="co-item__img">
                       <img :src="item.imagem" :alt="item.nome" loading="lazy" @error="e=>e.target.style.opacity='0'"/>
                     </div>
-
                     <div class="co-item__info">
                       <span class="co-item__cat">{{ item.categoria }}</span>
                       <p class="co-item__nome">{{ item.nome }}</p>
-
                       <div v-if="item.corNome || item.storage" class="co-item__variantes">
-                        <span
-                          v-if="item.corHex"
-                          class="co-item__swatch"
-                          :style="{ background: item.corHex }"
-                          :title="item.corNome"
-                        ></span>
+                        <span v-if="item.corHex" class="co-item__swatch" :style="{ background: item.corHex }" :title="item.corNome"></span>
                         <span v-if="item.corNome" class="co-item__var-txt">{{ item.corNome }}</span>
                         <span v-if="item.corNome && item.storage" class="co-item__var-sep">·</span>
                         <span v-if="item.storage" class="co-item__var-txt co-item__var-txt--storage">
-                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <rect x="2" y="2" width="20" height="8" rx="2"/>
-                            <rect x="2" y="14" width="20" height="8" rx="2"/>
-                            <line x1="6" y1="6" x2="6.01" y2="6"/>
-                            <line x1="6" y1="18" x2="6.01" y2="18"/>
-                          </svg>
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
                           {{ item.storage }}
                         </span>
                       </div>
-
                       <div class="co-qty" :aria-label="`Quantidade: ${item.qty}`">
                         <button class="co-qty__btn" @click="alterarQty(item,-1)" aria-label="Diminuir">−</button>
                         <span class="co-qty__val" aria-live="polite">{{ item.qty }}</span>
                         <button class="co-qty__btn" @click="alterarQty(item,+1)" aria-label="Aumentar">+</button>
                       </div>
                     </div>
-
                     <div class="co-item__right">
                       <p class="co-item__preco">R$ {{ fmt(item.preco * item.qty) }}</p>
                       <button class="co-remove" @click="removerItem(item)" aria-label="Remover item">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                          <path d="M18 6L6 18M6 6l12 12"/>
-                        </svg>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                       </button>
                     </div>
-
                   </div>
                 </TransitionGroup>
 
                 <!-- CUPOM -->
                 <div class="co-cupom">
                   <div class="co-cupom__row">
-                    <input
-                      v-model="cupomCodigo"
-                      :placeholder="t('Código de cupom')"
-                      class="co-cupom__input"
-                      @keyup.enter="aplicarCupom"
-                      :disabled="cupomAplicado"
-                      autocomplete="off"
-                      style="text-transform:uppercase"
-                    />
+                    <input v-model="cupomCodigo" :placeholder="t('Código de cupom')" class="co-cupom__input" @keyup.enter="aplicarCupom" :disabled="cupomAplicado" autocomplete="off" style="text-transform:uppercase"/>
                     <button v-if="!cupomAplicado" class="btn-ghost btn-sm" @click="aplicarCupom" :disabled="salvandoCupom||!cupomCodigo">
                       <span v-if="!salvandoCupom">{{ t('Aplicar') }}</span>
                       <span v-else class="co-spin co-spin--sm"></span>
@@ -214,6 +243,25 @@
                     <span class="co-campo__err" v-if="erros.cpf" role="alert">{{ erros.cpf }}</span>
                   </div>
                 </div>
+
+                <!-- DATA DE NASCIMENTO — verificação secundária de idade -->
+                <div class="co-campo" :class="campoClass('dataNasc')">
+                  <label for="f-nasc">{{ t('Data de nascimento') }} * <span class="co-campo__lbl-badge">+18</span></label>
+                  <div class="co-campo__row">
+                    <input
+                      id="f-nasc"
+                      v-model="cliente.dataNasc"
+                      type="date"
+                      :max="maxDataNasc"
+                      @change="validarIdade"
+                      @blur="validarIdade"
+                    />
+                    <span class="co-campo__ok" v-if="idadeValida && !erros.dataNasc" aria-label="Idade válida">✓</span>
+                  </div>
+                  <span class="co-campo__err" v-if="erros.dataNasc" role="alert">{{ erros.dataNasc }}</span>
+                  <span class="co-campo__hint" v-if="idadeValida && !erros.dataNasc">{{ idadeCalculada }} anos</span>
+                </div>
+
                 <div class="co-grid-2">
                   <div class="co-campo" :class="campoClass('email')">
                     <label for="f-email">{{ t('E-mail') }} *</label>
@@ -265,7 +313,6 @@
                 <span class="co-etapa__kanji" aria-hidden="true">住</span>
                 <h2 class="co-titulo"><span class="co-titulo__num">03</span>{{ t('Entrega') }}</h2>
               </div>
-
               <div class="co-form">
                 <div class="co-grid-2">
                   <div class="co-campo" :class="campoClass('cep')">
@@ -396,14 +443,12 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="co-campo">
                   <label>{{ t('Bandeira') }}</label>
                   <div class="co-bandeiras">
                     <button v-for="b in BANDEIRAS" :key="b.id" type="button" :class="['co-bandeira', {active: bandeiraCartao===b.id}]" @click="bandeiraCartao=b.id">{{ b.nome }}</button>
                   </div>
                 </div>
-
                 <div class="co-campo">
                   <label>{{ t('Tipo de cartão') }}</label>
                   <div class="co-radio-group">
@@ -411,7 +456,6 @@
                     <label class="co-radio"><input type="radio" value="debito"  v-model="tipoCartao"/>{{ t('Débito') }}</label>
                   </div>
                 </div>
-
                 <div class="co-campo" :class="campoClass('cartaoNum')">
                   <label for="c-num">{{ t('Número do cartão') }} *</label>
                   <div class="co-campo__row">
@@ -421,12 +465,10 @@
                   <span class="co-campo__err" v-if="erros.cartaoNum" role="alert">{{ erros.cartaoNum }}</span>
                   <span class="co-campo__hint" v-if="luhnValido && !erros.cartaoNum">{{ t('Número válido') }}</span>
                 </div>
-
                 <div class="co-campo">
                   <label for="c-nome">{{ t('Nome no cartão') }}</label>
                   <input id="c-nome" v-model="cartao.nome" :placeholder="t('Como impresso no cartão')" style="text-transform:uppercase" autocomplete="cc-name"/>
                 </div>
-
                 <div class="co-grid-2">
                   <div class="co-campo" :class="campoClass('cartaoVal')">
                     <label for="c-val">{{ t('Validade') }} *</label>
@@ -438,7 +480,6 @@
                     <input id="c-cvv" v-model="cartao.cvv" placeholder="•••" maxlength="4" type="password" @focus="cartaoVirado=true" @blur="cartaoVirado=false" inputmode="numeric" autocomplete="cc-csc"/>
                   </div>
                 </div>
-
                 <div class="co-campo">
                   <label for="c-parc">{{ t('Parcelamento') }}</label>
                   <select id="c-parc" v-model="cartao.parcelas" class="co-select" :disabled="tipoCartao==='debito'">
@@ -466,7 +507,6 @@
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <span>{{ t('Análise antifraude automática aplicada') }}</span>
               </div>
-
               <div class="co-seals">
                 <div class="co-seal"><span class="co-seal__dot"></span>SSL 256-bit</div>
                 <div class="co-seal"><span class="co-seal__dot"></span>{{ t('Mercado Pago') }}</div>
@@ -518,9 +558,7 @@
                 </div>
               </transition>
 
-              <p class="co-ped-id">
-                {{ t('Pedido') }} <strong>#{{ idPedidoFormatado }}</strong>
-              </p>
+              <p class="co-ped-id">{{ t('Pedido') }} <strong>#{{ idPedidoFormatado }}</strong></p>
 
               <!-- COMPROVANTE -->
               <div class="co-comprovante" ref="comprovanteRef">
@@ -534,10 +572,7 @@
                     <span class="co-comprovante__id">#{{ idPedidoFormatado }}</span>
                   </div>
                 </div>
-
-                <div class="co-comprovante__divider" aria-hidden="true">
-                  <span></span><span class="co-comprovante__gem">◆</span><span></span>
-                </div>
+                <div class="co-comprovante__divider" aria-hidden="true"><span></span><span class="co-comprovante__gem">◆</span><span></span></div>
 
                 <div class="co-comprovante__section">
                   <p class="co-comprovante__section-title">
@@ -564,31 +599,18 @@
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>
                     {{ t('Itens do Pedido') }}
                   </p>
-
                   <div v-for="item in (pedidoCriado.itens || [])" :key="item._id || item.id" class="co-comprovante__item">
                     <div class="co-comprovante__item-info">
                       <span class="co-comprovante__item-nome">{{ item.nome || item.produto?.nome }}</span>
-
                       <div v-if="item.corNome || item.storage" class="co-comprovante__variantes">
-                        <span
-                          v-if="item.corHex"
-                          class="co-comprovante__swatch"
-                          :style="{ background: item.corHex }"
-                          :title="item.corNome"
-                        ></span>
+                        <span v-if="item.corHex" class="co-comprovante__swatch" :style="{ background: item.corHex }" :title="item.corNome"></span>
                         <span v-if="item.corNome" class="co-comprovante__var-txt">{{ item.corNome }}</span>
                         <span v-if="item.corNome && item.storage" class="co-comprovante__var-sep">·</span>
                         <span v-if="item.storage" class="co-comprovante__var-txt co-comprovante__var-txt--storage">
-                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <rect x="2" y="2" width="20" height="8" rx="2"/>
-                            <rect x="2" y="14" width="20" height="8" rx="2"/>
-                            <line x1="6" y1="6" x2="6.01" y2="6"/>
-                            <line x1="6" y1="18" x2="6.01" y2="18"/>
-                          </svg>
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
                           {{ item.storage }}
                         </span>
                       </div>
-
                       <span class="co-comprovante__item-qty">{{ t('Qtd') }}: {{ item.qty || item.quantidade || 1 }}</span>
                     </div>
                     <span class="co-comprovante__item-val">R$ {{ fmt((item.preco || item.produto?.preco || 0) * (item.qty || 1)) }}</span>
@@ -620,17 +642,42 @@
                   <div class="co-comprovante__row"><span>{{ t('Processado por') }}</span><span>Mercado Pago</span></div>
                 </div>
 
-                <!-- QR CODE PIX -->
-                <div v-if="pedidoCriado.pagamento?.metodo==='pix' && pedidoCriado.status!=='aprovado'" class="co-pix-box">
+                <!-- QR CODE PIX — renderização corrigida com ref dinâmico -->
+                <div
+                  v-if="pedidoCriado.pagamento?.metodo==='pix' && pedidoCriado.status!=='aprovado'"
+                  class="co-pix-box"
+                >
                   <p class="co-pix-box__titulo">{{ t('QR Code para pagamento') }}</p>
+
                   <div class="co-qr-wrap">
-                    <img v-if="pedidoCriado.pagamento.pixQrImage" :src="`data:image/png;base64,${pedidoCriado.pagamento.pixQrImage}`" alt="QR Code Pix" class="co-qr-img"/>
-                    <canvas v-else ref="qrCanvasRef" class="co-qr-canvas" aria-label="QR Code Pix"></canvas>
+                    <!-- Prioridade 1: imagem base64 do backend -->
+                    <img
+                      v-if="pedidoCriado.pagamento.pixQrImage"
+                      :src="`data:image/png;base64,${pedidoCriado.pagamento.pixQrImage}`"
+                      alt="QR Code Pix"
+                      class="co-qr-img"
+                    />
+                    <!-- Prioridade 2: canvas gerado localmente -->
+                    <template v-else>
+                      <canvas
+                        v-if="qrGerado"
+                        ref="qrCanvasRef"
+                        class="co-qr-canvas"
+                        aria-label="QR Code Pix"
+                      ></canvas>
+                      <!-- Estado de carregando enquanto gera -->
+                      <div v-else class="co-qr-loading" aria-live="polite">
+                        <span class="co-spin"></span>
+                        <span>Gerando QR Code…</span>
+                      </div>
+                    </template>
                   </div>
+
                   <div class="co-pix-timer" :class="{ 'co-pix-timer--urgente': pixTimerSecs <= 300 }">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     {{ t('Expira em') }} <strong>{{ pixTimerFmt }}</strong>
                   </div>
+
                   <div v-if="pedidoCriado.pagamento.pixCopia" class="co-pix-copia">
                     <p class="co-pix-copia__label">{{ t('Pix Copia e Cola') }}</p>
                     <div class="co-pix-copia__row">
@@ -701,12 +748,9 @@
                   <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   <span>{{ t('Verificação') }}: {{ hashVerificacao }}</span>
                 </div>
-
                 <div class="co-comprovante__footer">
-                  <span>NOIR &amp; OR · ATELIER</span>
-                  <span>◆</span>
-                  <span>{{ t('Compra segura via Mercado Pago') }}</span>
-                  <span>◆</span>
+                  <span>NOIR &amp; OR · ATELIER</span><span>◆</span>
+                  <span>{{ t('Compra segura via Mercado Pago') }}</span><span>◆</span>
                   <span>noiror.com.br</span>
                 </div>
               </div>
@@ -730,10 +774,7 @@
 
           <!-- ASIDE RESUMO -->
           <aside class="co-aside" v-if="etapa < 5" aria-label="Resumo do pedido">
-            <h3 class="co-aside__titulo">
-              <span aria-hidden="true">◆</span>
-              {{ t('Resumo') }}
-            </h3>
+            <h3 class="co-aside__titulo"><span aria-hidden="true">◆</span>{{ t('Resumo') }}</h3>
             <div class="co-aside__itens">
               <div v-for="item in itens" :key="item._id||item.id" class="co-aside__item">
                 <div class="co-aside__item-img">
@@ -755,25 +796,19 @@
               <div class="co-aside__linha"><span>{{ t('Subtotal') }}</span><span>R$ {{ fmt(subtotal) }}</span></div>
               <transition name="msg-fade">
                 <div v-if="descontoValor>0" class="co-aside__linha co-aside__linha--desc">
-                  <span>{{ t('Desconto') }} <em>{{ cupomCodigo }}</em></span>
-                  <span>−R$ {{ fmt(descontoValor) }}</span>
+                  <span>{{ t('Desconto') }} <em>{{ cupomCodigo }}</em></span><span>−R$ {{ fmt(descontoValor) }}</span>
                 </div>
               </transition>
               <div class="co-aside__linha" :class="{ 'co-aside__linha--gratis': freteValor===0 && freteEscolhido }">
                 <span>{{ t('Frete') }}</span>
                 <span>{{ !freteEscolhido ? '—' : freteValor===0 ? t('GRÁTIS') : 'R$ '+fmt(freteValor) }}</span>
               </div>
-              <div class="co-aside__total">
-                <span>TOTAL</span>
-                <span>R$ {{ fmt(totalFinal) }}</span>
-              </div>
+              <div class="co-aside__total"><span>TOTAL</span><span>R$ {{ fmt(totalFinal) }}</span></div>
               <div v-if="metodo==='cartao' && cartao.parcelas>1" class="co-aside__parcela">
                 {{ cartao.parcelas }}x de R$ {{ fmt(totalFinal/cartao.parcelas) }}
               </div>
             </div>
-            <div class="co-aside__kanji" aria-hidden="true">
-              <span>誠</span><span>信</span>
-            </div>
+            <div class="co-aside__kanji" aria-hidden="true"><span>誠</span><span>信</span></div>
             <p class="co-aside__kanji-leg">SINCERIDADE · CONFIANÇA</p>
             <div class="co-aside__ssl">
               <span class="co-aside__ssl-dot"></span>
@@ -818,15 +853,14 @@ const LOJA = {
 
 const isDev = ref(true)
 const MAX_PARCELAS = 12
-const PARCELAS_SEM_JUROS = 12
 const FRETE_GRATIS_ACIMA_DE = 300
+const IDADE_MINIMA = 18
 
 const CUPONS_VALIDOS = {
   'NOIR10':      { desconto: 0.10, tipo: 'percent', msg: '10% de desconto aplicado!' },
   'TCC2025':     { desconto: 50,   tipo: 'fixed',   msg: 'R$ 50 de desconto aplicado!' },
   'FRETEGRATIS': { desconto: 0,    tipo: 'frete',   msg: 'Frete grátis aplicado!' },
 }
-
 
 const locale = ref(localStorage.getItem('noir_locale') || 'pt-BR')
 const salvarLocale = () => localStorage.setItem('noir_locale', locale.value)
@@ -838,17 +872,18 @@ const TRAD = {
     'Carrinho vazio':'Empty cart','Explorar Coleção':'Explore Collection',
     'Código de cupom':'Coupon code','Aplicar':'Apply','Remover':'Remove',
     'Continuar para Dados':'Continue to Details','Verificação de identidade':'Identity verification',
-    'CPF e nome validados em tempo real para sua segurança':'CPF and name validated in real time for your security',
+    'CPF e nome validados em tempo real para sua segurança':'CPF and name validated in real time',
     'Como no documento':'As on your ID','Nome completo':'Full name',
+    'Data de nascimento':'Date of birth',
     'E-mail':'Email','Telefone':'Phone','preenchido':'filled','Voltar':'Back',
     'Continuar para Entrega':'Continue to Delivery','Entrega':'Delivery',
     'Estado':'State','Endereço':'Address','Rua, número, complemento':'Street, number, complement',
     'Cidade':'City','Bairro':'Neighborhood','Sua cidade':'Your city','Seu bairro':'Your neighborhood',
     'Opções de frete':'Shipping options',
-    'Frete VIP: entrega especial para este endereço':'VIP Shipping: special delivery for this address',
+    'Frete VIP: entrega especial para este endereço':'VIP Shipping for this address',
     'Continuar para Pagamento':'Continue to Payment','Pagamento':'Payment',
     'Cartão':'Card','Pagamento via Pix':'Pix Payment',
-    'QR Code gerado pelo Mercado Pago após confirmar o pedido':'QR Code generated by Mercado Pago after order confirmation',
+    'QR Code gerado pelo Mercado Pago após confirmar o pedido':'QR Code generated after order confirmation',
     'Aprovação imediata':'Immediate approval','100% seguro e criptografado':'100% secure and encrypted',
     'Disponível 24 horas':'Available 24 hours','Titular':'Holder','Validade':'Expiry',
     'Bandeira':'Card Brand','Tipo de cartão':'Card Type','Crédito':'Credit','Débito':'Debit',
@@ -868,10 +903,10 @@ const TRAD = {
     'Frete':'Shipping','GRÁTIS':'FREE','Método':'Method','Status':'Status',
     'Processado por':'Processed by','QR Code para pagamento':'QR Code for payment',
     'Expira em':'Expires in','Pix Copia e Cola':'Pix Copy & Paste','Copiar':'Copy',
-    'Após o pagamento, a confirmação é automática em segundos.':'After payment, confirmation is automatic in seconds.',
+    'Após o pagamento, a confirmação é automática em segundos.':'After payment, confirmation is automatic.',
     'Simular Pagamento':'Simulate Payment','Linha Digitável do Boleto':'Bank Slip Code',
     'Ver Boleto':'View Bank Slip',
-    'Vencimento em 3 dias úteis. Pague em qualquer banco ou app.':'Due in 3 business days. Pay at any bank or app.',
+    'Vencimento em 3 dias úteis. Pague em qualquer banco ou app.':'Due in 3 business days.',
     'Confirmação enviada para':'Confirmation sent to',
     'Prazo de entrega: 5 a 10 dias úteis':'Delivery: 5 to 10 business days',
     'DANFE — Documento Auxiliar de Nota Fiscal':'DANFE — Invoice Auxiliary Document',
@@ -902,6 +937,60 @@ const BANDEIRAS = [
   { id: 'hipercard',  nome: 'Hipercard',  regex: /^(6062|3841)/ },
 ]
 
+// ══ VERIFICAÇÃO DE IDADE ══
+const mostrarVerifIdade  = ref(false)
+const idadeConfirmada    = ref(false)
+let   pendingItens       = null
+
+const maxDataNasc = computed(() => {
+  const d = new Date()
+  d.setFullYear(d.getFullYear() - IDADE_MINIMA)
+  return d.toISOString().split('T')[0]
+})
+
+const idadeCalculada = computed(() => {
+  if (!cliente.value.dataNasc) return null
+  const nasc = new Date(cliente.value.dataNasc)
+  const hoje = new Date()
+  let anos = hoje.getFullYear() - nasc.getFullYear()
+  const m = hoje.getMonth() - nasc.getMonth()
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) anos--
+  return anos
+})
+
+const idadeValida = computed(() =>
+  idadeCalculada.value !== null && idadeCalculada.value >= IDADE_MINIMA
+)
+
+const validarIdade = () => {
+  if (!cliente.value.dataNasc) {
+    erros.value.dataNasc = 'Data de nascimento obrigatória.'
+    return false
+  }
+  if (idadeCalculada.value < IDADE_MINIMA) {
+    erros.value.dataNasc = `Você precisa ter ${IDADE_MINIMA} anos ou mais para comprar.`
+    return false
+  }
+  erros.value.dataNasc = ''
+  return true
+}
+
+const confirmarIdade = () => {
+  idadeConfirmada.value = true
+  try { localStorage.setItem('noir_idade_confirmada', '1') } catch {}
+  mostrarVerifIdade.value = false
+  _abrirCheckout(pendingItens)
+  pendingItens = null
+}
+
+const recusarIdade = () => {
+  mostrarVerifIdade.value = false
+  pendingItens = null
+  // Redireciona para fora sem abrir o checkout
+  window.dispatchEvent(new CustomEvent('checkout-menor-de-idade'))
+}
+
+// ══ ESTADO PRINCIPAL ══
 const aberto         = ref(false)
 const etapa          = ref(1)
 const salvando       = ref(false)
@@ -912,6 +1001,7 @@ const copiado        = ref('')
 const modalRef       = ref(null)
 const comprovanteRef = ref(null)
 const qrCanvasRef    = ref(null)
+const qrGerado       = ref(false)   // controla quando o canvas está pronto para receber o QR
 
 const cupomCodigo    = ref('')
 const cupomAplicado  = ref(false)
@@ -946,8 +1036,11 @@ const pixTimerFmt = computed(() => {
 const nfNumero = ref('')
 const nfChave  = ref('')
 
-const erros = ref({ nome:'', email:'', cpf:'', telefone:'', cep:'', endereco:'', cartaoNum:'', cartaoVal:'' })
-const cliente = ref({ nome:'', email:'', cpf:'', telefone:'' })
+const erros = ref({
+  nome:'', email:'', cpf:'', telefone:'', dataNasc:'',
+  cep:'', endereco:'', cartaoNum:'', cartaoVal:''
+})
+const cliente = ref({ nome:'', email:'', cpf:'', telefone:'', dataNasc:'' })
 const entrega = ref({ cep:'', endereco:'', cidade:'', estado:'', bairro:'' })
 const cartao  = ref({ numero:'', nome:'', validade:'', cvv:'', parcelas:1 })
 const localizacao = ref({ lat: null, lng: null })
@@ -965,9 +1058,10 @@ const parcelasDisp = computed(() =>
 const completudePct = computed(() => {
   const campos = [
     cliente.value.nome.trim().split(' ').length >= 2,
-    validarCPF(cliente.value.cpf),
+    validarCPFPuro(cliente.value.cpf),
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.value.email),
     cliente.value.telefone.replace(/\D/g,'').length >= 10,
+    idadeValida.value,
   ]
   return Math.round((campos.filter(Boolean).length / campos.length) * 100)
 })
@@ -1008,6 +1102,14 @@ watch(metodo, (v) => { try { localStorage.setItem('no_metodo_pag', v) } catch {}
 watch(() => pedidoCriado.value?.status, (status) => { if (status === 'aprovado') clearInterval(pixTimerInt) })
 watch(subtotal, (val) => { if (FRETE_GRATIS_ACIMA_DE > 0 && val >= FRETE_GRATIS_ACIMA_DE) freteValor.value = 0 })
 
+// Observa qrGerado: quando virar true, tenta renderizar o QR no canvas
+watch(qrGerado, async (val) => {
+  if (val && pedidoCriado.value?.pagamento?.metodo === 'pix') {
+    await nextTick()
+    await _renderizarQRCode(pedidoCriado.value)
+  }
+})
+
 const fmt = (v) => (v||0).toLocaleString('pt-BR', { minimumFractionDigits:2 })
 const fmtDateLong = (d) => {
   if (!d) return ''
@@ -1024,6 +1126,7 @@ const campoClass = (campo) => ({
     campo==='cpf'       ? cpfStatus.value === 'ok' :
     campo==='email'     ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.value.email) :
     campo==='telefone'  ? cliente.value.telefone.replace(/\D/g,'').length >= 10 :
+    campo==='dataNasc'  ? idadeValida.value :
     campo==='cep'       ? entrega.value.cep.length === 9 :
     campo==='endereco'  ? !!entrega.value.endereco.trim() :
     campo==='cartaoNum' ? luhnValido.value :
@@ -1031,7 +1134,7 @@ const campoClass = (campo) => ({
   )
 })
 
-const validarCPF = (cpf) => {
+const validarCPFPuro = (cpf) => {
   const n = cpf.replace(/\D/g,'')
   if (n.length !== 11 || /^(\d)\1{10}$/.test(n)) return false
   let sum = 0, rest
@@ -1043,6 +1146,9 @@ const validarCPF = (cpf) => {
   rest = (sum*10)%11; if (rest===10||rest===11) rest=0
   return rest === parseInt(n.substring(10,11))
 }
+
+// Mantém alias para compatibilidade interna
+const validarCPF = validarCPFPuro
 
 const validarCPFCompleto = async () => {
   const cpf = cliente.value.cpf
@@ -1056,7 +1162,7 @@ const validarCPFCompleto = async () => {
   cpfStatus.value = 'loading'; cpfStatusMsg.value = 'Consultando Receita Federal...'; erros.value.cpf = ''
   try {
     await new Promise(r => setTimeout(r, 1200))
-    const CPF_BLOQUEADOS = ['000.000.000-00', '111.111.111-11', '999.999.999-99']
+    const CPF_BLOQUEADOS = ['000.000.000-00','111.111.111-11','999.999.999-99']
     if (CPF_BLOQUEADOS.includes(cpf)) throw new Error('CPF não localizado na base de dados da Receita Federal.')
     const nomePartes = cliente.value.nome.trim().split(/\s+/)
     if (nomePartes.length < 2) throw new Error('O nome informado não confere com o titular do CPF.')
@@ -1195,6 +1301,7 @@ const verificarAntifraude = () => {
 const validarDados = async () => {
   erroForm.value = ''
   ;['nome','email','telefone'].forEach(validarCampo)
+  if (!validarIdade()) { erroForm.value = `Você precisa ter ${IDADE_MINIMA} anos ou mais para finalizar a compra.`; return }
   if (erros.value.nome || erros.value.email || erros.value.telefone) { erroForm.value = 'Corrija os campos destacados para continuar.'; return }
   if (cpfStatus.value === 'idle' || cpfStatus.value === 'error') await validarCPFCompleto()
   if (cpfStatus.value !== 'ok') { erroForm.value = erros.value.cpf || 'Valide seu CPF antes de continuar.'; return }
@@ -1227,10 +1334,8 @@ const finalizarPedido = async () => {
   try {
     const payload = {
       itens: itens.value.map(i => ({
-        produto: i._id||i.id, qty: i.qty,
-        nome: i.nome, preco: i.preco,
-        corNome: i.corNome||'', corHex: i.corHex||'', storage: i.storage||'',
-        imagem: i.imagem||''
+        produto: i._id||i.id, qty: i.qty, nome: i.nome, preco: i.preco,
+        corNome: i.corNome||'', corHex: i.corHex||'', storage: i.storage||'', imagem: i.imagem||''
       })),
       pagamento: {
         metodo: metodo.value, parcelas: cartao.value.parcelas,
@@ -1240,7 +1345,8 @@ const finalizarPedido = async () => {
           bandeira: bandeiraCartao.value, tipo: tipoCartao.value,
         } : undefined,
       },
-      cliente: cliente.value, entrega: entrega.value,
+      cliente: { ...cliente.value },
+      entrega: entrega.value,
       cupom: cupomAplicado.value ? cupomCodigo.value : undefined,
       frete: freteEscolhido.value || undefined,
       freteValor: freteValor.value,
@@ -1252,10 +1358,20 @@ const finalizarPedido = async () => {
     pedidoCriado.value = data.pedido || data
     nfNumero.value = String(Math.floor(Math.random() * 900000) + 100000)
     nfChave.value = Array.from({length:44}, () => Math.floor(Math.random()*10)).join('')
+
     irParaEtapa(5)
-    if (data.pedido?.pagamento?.metodo === 'pix' && data.pedido?.status !== 'aprovado') {
-      iniciarTimerPix(); await nextTick(); await gerarQRCode(data.pedido)
+
+    // QR Code: inicia timer e sinaliza que canvas pode ser renderizado
+    if ((data.pedido || data)?.pagamento?.metodo === 'pix' && (data.pedido || data)?.status !== 'aprovado') {
+      iniciarTimerPix()
+      // Se não há imagem do backend, prepara canvas local
+      if (!(data.pedido || data)?.pagamento?.pixQrImage) {
+        qrGerado.value = false
+        await nextTick()
+        qrGerado.value = true  // dispara o watch que renderiza o QR após o canvas existir no DOM
+      }
     }
+
     await enviarEmailConfirmacao(data.pedido || data)
     cartao.value.cvv = ''; cartao.value.numero = ''
   } catch (e) {
@@ -1263,9 +1379,34 @@ const finalizarPedido = async () => {
   } finally { salvando.value = false }
 }
 
+// Renderização real do QR Code no canvas — separada para poder ser chamada do watch
+const _renderizarQRCode = async (pedido) => {
+  const pixStr = pedido?.pagamento?.pixCopia || pedido?.pagamento?.pix_copy_paste
+  if (!pixStr) return
+  // Espera o canvas aparecer no DOM após v-if="qrGerado"
+  await nextTick()
+  const canvas = qrCanvasRef.value
+  if (!canvas) {
+    // Retry em 300ms caso o DOM ainda não tenha commitado
+    setTimeout(() => _renderizarQRCode(pedido), 300)
+    return
+  }
+  try {
+    await QRCode.toCanvas(canvas, pixStr, {
+      width: 200, margin: 2,
+      color: { dark: '#0d0a04', light: '#f5f0e8' },
+      errorCorrectionLevel: 'H'
+    })
+  } catch (e) {
+    console.error('[QRCode]', e)
+    try {
+      await QRCode.toCanvas(canvas, pixStr.slice(0, 256), { width: 200, margin: 2 })
+    } catch {}
+  }
+}
+
 const enviarEmailConfirmacao = async (pedido) => {
-  emailStatus.value = 'sending'
-  emailStatusMsg.value = 'Enviando confirmação por e-mail...'
+  emailStatus.value = 'sending'; emailStatusMsg.value = 'Enviando confirmação por e-mail...'
   try {
     await api.patch(`/pedidos/${pedido._id}/confirmar`, {})
     emailStatus.value = 'sent'
@@ -1297,9 +1438,6 @@ const baixarNF = () => {
   .nf-chave{padding:8px;text-align:center;font-size:9px;letter-spacing:1px;background:#f9f9f9;word-break:break-all;border-top:1px solid #000}
   .nf-rodape{padding:8px;text-align:center;font-size:8px;color:#777;border-top:1px solid #000}
   .nf-sim-badge{background:#fff3cd;border:1px solid #ffc107;padding:6px 12px;text-align:center;font-weight:bold;font-size:11px;color:#856404}
-  .nf-variante{display:flex;align-items:center;gap:4px;margin-top:2px}
-  .nf-swatch{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(0,0,0,0.15)}
-  .nf-var-txt{font-size:9px;color:#888;letter-spacing:0.5px;text-transform:uppercase}
   @media print{.nf-sim-badge{display:none}}</style></head><body>
   <div class="nf-sim-badge">⚠ DOCUMENTO SIMULADO — TRABALHO DE CONCLUSÃO DE CURSO — NÃO TEM VALIDADE FISCAL</div>
   <div class="nf-container">
@@ -1329,13 +1467,11 @@ const baixarNF = () => {
     </div>
     <div class="nf-section nf-itens">
       <div class="nf-section__title">DADOS DOS PRODUTOS</div>
-      <table><thead><tr><th style="width:40px">COD.</th><th>DESCRIÇÃO</th><th style="width:50px">QTD</th><th style="width:80px">UNIT.</th><th style="width:80px">TOTAL</th></tr></thead>
+      <table><thead><tr><th>COD.</th><th>DESCRIÇÃO</th><th>QTD</th><th>UNIT.</th><th>TOTAL</th></tr></thead>
       <tbody>${(pedidoCriado.value.itens||[]).map((item,idx) => `
         <tr>
           <td>${String(idx+1).padStart(3,'0')}</td>
-          <td>${item.nome||item.produto?.nome||'Produto'}
-            ${(item.corNome||item.storage) ? `<div class="nf-variante">${item.corHex?`<span class="nf-swatch" style="background:${item.corHex}"></span>`:''}<span class="nf-var-txt">${[item.corNome,item.storage].filter(Boolean).join(' · ')}</span></div>` : ''}
-          </td>
+          <td>${item.nome||item.produto?.nome||'Produto'}</td>
           <td style="text-align:center">${item.qty||1}</td>
           <td style="text-align:right">R$ ${(item.preco||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
           <td style="text-align:right">R$ ${((item.preco||0)*(item.qty||1)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -1356,17 +1492,6 @@ const baixarNF = () => {
   a.download = `nf-noiror-${nfNumero.value}.html`; a.click(); URL.revokeObjectURL(a.href)
 }
 
-const gerarQRCode = async (pedido) => {
-  await nextTick()
-  if (pedido.pagamento?.pixQrImage) return
-  const pixStr = pedido.pagamento?.pixCopia || pedido.pagamento?.pix_copy_paste
-  if (!pixStr) return
-  const canvas = qrCanvasRef.value; if (!canvas) return
-  try {
-    await QRCode.toCanvas(canvas, pixStr, { width: 200, margin: 2, color: { dark: '#0d0a04', light: '#f5f0e8' }, errorCorrectionLevel: 'H' })
-  } catch (e) { console.error('[QRCode]', e); try { await QRCode.toCanvas(canvas, pixStr.slice(0,256), { width: 200, margin: 2 }) } catch {} }
-}
-
 const iniciarTimerPix = () => {
   pixTimerSecs.value = 1800; clearInterval(pixTimerInt)
   pixTimerInt = setInterval(() => { if (pixTimerSecs.value <= 0) { clearInterval(pixTimerInt); return }; pixTimerSecs.value-- }, 1000)
@@ -1374,7 +1499,10 @@ const iniciarTimerPix = () => {
 
 const simularPagamento = async () => {
   if (!isDev.value) return
-  try { const { data } = await api.patch(`/pedidos/${pedidoCriado.value._id}/confirmar`); pedidoCriado.value = data.pedido; clearInterval(pixTimerInt) } catch (e) { console.error(e) }
+  try {
+    const { data } = await api.patch(`/pedidos/${pedidoCriado.value._id}/confirmar`)
+    pedidoCriado.value = data.pedido; clearInterval(pixTimerInt)
+  } catch (e) { console.error(e) }
 }
 
 const copiarTexto = async (txt, tipo) => {
@@ -1425,26 +1553,34 @@ const fecharELimpar = () => {
   cupomCodigo.value = ''; cupomAplicado.value = false; descontoValor.value = 0
   freteValor.value = 0; opcoesEntrega.value = []; erroForm.value = ''
   cpfStatus.value = 'idle'; emailStatus.value = 'idle'; freteGratisPosCupom.value = false
-  clearInterval(pixTimerInt); cartao.value = { numero:'', nome:'', validade:'', cvv:'', parcelas:1 }
+  qrGerado.value = false
+  clearInterval(pixTimerInt)
+  cartao.value = { numero:'', nome:'', validade:'', cvv:'', parcelas:1 }
 }
 
 const obterLocalizacao = () => {
   if (!navigator.geolocation) return
-  navigator.geolocation.getCurrentPosition((p) => { localizacao.value = { lat: p.coords.latitude, lng: p.coords.longitude } }, () => {}, { enableHighAccuracy: false, timeout: 5000 })
+  navigator.geolocation.getCurrentPosition(
+    (p) => { localizacao.value = { lat: p.coords.latitude, lng: p.coords.longitude } },
+    () => {}, { enableHighAccuracy: false, timeout: 5000 }
+  )
 }
 
-const onAbrirCheckout = (e) => {
-  itens.value = e.detail || window.__noirCarrinho || []
+// _abrirCheckout: lógica real de abertura (chamada após confirmação de idade)
+const _abrirCheckout = (itensList) => {
+  itens.value = itensList || []
   etapa.value = 1; pedidoCriado.value = null; erroForm.value = ''
   cupomAplicado.value = false; cupomCodigo.value = ''; cupomMsg.value = ''
   descontoValor.value = 0; freteValor.value = 0; opcoesEntrega.value = []; copiado.value = ''
   cpfStatus.value = 'idle'; emailStatus.value = 'idle'; freteGratisPosCupom.value = false
+  qrGerado.value = false
 
   if (auth.user) {
     cliente.value.nome     = `${auth.user.nome||''} ${auth.user.sobrenome||''}`.trim()
     cliente.value.email    = auth.user.email     || ''
     cliente.value.cpf      = auth.user.cpf       || ''
     cliente.value.telefone = auth.user.telefone  || ''
+    cliente.value.dataNasc = auth.user.dataNasc  || ''
     entrega.value.cep      = auth.user.cep       || ''
     entrega.value.cidade   = auth.user.cidade    || ''
     entrega.value.endereco = auth.user.endereco  || ''
@@ -1464,7 +1600,27 @@ const onAbrirCheckout = (e) => {
   obterLocalizacao(); aberto.value = true; document.body.style.overflow = 'hidden'
 }
 
-const onKeyDown = (e) => { if (e.key === 'Escape' && aberto.value) tentarFechar() }
+const onAbrirCheckout = (e) => {
+  const itensList = e.detail || window.__noirCarrinho || []
+
+  // Verifica se já confirmou maioridade nesta sessão (ou via localStorage)
+  const jaConfirmou = idadeConfirmada.value || localStorage.getItem('noir_idade_confirmada') === '1'
+
+  if (!jaConfirmou) {
+    pendingItens = itensList
+    mostrarVerifIdade.value = true
+    document.body.style.overflow = 'hidden'
+  } else {
+    _abrirCheckout(itensList)
+  }
+}
+
+const onKeyDown = (e) => {
+  if (e.key === 'Escape') {
+    if (mostrarVerifIdade.value) { recusarIdade(); return }
+    if (aberto.value) tentarFechar()
+  }
+}
 
 onMounted(() => {
   window.addEventListener('abrir-checkout', onAbrirCheckout)
@@ -1503,6 +1659,137 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;700&family=Syne:wght@300;400;500;600;700&family=DM+Mono:wght@300;400&display=swap');
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ══ MODAL VERIFICAÇÃO DE IDADE ══ */
+.co-overlay--idade { z-index: 9600; }
+.co-idade-modal {
+  position: relative;
+  background: linear-gradient(160deg, #110d05 0%, #06040a 100%);
+  border: 0.5px solid rgba(200,168,75,0.3);
+  border-radius: 3px;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px 28px;
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(0,0,0,.92), 0 0 0 1px rgba(200,168,75,0.06) inset;
+  animation: coPopIn .45s var(--ease) both;
+}
+.co-idade-modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--or), transparent);
+  opacity: .6;
+}
+.co-idade-icone {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: rgba(200,168,75,0.08);
+  border: 0.5px solid rgba(200,168,75,0.25);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--or);
+  margin: 0 auto 16px;
+  animation: coScaleIn .55s var(--ease) .1s both;
+}
+.co-idade-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .35em;
+  color: rgba(200,168,75,0.18);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.co-idade-titulo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.3rem;
+  font-weight: 200;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: .04em;
+}
+.co-idade-desc {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+.co-idade-desc strong { color: var(--or); font-weight: 600; }
+.co-idade-aviso {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(231,76,60,0.6);
+  background: rgba(231,76,60,0.04);
+  border: 0.5px solid rgba(231,76,60,0.15);
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.co-idade-aviso svg { color: var(--red); flex-shrink: 0; }
+.co-idade-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.co-idade-btns .btn-ghost { width: 100%; justify-content: center; font-size: 7.5px; }
+.co-idade-btns .btn-gold  { width: 100%; justify-content: center; }
+.co-idade-legal {
+  font-size: 9px;
+  color: rgba(245,240,232,0.15);
+  line-height: 1.6;
+}
+.co-idade-legal a {
+  color: rgba(200,168,75,0.35);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.co-idade-legal a:hover { color: rgba(200,168,75,0.6); }
+
+/* Badge +18 no header */
+.co-idade-badge {
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 7px; letter-spacing: .2em;
+  color: rgba(46,204,113,0.55);
+  background: rgba(46,204,113,0.05);
+  border: 0.5px solid rgba(46,204,113,0.18);
+  padding: 3px 8px;
+  cursor: default;
+}
+.co-idade-badge svg { color: var(--green); }
+
+/* Campo data nascimento — badge */
+.co-campo__lbl-badge {
+  display: inline-flex; align-items: center;
+  background: rgba(200,168,75,0.1);
+  border: 0.5px solid rgba(200,168,75,0.25);
+  color: var(--or);
+  font-size: 6px; letter-spacing: .2em;
+  padding: 1px 5px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* QR Code loading state */
+.co-qr-loading {
+  width: 200px; height: 200px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  background: rgba(200,168,75,0.04);
+  border: 1px dashed rgba(200,168,75,0.15);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: .15em;
+  color: rgba(200,168,75,0.35);
+}
+
+/* ══ OVERLAY BASE ══ */
 .co-overlay { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,.9); backdrop-filter: blur(24px) saturate(160%); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .co-realm-line { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9600; background: linear-gradient(90deg, transparent 5%, var(--or2) 20%, var(--or) 50%, var(--or2) 80%, transparent 95%); opacity: .7; }
 .co-modal { position: relative; background: linear-gradient(160deg, #110d05 0%, #06040a 100%); border: 0.5px solid var(--hair); border-radius: 3px; width: 100%; max-width: 1020px; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 60px 120px rgba(0,0,0,.95), 0 0 0 1px rgba(200,168,75,0.04) inset; animation: coPopIn .5s var(--ease) both; }
@@ -1555,7 +1842,6 @@ onUnmounted(() => {
 .co-titulo__num { font-size: .65rem; font-weight: 300; letter-spacing: .25em; color: var(--or); opacity: .65; font-family: 'DM Mono', monospace; }
 .co-badge { font-family: 'DM Mono', monospace; font-size: 7.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--or); background: rgba(200,168,75,.08); border: 0.5px solid rgba(200,168,75,.2); padding: 3px 9px; margin-left: auto; }
 
-/* ITENS */
 .co-itens { display: flex; flex-direction: column; }
 .co-item { display: grid; grid-template-columns: 22px 64px 1fr auto; gap: 12px; padding: 13px 0; border-bottom: 0.5px solid rgba(200,168,75,0.07); transition: background .2s; position: relative; }
 .co-item:hover { background: rgba(200,168,75,0.02); margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
@@ -1564,16 +1850,11 @@ onUnmounted(() => {
 .co-item__img img { width: 100%; height: 100%; object-fit: cover; }
 .co-item__cat  { font-size: 7px; letter-spacing: .45em; color: var(--or); text-transform: uppercase; margin-bottom: 3px; font-family: 'DM Mono', monospace; display: block; }
 .co-item__nome { font-size: 12px; color: var(--text); font-weight: 300; line-height: 1.4; }
-
-/* VARIANTES ETAPA 1 */
 .co-item__variantes { display: flex; align-items: center; gap: 6px; margin: 6px 0 8px; flex-wrap: wrap; padding: 5px 8px; background: rgba(200,168,75,0.03); border: 0.5px solid rgba(200,168,75,0.08); border-left: 2px solid rgba(200,168,75,0.25); }
-.co-item__swatch { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.25); flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.1); transition: transform 0.2s; }
-.co-item__swatch:hover { transform: scale(1.3); }
+.co-item__swatch { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.25); flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.1); }
 .co-item__var-txt { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1.2px; color: rgba(245,240,232,0.38); text-transform: uppercase; line-height: 1; }
 .co-item__var-txt--storage { display: flex; align-items: center; gap: 4px; color: rgba(200,168,75,0.5); }
-.co-item__var-txt--storage svg { color: rgba(200,168,75,0.4); flex-shrink: 0; }
-.co-item__var-sep { color: rgba(245,240,232,0.15); font-size: 8px; line-height: 1; }
-
+.co-item__var-sep { color: rgba(245,240,232,0.15); font-size: 8px; }
 .co-qty { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
 .co-qty__btn { background: rgba(200,168,75,0.06); border: 0.5px solid rgba(200,168,75,0.18); color: var(--text2); width: 22px; height: 22px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
 .co-qty__btn:hover { background: var(--or); border-color: var(--or); color: var(--void); }
@@ -1582,11 +1863,9 @@ onUnmounted(() => {
 .co-item__preco { font-family: 'Noto Serif JP', serif; font-size: 1rem; color: var(--or); }
 .co-remove { background: none; border: 0.5px solid rgba(200,168,75,0.12); color: rgba(245,240,232,0.18); width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
 .co-remove:hover { border-color: var(--red); color: var(--red); background: rgba(231,76,60,.06); }
-
 .item-list-enter-active, .item-list-leave-active { transition: all .28s ease; }
 .item-list-enter-from { opacity:0; transform:translateY(-8px); }
 .item-list-leave-to   { opacity:0; transform:translateX(18px); }
-
 .co-vazio { text-align: center; padding: 48px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; color: rgba(245,240,232,0.22); }
 .co-vazio__ico { color: rgba(245,240,232,0.08); animation: coFloat 3s ease-in-out infinite; }
 @keyframes coFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
@@ -1625,6 +1904,7 @@ onUnmounted(() => {
 .co-campo--err label { color: var(--red) !important; }
 .co-campo--ok .co-campo__row::after { width: 100%; background: rgba(46,204,113,0.6); }
 .co-campo input, .co-select { flex: 1; background: transparent; border: none; padding: 8px 0; color: var(--text); font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 300; outline: none; caret-color: var(--or); width: 100%; transition: background-color 9999s; }
+.co-campo input[type="date"] { color-scheme: dark; }
 .co-campo input::placeholder { color: rgba(245,240,232,0.18); }
 .co-campo input:disabled { opacity: .3; cursor: not-allowed; }
 .co-campo__ok   { color: var(--green); font-size: 11px; flex-shrink: 0; padding-left: 6px; }
@@ -1699,7 +1979,6 @@ onUnmounted(() => {
 .co-radio-group { display: flex; gap: 16px; margin-top: 4px; }
 .co-radio { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; }
 .co-radio input { accent-color: var(--or); width: 14px; height: 14px; }
-
 .co-seals { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
 .co-seal { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 7.5px; letter-spacing: .15em; color: rgba(200,168,75,0.3); text-transform: uppercase; }
 .co-seal__dot { width: 4px; height: 4px; background: rgba(200,168,75,0.4); border-radius: 50%; flex-shrink: 0; }
@@ -1725,6 +2004,8 @@ onUnmounted(() => {
 .co-divider span { font-size: 7px; letter-spacing: .4em; color: rgba(200,168,75,0.38); text-transform: uppercase; font-family: 'DM Mono', monospace; white-space: nowrap; }
 .msg-fade-enter-active, .msg-fade-leave-active { transition: all .22s ease; }
 .msg-fade-enter-from, .msg-fade-leave-to { opacity: 0; transform: translateY(-4px); }
+.co-fade-enter-active, .co-fade-leave-active { transition: opacity .3s ease; }
+.co-fade-enter-from, .co-fade-leave-to { opacity: 0; }
 
 .co-spin { width: 15px; height: 15px; border: 2px solid rgba(245,240,232,0.12); border-top-color: var(--text); border-radius: 50%; animation: coSpin .7s linear infinite; display: inline-block; flex-shrink: 0; }
 .co-spin--sm { width: 11px; height: 11px; border-width: 1.5px; border-top-color: var(--or); border-color: rgba(200,168,75,0.15); }
@@ -1761,21 +2042,16 @@ onUnmounted(() => {
 .co-comprovante__row--total { font-family: 'Noto Serif JP', serif; font-size: 1.1rem !important; border-top: 0.5px solid rgba(200,168,75,0.2) !important; border-bottom: none !important; padding-top: 10px !important; margin-top: 4px; }
 .co-comprovante__row--total span:last-child { color: var(--or) !important; }
 .co-comprovante__row--parc { font-size: 10px !important; }
-
-/* VARIANTES COMPROVANTE */
-.co-comprovante__item { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 0.5px solid rgba(200,168,75,0.04); transition: background 0.2s; }
-.co-comprovante__item:hover { background: rgba(200,168,75,0.02); padding-left: 4px; }
+.co-comprovante__item { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 0.5px solid rgba(200,168,75,0.04); }
 .co-comprovante__item-info  { display: flex; flex-direction: column; gap: 2px; }
 .co-comprovante__item-nome  { font-size: 11.5px; color: var(--text2); }
 .co-comprovante__item-qty   { font-size: 9px; color: var(--text3); font-family: 'DM Mono', monospace; }
 .co-comprovante__item-val   { font-family: 'Noto Serif JP', serif; font-size: .95rem; color: var(--or); flex-shrink: 0; }
-.co-comprovante__variantes { display: flex; align-items: center; gap: 5px; margin: 4px 0 5px; flex-wrap: wrap; padding: 4px 7px; background: rgba(200,168,75,0.04); border: 0.5px solid rgba(200,168,75,0.1); border-radius: 1px; }
-.co-comprovante__swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.22); flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.08); }
+.co-comprovante__variantes { display: flex; align-items: center; gap: 5px; margin: 4px 0 5px; flex-wrap: wrap; padding: 4px 7px; background: rgba(200,168,75,0.04); border: 0.5px solid rgba(200,168,75,0.1); }
+.co-comprovante__swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.22); flex-shrink: 0; }
 .co-comprovante__var-txt { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.8px; color: rgba(200,168,75,0.5); text-transform: uppercase; line-height: 1; }
 .co-comprovante__var-txt--storage { display: flex; align-items: center; gap: 4px; color: rgba(200,168,75,0.4); }
-.co-comprovante__var-txt--storage svg { color: rgba(200,168,75,0.35); flex-shrink: 0; }
-.co-comprovante__var-sep { color: rgba(200,168,75,0.2); font-size: 8px; line-height: 1; }
-
+.co-comprovante__var-sep { color: rgba(200,168,75,0.2); font-size: 8px; }
 .co-comprovante__totais { margin: 10px 0; padding: 10px 12px; background: rgba(200,168,75,0.025); border: 0.5px solid rgba(200,168,75,0.08); }
 .co-comprovante__status { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .15em; text-transform: uppercase; padding: 2px 8px; }
 .co-comprovante__status--aprovado { color: var(--green); background: rgba(46,204,113,0.08); }
@@ -1789,7 +2065,7 @@ onUnmounted(() => {
 .co-nf { width: 100%; margin-top: 14px; background: rgba(255,215,0,0.03); border: 0.5px solid rgba(255,215,0,0.2); border-left: 2px solid rgba(255,215,0,0.4); padding: 14px; }
 .co-nf__header { display: flex; align-items: center; gap: 8px; font-family: 'DM Mono', monospace; font-size: 7.5px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,215,0,0.5); margin-bottom: 10px; }
 .co-nf__sim { color: rgba(255,200,0,0.3); font-size: 7px; letter-spacing: .15em; }
-.co-nf__body { display: flex; flex-direction: column; gap: 0; }
+.co-nf__body { display: flex; flex-direction: column; }
 .co-nf__row { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 0; border-bottom: 0.5px solid rgba(255,215,0,0.06); font-size: 10.5px; }
 .co-nf__row span:first-child { color: rgba(255,215,0,0.35); flex-shrink: 0; margin-right: 10px; font-family: 'DM Mono', monospace; font-size: 9px; }
 .co-nf__row span:last-child  { color: rgba(245,240,232,0.5); text-align: right; }
@@ -1799,7 +2075,7 @@ onUnmounted(() => {
 
 .co-pix-box { width: 100%; margin-top: 14px; background: rgba(200,168,75,0.03); border: 0.5px solid rgba(200,168,75,0.15); padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 11px; }
 .co-pix-box__titulo { font-family: 'DM Mono', monospace; font-size: 7.5px; letter-spacing: .4em; text-transform: uppercase; color: rgba(200,168,75,0.6); }
-.co-qr-wrap { background: #f5f0e8; padding: 10px; border: 0.5px solid rgba(200,168,75,0.2); display: flex; align-items: center; justify-content: center; }
+.co-qr-wrap { background: #f5f0e8; padding: 10px; border: 0.5px solid rgba(200,168,75,0.2); display: flex; align-items: center; justify-content: center; min-height: 220px; }
 .co-qr-img   { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
 .co-qr-canvas { display: block; border-radius: 1px; }
 .co-pix-timer { display: flex; align-items: center; gap: 7px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--or); background: rgba(200,168,75,0.05); border: 0.5px solid rgba(200,168,75,0.15); padding: 7px 14px; width: 100%; justify-content: center; }
@@ -1821,13 +2097,10 @@ onUnmounted(() => {
 .co-aprovado__linha svg    { color: var(--green); flex-shrink: 0; }
 .co-aprovado__linha strong { color: var(--green); }
 
-/* ASIDE */
 .co-aside { padding: 22px 18px; background: rgba(0,0,0,.22); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(200,168,75,0.1) transparent; position: relative; }
 .co-aside::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 1.5px; background: repeating-linear-gradient(to bottom, var(--or) 0, var(--or) 3px, transparent 3px, transparent 10px); opacity: .12; }
 .co-aside__titulo { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .5em; text-transform: uppercase; color: rgba(200,168,75,0.5); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 0.5px solid var(--hair); display: flex; align-items: center; gap: 7px; }
 .co-aside__itens { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-
-/* VARIANTES ASIDE */
 .co-aside__item { display: flex; align-items: flex-start; gap: 9px; }
 .co-aside__item-body { flex: 1; min-width: 0; }
 .co-aside__item-img { position: relative; width: 40px; height: 40px; background: rgba(200,168,75,.04); border: 0.5px solid var(--hair); overflow: visible; flex-shrink: 0; }
@@ -1837,9 +2110,8 @@ onUnmounted(() => {
 .co-aside__item-nome  { font-size: 10px; color: var(--text3); margin-bottom: 1px; line-height: 1.3; }
 .co-aside__item-preco { font-family: 'Noto Serif JP', serif; font-size: 11px; color: var(--or); }
 .co-aside__variantes { display: flex; align-items: center; gap: 4px; margin: 3px 0 4px; flex-wrap: wrap; }
-.co-aside__swatch { display: inline-block; width: 8px; height: 8px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.2); flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.3); }
-.co-aside__var-txt { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.8px; color: rgba(245,240,232,0.28); text-transform: uppercase; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
-
+.co-aside__swatch { display: inline-block; width: 8px; height: 8px; border-radius: 50%; border: 0.5px solid rgba(200,168,75,0.2); flex-shrink: 0; }
+.co-aside__var-txt { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.8px; color: rgba(245,240,232,0.28); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
 .co-aside__totais { border-top: 0.5px solid var(--hair); padding-top: 10px; }
 .co-aside__linha { display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: rgba(245,240,232,0.22); padding: 5px 0; }
 .co-aside__linha--gratis { color: var(--or); }
@@ -1875,13 +2147,8 @@ onUnmounted(() => {
   .co-comprovante { padding: 16px; }
   .co-comprovante__acoes { justify-content: stretch; }
   .co-comprovante__acoes > * { flex: 1; }
-  .co-aside__var-txt { max-width: 100px; }
-}
-
-@media (max-width: 480px) {
-  .co-item__variantes, .co-aside__variantes, .co-comprovante__variantes { gap: 4px; padding: 4px 6px; }
-  .co-item__var-txt, .co-aside__var-txt, .co-comprovante__var-txt { font-size: 8px; letter-spacing: 0.6px; }
-  .co-item__swatch, .co-aside__swatch, .co-comprovante__swatch { width: 9px; height: 9px; }
+  .co-idade-modal { margin: 16px; }
+  .co-idade-btns { flex-direction: column; }
 }
 
 @media print {
